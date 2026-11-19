@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="img-src 'self' data:; font-src https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; object-src 'none'; base-uri 'none'; form-action 'none'">
 <title>九九乘法大冒險</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -99,6 +100,7 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 .mode b{font-size:20px;margin-top:6px}
 .mode span{font-size:14px;line-height:1.4;opacity:.85}
 .m1{background:var(--sun)} .m2{background:#FF8A8A} .m3{background:#B9A8FF} .m4{background:#7FE0B5}
+.m5{background:#FFB38A} .m6{background:#FFC2DE}
 
 /* picker */
 .seg{display:flex;background:var(--surface2);border:3px solid var(--edge);border-radius:16px;padding:4px;gap:4px;margin-bottom:16px}
@@ -215,6 +217,62 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 .legend{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:14px;font-size:14px;color:var(--muted)}
 .legend i{display:inline-block;width:14px;height:14px;border-radius:4px;border:2px solid var(--edge);vertical-align:-2px;margin-right:4px}
 
+/* review flip cards */
+.flipgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.fcard{background:none;border:0;padding:0;cursor:pointer;perspective:700px;aspect-ratio:1}
+.fin{position:relative;display:block;width:100%;height:100%;transform-style:preserve-3d;transition:transform .45s cubic-bezier(.3,1.1,.5,1)}
+.fcard.on .fin{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;border:3px solid var(--edge);border-radius:20px;box-shadow:0 4px 0 var(--drop);backface-visibility:hidden;-webkit-backface-visibility:hidden;font-family:var(--num);font-weight:700}
+.face.front{background:var(--surface);color:var(--ink);font-size:clamp(19px,6vw,28px)}
+.face.front small{color:var(--muted);font-size:.72em;margin:0 3px}
+.face.back{background:var(--sun);color:var(--on-color);font-size:clamp(32px,10vw,50px);transform:rotateY(180deg)}
+.fcard:active .fin{transform:scale(.96) rotateY(var(--ry,0deg))}
+.fcard.on:active .fin{--ry:180deg}
+
+/* stages */
+.slist{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.stage{position:relative;text-align:left;background:var(--surface);border:3px solid var(--edge);border-radius:20px;box-shadow:0 4px 0 var(--drop);padding:12px 14px;cursor:pointer;display:flex;flex-direction:column;gap:2px;transition:transform .08s,box-shadow .08s}
+.stage:active:not(:disabled){transform:translateY(4px);box-shadow:0 0 0 var(--drop)}
+.stage .sno{font-family:var(--num);font-size:14px;color:var(--muted);font-weight:600}
+.stage b{font-size:19px}
+.stage .ss{font-size:15px;letter-spacing:1px}
+.stage.done{background:color-mix(in srgb,var(--mint) 26%,var(--surface))}
+.stage.boss{background:color-mix(in srgb,var(--grape) 24%,var(--surface))}
+.stage.lock{opacity:.5;cursor:not-allowed;box-shadow:0 4px 0 var(--track)}
+.stage .q{position:absolute;right:12px;top:12px;font-size:13px;color:var(--muted);font-family:var(--num)}
+
+/* challenger */
+.who{display:inline-flex;align-items:center;gap:8px;background:var(--surface);border:3px solid var(--edge);border-radius:999px;box-shadow:0 4px 0 var(--drop);padding:5px 14px 5px 8px;margin-top:12px;cursor:pointer;font-weight:700;font-size:17px}
+.who .ava{font-size:24px;line-height:1}
+.who .sw{font-size:13px;color:var(--muted);font-weight:400}
+.tiertabs{display:flex;gap:6px;margin-bottom:10px}
+.tt{flex:1;min-width:0;background:var(--surface2);border:2px solid var(--edge);border-radius:14px;padding:7px 4px;cursor:pointer;font-weight:700;font-size:15px;display:flex;flex-direction:column;align-items:center;gap:1px;line-height:1.25}
+.tt i{font-style:normal;font-family:var(--num);font-size:12px;color:var(--muted);font-weight:600;white-space:nowrap}
+.tt.on{color:var(--on-color)}
+.tt.on i{color:var(--on-color);opacity:.8}
+.tt.e.on{background:var(--mint)} .tt.m.on{background:#8CC9FF} .tt.h.on{background:#B9A8FF}
+.tdesc{font-size:13px;color:var(--muted);margin-bottom:10px}
+
+/* players */
+.plist{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.prow{display:flex;align-items:center;gap:12px;background:var(--surface);border:3px solid var(--edge);border-radius:20px;box-shadow:0 4px 0 var(--drop);padding:12px}
+.prow.on{background:color-mix(in srgb,var(--sun) 22%,var(--surface))}
+.pava{font-size:30px;width:48px;height:48px;display:grid;place-items:center;background:var(--surface2);border:2px solid var(--edge);border-radius:50%;flex:none}
+.pbody{flex:1;min-width:0}
+.pname{font-weight:700;font-size:19px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.now{font-size:12px;background:var(--mint);color:#06281A;border:2px solid var(--edge);border-radius:99px;padding:0 8px;font-weight:700}
+.pstat{font-size:14px;color:var(--muted);font-family:var(--num);margin-top:2px}
+.pacts{display:flex;gap:6px;align-items:center;flex:none}
+.iconbtn.small{width:32px;height:32px;font-size:14px}
+
+/* name form */
+.flab{font-size:14px;color:var(--muted);margin-bottom:6px;display:block;text-align:left}
+.field{width:100%;font:inherit;font-family:var(--zh);font-size:20px;font-weight:700;color:var(--ink);background:var(--surface2);border:3px solid var(--edge);border-radius:16px;padding:10px 14px;margin-bottom:14px}
+.avas{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.ava-opt{font-size:23px;aspect-ratio:1;background:var(--surface2);border:2px solid var(--edge);border-radius:14px;cursor:pointer;display:grid;place-items:center;padding:0;line-height:1}
+.ava-opt.on{background:var(--sun)}
+.formrow{display:flex;gap:10px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap}
+
 /* modal */
 .modal{position:fixed;inset:0;z-index:20;background:rgba(10,18,40,.55);display:grid;place-items:center;padding:20px;animation:fade .2s}
 .sheet{background:var(--surface);border:3px solid var(--edge);border-radius:26px;box-shadow:0 6px 0 var(--drop);padding:24px 20px;max-width:340px;width:100%;text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px}
@@ -249,6 +307,11 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 @keyframes floatup{0%{transform:translate(-50%,0);opacity:1}100%{transform:translate(-50%,-70px);opacity:0}}
 
 @media (max-width:420px){
+  .prow{flex-wrap:wrap}
+  .pacts{width:100%;justify-content:flex-end}
+  .topbar .in{gap:6px;padding:10px 10px}
+  .pill{padding:2px 9px;font-size:16px}
+  .tt{font-size:14px}
   .tiles span{width:70px;height:70px;font-size:48px}
   .tiles span:nth-child(2){width:52px;font-size:36px}
   .sgrid{grid-template-columns:repeat(4,1fr)}
@@ -267,6 +330,7 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
   <div class="spacer"></div>
   <span class="pill" title="星星">⭐ <span id="stars">0</span></span>
   <span class="pill" title="扭蛋幣">🪙 <span id="coins">0</span></span>
+  <button class="iconbtn" id="whobtn" data-act="players" aria-label="切換挑戰者">👤</button>
   <button class="iconbtn" id="mutebtn" data-act="mute" aria-label="音效開關">🔊</button>
 </div></header>
 <main id="view"></main>
@@ -291,6 +355,16 @@ const STICKERS = [
   ['m1','⭐','星星','n','m'],['m2','🌙','月亮','n','m'],['m3','🌈','彩虹','n','m'],['m4','🍄','蘑菇','n','m'],['m5','🦕','恐龍','n','m'],
   ['m6','👾','小怪獸','n','m'],['m7','🚀','火箭','r','m'],['m8','🪐','土星','r','m'],['m9','🐉','小龍','r','m'],['m10','🦄','獨角獸','s','m']
 ].map(([id,emo,name,rar,theme])=>({id,emo,name,rar,theme}));
+const STAGES = [
+  {table:2, q:10}, {table:3, q:10}, {table:4, q:10}, {table:5, q:10},
+  {table:6, q:10}, {table:7, q:10}, {table:8, q:10}, {table:9, q:10},
+  {table:0, q:10, label:'混合挑戰'},
+  {table:0, q:10, label:'混合挑戰 2'},
+  {table:0, q:10, label:'弱點挑戰', weak:true},
+  {table:0, q:15, label:'大魔王', boss:true}
+].map((s,i)=>Object.assign({n:i+1, label:s.table?`${s.table} 的乘法`:''}, s));
+const STAGE_COIN_CAP = 2;   /* 重玩通關每天最多拿幾枚 */
+
 const RAR_LABEL = {n:'普通', r:'稀有 ✨', s:'閃亮 🌟'};
 const RAR_WEIGHT = {n:6, r:3, s:1};
 
@@ -306,21 +380,119 @@ const PRAISE = ['答對了！','好棒！','太厲害了！','完全正確！','
 
 /* ---------- state ---------- */
 const LS_KEY = 'mul99-adventure-v1';
+const AVATARS = ['🦊','🐱','🐶','🐼','🐯','🦄','🐵','🐸','🐙','🐧','🦖','🐳'];
+const MAX_PLAYERS = 6;
+function uid(){ return 'p'+Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
+function blankPlayer(name,avatar){
+  return { id:uid(), name:name||'挑戰者', avatar:avatar||AVATARS[0], createdAt:Date.now(),
+    stars:0, coins:0, owned:{}, facts:{}, stages:{}, daily:null, streak:{last:'',count:0}, timedBest:0 };
+}
 function defaultState(){
-  return { stars:0, coins:0, owned:{}, facts:{}, daily:null,
-    streak:{last:'',count:0}, timedBest:0, settings:{muted:false,input:'type'}, savedAt:0 };
+  return { v:2, players:[], activeId:'', settings:{muted:false,input:'type'}, savedAt:0 };
+}
+
+/* ---- 讀存檔一律白名單驗證：存檔可能被同源的其他頁面或同步來源改過 ---- */
+const AVA_SET = new Set(AVATARS);
+const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+const ID_RE = /^[a-z0-9]{1,24}$/;
+const TIER_IDS = ['e','m','h'];
+const obj = v => (v && typeof v==='object' && !Array.isArray(v)) ? v : {};
+function num(v,max){ const n=Math.floor(Number(v)); return (isFinite(n) && n>0) ? Math.min(n,max) : 0; }
+function fixFacts(src){
+  const f=obj(src), out={};
+  for(let a=1;a<=9;a++) for(let b=a;b<=9;b++){
+    const k=a+'x'+b, v=obj(f[k]);
+    if(f[k]) out[k]={ c:num(v.c,999999), w:num(v.w,999999), s:num(v.s,999) };
+  }
+  return out;
+}
+function fixOwned(src){
+  const o=obj(src), out={};
+  STICKERS.forEach(s=>{ const v=o[s.id]; if(typeof v==='string' && DATE_RE.test(v)) out[s.id]=v; });
+  return out;
+}
+function fixStages(src){
+  const s=obj(src), out={};
+  STAGES.forEach(S=>{ const v=obj(s[S.n]); if(v.cleared) out[S.n]={cleared:true, stars:Math.min(3,num(v.stars,3))}; });
+  return out;
+}
+function fixP(src){
+  const p=obj(src), out=blankP();
+  Object.keys(out).forEach(k=>{ if(typeof out[k]==='number') out[k]=num(p[k],999999); });
+  const tb=obj(p.tables); for(let t=2;t<=9;t++) if(tb[t]) out.tables[t]=true;
+  const ck=obj(p.cellk);
+  for(let a=1;a<=9;a++) for(let b=a;b<=9;b++){ const k=a+'x'+b; if(ck[k]) out.cellk[k]=1; }
+  const rv=obj(p.revk); for(let t=2;t<=9;t++) if(rv[t]) out.revk[t]=1;
+  return out;
+}
+function fixDaily(src){
+  const d=obj(src);
+  if(typeof d.date!=='string' || !DATE_RE.test(d.date)) return null;
+  const out={ date:d.date, tiers:{}, p:fixP(d.p) };
+  const ts=obj(d.tiers);
+  TIER_IDS.forEach(id=>{
+    const t=obj(ts[id]), cl=Array.isArray(t.claimed)?t.claimed:[], nt=Array.isArray(t.notified)?t.notified:[];
+    /* quests 不從存檔讀：由日期 + 難度的亂數種子重新產生，內容保證一致且不可被竄改 */
+    out.tiers[id]={ quests:null, claimed:[!!cl[0],!!cl[1],!!cl[2]], bonus:!!t.bonus, notified:[!!nt[0],!!nt[1],!!nt[2]] };
+  });
+  return out;
+}
+function fixPlayer(src){
+  const p=obj(src), out=blankPlayer();
+  out.id = (typeof p.id==='string' && ID_RE.test(p.id)) ? p.id : uid();
+  out.name = String(p.name==null?'':p.name).slice(0,10).trim() || '挑戰者';
+  out.avatar = AVA_SET.has(p.avatar) ? p.avatar : AVATARS[0];
+  out.createdAt = num(p.createdAt, 9e15) || Date.now();
+  out.stars = num(p.stars, 999999);
+  out.coins = num(p.coins, 999999);
+  out.timedBest = num(p.timedBest, 999);
+  out.owned = fixOwned(p.owned);
+  out.facts = fixFacts(p.facts);
+  out.stages = fixStages(p.stages);
+  const st=obj(p.streak);
+  out.streak = { last:(typeof st.last==='string'&&DATE_RE.test(st.last))?st.last:'', count:num(st.count,999999) };
+  out.daily = fixDaily(p.daily);
+  return out;
 }
 function migrate(s){
-  const d = defaultState();
-  if(!s || typeof s!=='object') return d;
-  const out = Object.assign(d, s);
-  out.settings = Object.assign(defaultState().settings, s.settings||{});
-  out.streak = Object.assign(defaultState().streak, s.streak||{});
-  out.owned = s.owned||{}; out.facts = s.facts||{};
-  return out;
+  const d = defaultState(), raw = obj(s), ss = obj(raw.settings);
+  d.settings = { muted: !!ss.muted, input: ss.input==='choice' ? 'choice' : 'type' };
+  d.savedAt = num(raw.savedAt, 9e15);
+  if(Array.isArray(raw.players)){
+    d.players = raw.players.slice(0,MAX_PLAYERS).map(fixPlayer);
+    d.activeId = typeof raw.activeId==='string' ? raw.activeId : '';
+  } else if(raw.stars || raw.coins || Object.keys(obj(raw.facts)).length || Object.keys(obj(raw.owned)).length){
+    /* 舊版單人存檔 → 變成第一位挑戰者 */
+    d.players = [fixPlayer({ name:'挑戰者 1', avatar:AVATARS[0], stars:raw.stars, coins:raw.coins,
+      owned:raw.owned, facts:raw.facts, streak:raw.streak, timedBest:raw.timedBest, daily:raw.daily })];
+    d.activeId = d.players[0].id;
+  }
+  if(!d.players.some(p=>p.id===d.activeId)) d.activeId = d.players.length?d.players[0].id:'';
+  return d;
 }
 function lsLoad(){ try{ const s=localStorage.getItem(LS_KEY); return s?JSON.parse(s):null; }catch(e){ return null; } }
 let state = migrate(lsLoad());
+
+/* ---------- 挑戰者 ---------- */
+function me(){ return state.players.find(p=>p.id===state.activeId) || state.players[0] || null; }
+function hasPlayer(){ return !!me(); }
+function addPlayer(name,avatar){
+  if(state.players.length>=MAX_PLAYERS) return null;
+  const p = blankPlayer(String(name||'').slice(0,10), AVA_SET.has(avatar)?avatar:AVATARS[0]);
+  state.players.push(p); state.activeId = p.id; uiTier = null;
+  save(); return p;
+}
+function usePlayer(id){
+  if(!state.players.some(p=>p.id===id)) return;
+  endGame(); state.activeId = id; uiTier = null;
+  save(); updateTop(); go('home');
+  const m = me(); toast(`換 ${m.avatar} ${m.name} 玩囉！`);
+}
+function removePlayer(id){
+  state.players = state.players.filter(p=>p.id!==id);
+  if(!state.players.some(p=>p.id===state.activeId)) state.activeId = state.players.length?state.players[0].id:'';
+  uiTier = null; save();
+}
 
 let cloudRef=null, cloudTimer=null, cloudBusy=false, cloudDirty=false;
 function save(){
@@ -366,23 +538,40 @@ function seeded(str){
   for(let i=0;i<str.length;i++){ h=Math.imul(h^str.charCodeAt(i),3432918353); h=h<<13|h>>>19; }
   return ()=>{ h=Math.imul(h^h>>>16,2246822507); h=Math.imul(h^h>>>13,3266489909); h^=h>>>16; return (h>>>0)/4294967296; };
 }
-function makeQuests(date){
-  const r = seeded('mul99'+date);
+const TIERS = [
+  {id:'e', name:'初階', icon:'🌱', bonus:1, desc:'剛開始的小任務，輕鬆完成'},
+  {id:'m', name:'中階', icon:'⚡', bonus:1, desc:'多一點挑戰，任務也多一點'},
+  {id:'h', name:'高階', icon:'🔥', bonus:2, desc:'高手級任務，獎勵最多'}
+];
+const TIER_BY = {}; TIERS.forEach(T=>{ TIER_BY[T.id]=T; });
+const TIER_POOL = {
+  e:['correct','rounds','table','combo','timed','cells','review'],
+  m:['correct','rounds','table','combo','timed','perfect','mix','stage'],
+  h:['correct','rounds','table','combo','timed','perfect','mix','master','stage']
+};
+const TIER_TARGET = {
+  correct:{e:[8,10,12],  m:[15,18,20], h:[20,25,30]},
+  rounds: {e:[1],        m:[2],        h:[2,3]},
+  combo:  {e:[3,4,5],    m:[5,6,8],    h:[6,8,10]},
+  timed:  {e:[3,4,5],    m:[5,6,8],    h:[6,8,10]},
+  cells:  {e:[5,8],      m:[8,10],     h:[10,12]},
+  review: {e:[1],        m:[1],        h:[2]},
+  stage:  {e:[1],        m:[1,2],      h:[2,3]},
+  master: {e:[1],        m:[2],        h:[2,3]}
+};
+const TABLE_RANGE = {e:[2,5], m:[5,9], h:[3,9]};
+function makeQuests(date, tier){
+  const r = seeded('mul99'+date+'#'+tier);
   const pick = arr => arr[Math.floor(r()*arr.length)];
-  const types = ['correct','rounds','table','combo','timed','perfect'];
+  const types = TIER_POOL[tier].slice();
   for(let i=types.length-1;i>0;i--){ const j=Math.floor(r()*(i+1)); [types[i],types[j]]=[types[j],types[i]]; }
   return types.slice(0,3).map(type=>{
-    switch(type){
-      case 'correct': return {type, target:pick([20,25,30])};
-      case 'rounds':  return {type, target:pick([2,3])};
-      case 'table':   return {type, t:3+Math.floor(r()*7), target:1};
-      case 'combo':   return {type, target:pick([6,8,10])};
-      case 'timed':   return {type, target:pick([6,8,10])};
-      default:        return {type:'perfect', target:1};
-    }
+    if(type==='table'){ const lo=TABLE_RANGE[tier][0], hi=TABLE_RANGE[tier][1]; return {type, t:lo+Math.floor(r()*(hi-lo+1)), target:1}; }
+    if(type==='perfect' || type==='mix') return {type, target:1};
+    return {type, target:pick(TIER_TARGET[type][tier])};
   });
 }
-const QUEST_ICON = {correct:'✅', rounds:'📘', table:'🎯', combo:'🔥', timed:'⏱️', perfect:'💯'};
+const QUEST_ICON = {correct:'✅', rounds:'📘', table:'🎯', combo:'🔥', timed:'⏱️', perfect:'💯', cells:'🧮', mix:'🎲', master:'🌟', review:'🃏', stage:'🗺️'};
 function questText(q){
   switch(q.type){
     case 'correct': return `答對 ${q.target} 題`;
@@ -390,56 +579,102 @@ function questText(q){
     case 'table':   return `完成一回「${q.t} 的乘法」`;
     case 'combo':   return `連續答對 ${q.target} 題`;
     case 'timed':   return `限時挑戰答對 ${q.target} 題`;
+    case 'cells':   return `在九九表點 ${q.target} 個不同的格子`;
+    case 'review':  return q.target>1?`複習 ${q.target} 張乘法表`:'複習完一張乘法表';
+    case 'stage':   return q.target>1?`闖關通過 ${q.target} 關`:'闖關通過 1 關';
+    case 'mix':     return '完成一回綜合挑戰';
+    case 'master':  return `讓 ${q.target} 組題目變熟練`;
     default:        return '一回練習全部答對';
   }
 }
+function blankP(){ return {correct:0, rounds:0, maxCombo:0, timedBest:0, tables:{}, perfect:0, cells:0, cellk:{},
+  mix:0, mastered:0, reviews:0, revk:{}, stagesCleared:0, stageCoins:0}; }
+function blankTier(date,id){ return {quests:makeQuests(date,id), claimed:[false,false,false], bonus:false, notified:[false,false,false]}; }
 function ensureDaily(){
+  const m = me();
+  if(!m) return null;
   const t = todayStr();
-  if(!state.daily || state.daily.date!==t){
-    state.daily = { date:t, quests:makeQuests(t), claimed:[false,false,false], bonus:false, notified:[false,false,false],
-      p:{correct:0, rounds:0, maxCombo:0, timedBest:0, tables:{}, perfect:0} };
+  let d = m.daily;
+  if(!d || d.date!==t){
+    const keep = (d && d.date===t) ? d.p : null;   /* 同一天換版本，進度留著 */
+    d = m.daily = { date:t, tiers:{}, p:keep || blankP() };
     save();
   }
-  return state.daily;
+  if(!d.tiers) d.tiers = {};
+  const base = blankP();                            /* 舊存檔補上新欄位，不換掉物件 */
+  Object.keys(base).forEach(k=>{ if(d.p[k]===undefined) d.p[k]=base[k]; });
+  TIERS.forEach(T=>{
+    let tt = d.tiers[T.id];
+    if(!tt) tt = d.tiers[T.id] = blankTier(t,T.id);
+    if(!tt.quests) tt.quests = makeQuests(t,T.id);   /* 任務內容一律由種子重算 */
+  });
+  return d;
 }
 function progressOf(q){
-  const p = state.daily.p;
+  const p = me().daily.p;
   switch(q.type){
     case 'correct': return p.correct;
     case 'rounds':  return p.rounds;
     case 'table':   return p.tables[q.t]?1:0;
     case 'combo':   return p.maxCombo;
     case 'timed':   return p.timedBest;
+    case 'cells':   return p.cells;
+    case 'review':  return p.reviews;
+    case 'stage':   return p.stagesCleared;
+    case 'mix':     return p.mix;
+    case 'master':  return p.mastered;
     default:        return p.perfect;
   }
 }
-function questDone(i){ const q=state.daily.quests[i]; return progressOf(q)>=q.target; }
-function checkQuests(){
-  const d = ensureDaily();
-  d.quests.forEach((q,i)=>{
-    if(!d.notified[i] && questDone(i)){
-      d.notified[i] = true;
-      setTimeout(()=>{ toast(`任務完成：${questText(q)}！可以去領扭蛋幣 🪙`); sfx.coin(); }, 500);
-    }
+function questDone(tier,i){ const q=me().daily.tiers[tier].quests[i]; return progressOf(q)>=q.target; }
+function doneCount(tier){ const t=me().daily.tiers[tier]; return t.quests.filter((q,i)=>questDone(tier,i)).length; }
+function tierFinished(tier){ const t=me().daily.tiers[tier]; return t.claimed.every(Boolean) && t.bonus; }
+function anyClaimable(){
+  const d = ensureDaily(); if(!d) return false;
+  return TIERS.some(T=>{
+    const t = d.tiers[T.id];
+    return t.quests.some((q,i)=>questDone(T.id,i)&&!t.claimed[i]) || (t.claimed.every(Boolean)&&!t.bonus);
   });
 }
-function streakNow(){ const s=state.streak; return (s.last===todayStr()||s.last===yesterdayStr()) ? s.count : 0; }
+function defaultTier(){
+  const d = ensureDaily();
+  for(let i=0;i<TIERS.length;i++){ if(!tierFinished(TIERS[i].id)) return TIERS[i].id; }
+  return 'h';
+}
+function checkQuests(){
+  const d = ensureDaily(); if(!d) return;
+  let n = 0;
+  TIERS.forEach(T=>{
+    const t = d.tiers[T.id];
+    t.quests.forEach((q,i)=>{
+      if(!t.notified[i] && questDone(T.id,i)){
+        t.notified[i] = true;
+        const delay = 500 + (n++)*1100;
+        setTimeout(()=>{ toast(`${T.icon} ${T.name}任務完成：${questText(q)}！可以去領扭蛋幣 🪙`); sfx.coin(); }, delay);
+      }
+    });
+  });
+}
+function streakOf(p){ const s=(p&&p.streak)||{}; return (s.last===todayStr()||s.last===yesterdayStr()) ? (s.count||0) : 0; }
+function streakNow(){ return streakOf(me()); }
 function markPlayed(){
-  const t=todayStr();
-  if(state.streak.last===t) return;
-  state.streak.count = state.streak.last===yesterdayStr() ? state.streak.count+1 : 1;
-  state.streak.last = t;
+  const m=me(), t=todayStr();
+  if(m.streak.last===t) return;
+  m.streak.count = m.streak.last===yesterdayStr() ? m.streak.count+1 : 1;
+  m.streak.last = t;
 }
 
 /* ---------- facts / mastery ---------- */
 const key = (a,b) => Math.min(a,b)+'x'+Math.max(a,b);
 function record(a,b,ok){
-  const k=key(a,b), f=state.facts[k]||{c:0,w:0,s:0};
+  const m=me(), k=key(a,b), f=m.facts[k]||{c:0,w:0,s:0};
+  const before=level(a,b);
   if(ok){ f.c++; f.s++; } else { f.w++; f.s=0; }
-  state.facts[k]=f;
+  m.facts[k]=f;
+  if(ok && before<3 && level(a,b)===3 && m.daily && m.daily.p) m.daily.p.mastered++;
 }
 function level(a,b){
-  const f=state.facts[key(a,b)];
+  const f=me().facts[key(a,b)];
   if(!f || f.c+f.w===0) return 0;
   if(f.s>=3) return 3;
   if(f.s>=1) return 2;
@@ -517,48 +752,96 @@ const $ = s => document.querySelector(s);
 const view = document.getElementById('view');
 const rnd = n => Math.floor(Math.random()*n);
 function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=rnd(i+1); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function updateTop(){
-  $('#stars').textContent=state.stars; $('#coins').textContent=state.coins;
+  const m=me();
+  $('#stars').textContent=m?m.stars:0; $('#coins').textContent=m?m.coins:0;
+  const wb=$('#whobtn');
+  wb.hidden=!m; wb.textContent=m?m.avatar:'👤';
+  wb.setAttribute('aria-label', m?`挑戰者 ${m.name}，點一下切換`:'挑戰者');
   const mb=$('#mutebtn'); mb.textContent=state.settings.muted?'🔇':'🔊';
   mb.setAttribute('aria-label', state.settings.muted?'開啟音效':'關閉音效');
 }
+let formAvatar = AVATARS[0];
+function avaGrid(sel){
+  return `<div class="avas">${AVATARS.map(a=>`<button type="button" class="ava-opt ${a===sel?'on':''}" data-act="ava" data-arg="${a}" aria-label="頭貼 ${a}">${a}</button>`).join('')}</div>`;
+}
+function nameForm(o){
+  formAvatar = o.avatar || AVATARS[0];
+  return `<label class="flab" for="nameInput">挑戰者名字（最多 10 個字）</label>
+    <input id="nameInput" class="field" maxlength="10" placeholder="例如：小安" value="${esc(o.name||'')}" autocomplete="off">
+    <span class="flab">選一個頭貼</span>
+    ${avaGrid(formAvatar)}
+    <div class="formrow">
+      ${o.cancel?`<button class="btn" data-act="${o.cancel}">取消</button>`:''}
+      <button class="btn sun big" data-act="${o.act}" ${o.arg?`data-arg="${o.arg}"`:''}>${o.btn}</button>
+    </div>`;
+}
+function focusName(){ setTimeout(()=>{ const i=$('#nameInput'); if(i) i.focus(); }, 60); }
+function readName(){ const i=$('#nameInput'); return i ? i.value.trim().slice(0,10) : ''; }
 function stickerHTML(s, extra=''){
   return `<button class="sticker r-${s.rar}" style="--sbg:${THEMES[s.theme].bg}" data-act="peek" data-arg="${s.id}" aria-label="${s.name}" ${extra}><span class="emo">${s.emo}</span></button>`;
 }
 
 /* ---------- views ---------- */
-let currentView='home', game=null, lastSetup=null;
+let currentView='home', game=null, lastSetup=null, uiTier=null;
+let pickFor='practice', reviewTable=2, revOpen={}, autoT=null, autoI=0;
 function go(name){
+  stopAuto();
   currentView=name;
   (VIEWS[name]||VIEWS.home)();
   window.scrollTo(0,0);
   updateTop();
 }
 const VIEWS = {
+  welcome(){
+    view.innerHTML=`
+      <section class="hero">
+        <div class="tiles" aria-hidden="true"><span>9</span><span>×</span><span>9</span></div>
+        <h1>九九乘法大冒險</h1>
+      </section>
+      <section class="card">
+        <h2 style="font-size:21px">你是哪一位挑戰者？</h2>
+        <p class="tdesc" style="margin:6px 0 14px">輸入名字就可以開始。每位挑戰者的星星、扭蛋幣、貼紙和每日任務都分開記錄。</p>
+        ${nameForm({name:'', avatar:AVATARS[0], act:'createPlayer', btn:'開始冒險 🚀'})}
+      </section>`;
+    focusName();
+  },
+
   home(){
-    const d=ensureDaily();
-    const ownedCount=Object.keys(state.owned).length;
-    const rows=d.quests.map((q,i)=>{
+    if(!hasPlayer()) return VIEWS.welcome();
+    const m=me(), d=ensureDaily();
+    const tier = (uiTier && d.tiers[uiTier]) ? uiTier : defaultTier();
+    uiTier = tier;
+    const T=TIER_BY[tier], t=d.tiers[tier];
+    const ownedCount=Object.keys(m.owned).length;
+    const clearedStages=Object.keys(m.stages||{}).length;
+    const tabs=TIERS.map(T2=>{
+      const n=doneCount(T2.id);
+      return `<button class="tt ${T2.id} ${T2.id===tier?'on':''}" data-act="tier" data-arg="${T2.id}" aria-pressed="${T2.id===tier}">
+        <span>${T2.icon} ${T2.name}</span><i>${tierFinished(T2.id)?'完成 ✔':n+'/3'}</i></button>`;
+    }).join('');
+    const rows=t.quests.map((q,i)=>{
       const pr=Math.min(progressOf(q),q.target), done=pr>=q.target;
       let right;
-      if(d.claimed[i]) right='<span class="claimed">已領取 ✔</span>';
-      else if(done) right=`<button class="btn small sun" data-act="claim" data-arg="${i}">領取 🪙</button>`;
+      if(t.claimed[i]) right='<span class="claimed">已領取 ✔</span>';
+      else if(done) right=`<button class="btn small sun" data-act="claim" data-arg="${tier}:${i}">領取 🪙</button>`;
       else right=`<span class="count">${pr}/${q.target}</span>`;
-      return `<li class="quest ${d.claimed[i]?'got':done?'ready':''}">
+      return `<li class="quest ${t.claimed[i]?'got':done?'ready':''}">
         <span class="qicon">${QUEST_ICON[q.type]}</span>
         <div class="qbody"><div class="qtext">${questText(q)}</div><div class="bar"><i style="width:${pr/q.target*100}%"></i></div></div>
         ${right}</li>`;
     }).join('');
-    const allClaimed=d.claimed.every(Boolean);
     let bonus;
-    if(d.bonus) bonus='<span>🎁 今天的額外獎勵已領取，明天再來喔！</span>';
-    else if(allClaimed) bonus='<span>🎁 <b>三個任務都完成了！</b></span><button class="btn small sun" data-act="bonus">領額外 🪙</button>';
-    else bonus='<span>🎁 三個任務都完成，再送 1 枚扭蛋幣</span>';
+    if(t.bonus) bonus=`<span>🎁 ${T.name}的額外獎勵已領取，明天再來喔！</span>`;
+    else if(t.claimed.every(Boolean)) bonus=`<span>🎁 <b>${T.name}三個任務都完成了！</b></span><button class="btn small sun" data-act="bonus" data-arg="${tier}">領 ${T.bonus} 枚 🪙</button>`;
+    else bonus=`<span>🎁 ${T.name}三個任務都完成，再送 ${T.bonus} 枚扭蛋幣</span>`;
     const st=streakNow();
     view.innerHTML=`
       <section class="hero">
         <div class="tiles" aria-hidden="true"><span>9</span><span>×</span><span>9</span></div>
         <h1>九九乘法大冒險</h1>
+        <button class="who" data-act="players"><span class="ava">${esc(m.avatar)}</span><b>${esc(m.name)}</b><span class="sw">切換 ▾</span></button>
         <div class="chips">
           <span class="pill">🔥 連續 ${st} 天</span>
           <span class="pill">📒 貼紙 ${ownedCount}/${STICKERS.length}</span>
@@ -566,34 +849,112 @@ const VIEWS = {
       </section>
       <section class="card quests">
         <h2>📋 今日任務 <small>每天都會換新的</small></h2>
+        <div class="tiertabs" role="group" aria-label="任務難度">${tabs}</div>
+        <p class="tdesc">${T.icon} ${T.name}：${T.desc}（每題 1 枚，三題全拿再加 ${T.bonus} 枚）</p>
         <ul class="qlist">${rows}</ul>
         <div class="bonus">${bonus}</div>
       </section>
       <section class="modes">
         <button class="mode m1" data-act="pick"><span class="mi">✏️</span><b>練習</b><span>選一個乘法表，答錯的題目會再出現一次</span></button>
-        <button class="mode m2" data-act="timed"><span class="mi">⏱️</span><b>限時挑戰</b><span>60 秒能答對幾題？最佳紀錄 ${state.timedBest} 題</span></button>
-        <button class="mode m3" data-act="book"><span class="mi">🎰</span><b>扭蛋貼紙簿</b><span>${state.coins>0?`有 ${state.coins} 枚扭蛋幣可以轉！`:'用扭蛋幣收集可愛貼紙'}</span></button>
+        <button class="mode m5" data-act="stages"><span class="mi">🗺️</span><b>闖關</b><span>${clearedStages}/${STAGES.length} 關　通關可以拿扭蛋幣</span></button>
+        <button class="mode m6" data-act="reviewPick"><span class="mi">🃏</span><b>複習</b><span>翻牌看答案，翻開的同時唸口訣</span></button>
+        <button class="mode m2" data-act="timed"><span class="mi">⏱️</span><b>限時挑戰</b><span>60 秒能答對幾題？最佳紀錄 ${m.timedBest} 題</span></button>
+        <button class="mode m3" data-act="book"><span class="mi">🎰</span><b>扭蛋貼紙簿</b><span>${m.coins>0?`有 ${m.coins} 枚扭蛋幣可以轉！`:'用扭蛋幣收集可愛貼紙'}</span></button>
         <button class="mode m4" data-act="grid"><span class="mi">🧮</span><b>九九表</b><span>看看哪些已經背熟了，點格子聽口訣</span></button>
       </section>`;
   },
 
+  players(){
+    const rows=state.players.map(p=>{
+      const on=p.id===state.activeId, got=Object.keys(p.owned||{}).length;
+      return `<li class="prow ${on?'on':''}">
+        <span class="pava" aria-hidden="true">${esc(p.avatar)}</span>
+        <div class="pbody">
+          <div class="pname">${esc(p.name)}${on?'<span class="now">使用中</span>':''}</div>
+          <div class="pstat">⭐ ${p.stars}　🪙 ${p.coins}　📒 ${got}/${STICKERS.length}　🔥 ${streakOf(p)} 天</div>
+        </div>
+        <div class="pacts">
+          ${on?'':`<button class="btn small mint" data-act="use" data-arg="${esc(p.id)}">換我玩</button>`}
+          <button class="iconbtn small" data-act="rename" data-arg="${esc(p.id)}" aria-label="修改 ${esc(p.name)} 的名字">✏️</button>
+          ${state.players.length>1?`<button class="iconbtn small" data-act="delp" data-arg="${esc(p.id)}" aria-label="刪除 ${esc(p.name)}">🗑️</button>`:''}
+        </div></li>`;
+    }).join('');
+    view.innerHTML=`
+      <div class="backrow"><button class="iconbtn" data-act="home" aria-label="返回">←</button><h2>挑戰者</h2></div>
+      <ul class="plist">${rows}</ul>
+      ${state.players.length<MAX_PLAYERS
+        ? `<div style="margin-top:16px;text-align:center"><button class="btn sun big" data-act="addForm">＋ 新增挑戰者</button></div>`
+        : `<p class="note">最多 ${MAX_PLAYERS} 位挑戰者</p>`}
+      <p class="note">每位挑戰者的星星、扭蛋幣、貼紙和每日任務都是分開記錄的。</p>`;
+  },
+
+  addPlayer(){
+    view.innerHTML=`
+      <div class="backrow"><button class="iconbtn" data-act="players" aria-label="返回">←</button><h2>新增挑戰者</h2></div>
+      <section class="card">
+        ${nameForm({name:'', avatar:AVATARS[state.players.length%AVATARS.length], act:'createPlayer', cancel:'players', btn:'建立 ✨'})}
+      </section>`;
+    focusName();
+  },
+
   pick(){
-    const mode=state.settings.input;
+    const rev = pickFor==='review', mode=state.settings.input;
     const btns=[2,3,4,5,6,7,8,9].map(t=>{
       let m=0; for(let b=1;b<=9;b++) if(level(t,b)===3) m++;
       const dots=Array.from({length:9},(_,i)=>`<i class="${i<m?'on':''}"></i>`).join('');
       return `<button class="pickbtn" data-act="start" data-arg="${t}"><span class="n">${t}</span><span class="lbl">${t} 的乘法</span><span class="dots" title="已熟練 ${m}/9">${dots}</span></button>`;
     }).join('');
     view.innerHTML=`
-      <div class="backrow"><button class="iconbtn" data-act="home" aria-label="返回">←</button><h2>要練習哪一個？</h2></div>
-      <div class="seg" role="group" aria-label="作答方式">
+      <div class="backrow"><button class="iconbtn" data-act="home" aria-label="返回">←</button><h2>${rev?'要複習哪一個？':'要練習哪一個？'}</h2></div>
+      ${rev?'':`<div class="seg" role="group" aria-label="作答方式">
         <button class="${mode==='type'?'on':''}" data-act="input" data-arg="type">⌨️ 自己打數字</button>
         <button class="${mode==='choice'?'on':''}" data-act="input" data-arg="choice">👆 選答案</button>
-      </div>
+      </div>`}
       <div class="picks">${btns}
-        <button class="pickbtn mixbtn" data-act="start" data-arg="mix">🎲 綜合挑戰 <small>會多出不熟的題目</small></button>
+        ${rev?'':'<button class="pickbtn mixbtn" data-act="start" data-arg="mix">🎲 綜合挑戰 <small>會多出不熟的題目</small></button>'}
       </div>
-      <p class="note">綠點代表已經熟練的題目（連續答對 3 次）</p>`;
+      <p class="note">${rev?'翻開卡片會唸出口訣，不計分也不影響熟練度':'綠點代表已經熟練的題目（連續答對 3 次）'}</p>`;
+  },
+
+  review(){
+    const t=reviewTable;
+    const cards=[1,2,3,4,5,6,7,8,9].map(b=>
+      `<button class="fcard ${revOpen[b]?'on':''}" data-act="flip" data-arg="${b}" aria-label="${t} 乘 ${b}">
+        <span class="fin">
+          <span class="face front">${t}<small>×</small>${b}</span>
+          <span class="face back">${t*b}</span>
+        </span></button>`).join('');
+    const open=[1,2,3,4,5,6,7,8,9].filter(b=>revOpen[b]).length;
+    view.innerHTML=`
+      <div class="backrow"><button class="iconbtn" data-act="reviewPick" aria-label="返回">←</button><h2>複習 ${t} 的乘法</h2></div>
+      <p class="note" style="margin:0 0 14px">點卡片翻面，翻開的同時會唸口訣${canSpeak?'':'（這台裝置沒有語音，只會顯示答案）'}　<b>${open}/9</b></p>
+      <div class="flipgrid">${cards}</div>
+      <div class="rbtns" style="margin-top:20px">
+        <button class="btn small" data-act="flipall">全部翻開</button>
+        <button class="btn small" data-act="flipnone">全部蓋起來</button>
+        <button class="btn small ${autoT?'mint':'sun'}" data-act="auto">${autoT?'⏸ 停止':'▶️ 自動播放'}</button>
+      </div>
+      <p class="note">複習不計分，也不會影響九九表的熟練度</p>`;
+  },
+
+  stages(){
+    const m=me(), sv=m.stages||{}, d=ensureDaily();
+    const cards=STAGES.map(S=>{
+      const got=sv[S.n], locked=!stageUnlocked(S.n), st=got?got.stars:0;
+      const line = locked ? '🔒 還沒解鎖' : (got ? '⭐'.repeat(st)+'☆'.repeat(3-st) : '還沒挑戰');
+      return `<button class="stage ${got?'done':''} ${S.boss?'boss':''} ${locked?'lock':''}" data-act="stage" data-arg="${S.n}" ${locked?'disabled':''}>
+        <span class="q">${S.q} 題</span>
+        <span class="sno">第 ${S.n} 關</span>
+        <b>${S.boss?'👑 ':''}${S.label}</b>
+        <span class="ss">${line}</span></button>`;
+    }).join('');
+    const cleared=Object.keys(sv).length;
+    const left=Math.max(0, STAGE_COIN_CAP-d.p.stageCoins);
+    view.innerHTML=`
+      <div class="backrow"><button class="iconbtn" data-act="home" aria-label="返回">←</button><h2>闖關 ${cleared}/${STAGES.length}</h2></div>
+      <p class="note" style="margin:0 0 14px">答對八成就過關，第一次通關可以拿扭蛋幣（全對再多 1 枚）</p>
+      <div class="slist">${cards}</div>
+      <p class="note">重玩已經過的關卡，今天還可以拿 ${left} 枚扭蛋幣</p>`;
   },
 
   play(){
@@ -616,35 +977,45 @@ const VIEWS = {
   result(){
     const r=game.result;
     const starsHTML=[1,2,3].map(i=>`<span class="${i<=r.stars?'on':''}">⭐</span>`).join('');
-    const title = r.stars===3?'太厲害了！':r.stars===2?'做得很好！':'再練習一下會更棒！';
-    const d=ensureDaily();
-    const doneCount=d.quests.filter((q,i)=>questDone(i)).length;
-    const claimable=d.quests.some((q,i)=>questDone(i)&&!d.claimed[i]) || (d.claimed.every(Boolean)&&!d.bonus);
+    const title = r.stage
+      ? (r.cleared ? (r.firstClear?`第 ${r.stage} 關通關！`:`第 ${r.stage} 關再次通關！`) : '差一點點！')
+      : (r.stars===3?'太厲害了！':r.stars===2?'做得很好！':'再練習一下會更棒！');
+    ensureDaily();
+    const dn=TIERS.reduce((s,T)=>s+doneCount(T.id),0);
+    const claimable=anyClaimable();
     const statA = r.timed
       ? `<div class="stat"><b>${r.score}</b><span>60 秒答對題數</span></div>`
-      : `<div class="stat"><b>${r.score}/${r.total}</b><span>第一次就答對</span></div>`;
+      : `<div class="stat"><b>${r.score}/${r.total}</b><span>第一次就答對${r.stage?`（過關要 ${r.need}）`:''}</span></div>`;
+    let badge='';
+    if(r.newBest) badge='<div class="badge">🏆 新紀錄！</div>';
+    else if(r.coins) badge=`<div class="badge">🪙 得到 ${r.coins} 枚扭蛋幣</div>`;
+    else if(r.capped) badge='<div class="badge">今天闖關的扭蛋幣領滿了</div>';
+    const nextN = r.stage && r.cleared && r.stage<STAGES.length ? r.stage+1 : 0;
     view.innerHTML=`
       <section class="card result">
         <div class="bigstars">${starsHTML}</div>
         <h2>${title}</h2>
-        ${r.newBest?'<div class="badge">🏆 新紀錄！</div>':''}
+        ${badge}
         <div class="stats">
           ${statA}
           <div class="stat"><b>${r.maxCombo}</b><span>最多連續答對</span></div>
         </div>
-        <p class="qsum">得到 ${r.stars} 顆星星，今日任務完成 ${doneCount}/3</p>
+        <p class="qsum">得到 ${r.stars} 顆星星，今日任務完成 ${dn}/9</p>
         <div class="rbtns">
-          ${claimable?'<button class="btn sun big" data-act="home">去領扭蛋幣 🪙</button>':''}
-          <button class="btn ${claimable?'':'sun big'}" data-act="again">再玩一次</button>
+          ${nextN?`<button class="btn sun big" data-act="stage" data-arg="${nextN}">下一關 ▶</button>`:''}
+          ${claimable?`<button class="btn ${nextN?'':'sun big'}" data-act="home">去領扭蛋幣 🪙</button>`:''}
+          <button class="btn ${(claimable||nextN)?'':'sun big'}" data-act="again">再玩一次</button>
+          ${r.stage?'<button class="btn" data-act="stages">回關卡</button>':''}
           <button class="btn" data-act="home">回首頁</button>
         </div>
       </section>`;
-    if(r.stars===3){ sfx.fanfare(); setTimeout(()=>burstAt(document.querySelector('.bigstars'),40),400); }
+    if(r.stage && !r.cleared){ sfx.wrong(); }
+    else if(r.stars===3){ sfx.fanfare(); setTimeout(()=>burstAt(document.querySelector('.bigstars'),40),400); }
     else sfx.coin();
   },
 
   book(){
-    const owned=state.owned;
+    const owned=me().owned;
     const caps=[[8,62,'#FF5C5C'],[44,70,'#FFC83D'],[80,64,'#3FA3FF'],[24,38,'#25C686'],[62,36,'#7B61FF'],[96,30,'#FF9E6B'],[6,88,'#3FA3FF'],[100,88,'#FF5C5C'],[40,10,'#FFC83D']]
       .map(([l,t,c])=>`<i style="left:${l}px;top:${t}px;--c:${c}"></i>`).join('');
     const groups=Object.keys(THEMES).map(th=>{
@@ -661,9 +1032,9 @@ const VIEWS = {
       <section class="card gacha">
         <div class="machine" id="machine" aria-hidden="true"><div class="dome">${caps}</div><div class="mbase"><div class="knob"></div><div class="mouth"></div></div></div>
         <div class="gachainfo">
-          <p class="coinline">扭蛋幣<b>${state.coins}</b>枚</p>
-          <button class="btn big sun" id="drawbtn" data-act="draw" ${state.coins>0?'':'disabled'}>轉一次扭蛋</button>
-          <p class="hint">${state.coins>0?'每轉一次會得到一張還沒有的貼紙':'完成首頁的每日任務，就能拿到扭蛋幣'}</p>
+          <p class="coinline">扭蛋幣<b>${me().coins}</b>枚</p>
+          <button class="btn big sun" id="drawbtn" data-act="draw" ${me().coins>0?'':'disabled'}>轉一次扭蛋</button>
+          <p class="hint">${me().coins>0?'每轉一次會得到一張還沒有的貼紙':'完成首頁的每日任務，就能拿到扭蛋幣'}</p>
         </div>
       </section>
       ${groups}`;
@@ -711,6 +1082,65 @@ function startPractice(table){
     firstCorrect:0, combo:0, maxCombo:0, typed:'', locked:false, waiting:false, t:null};
   go('play'); nextQ();
 }
+function stageUnlocked(n){
+  if(n<=1) return true;
+  const sv=me().stages||{};
+  return !!(sv[n-1] && sv[n-1].cleared);
+}
+function startStage(n){
+  const S=STAGES[n-1];
+  if(!S || !stageUnlocked(n)) return;
+  endGame();
+  lastSetup={mode:'stage', stage:n};
+  let items=[];
+  if(S.table){
+    for(let b=1;b<=9;b++) items.push(Math.random()<.3?{a:b,b:S.table}:{a:S.table,b});
+    shuffle(items);
+    let worst=2+rnd(8), ww=-1;
+    for(let b=2;b<=9;b++){ const w=weightOf(S.table,b)+Math.random(); if(w>ww){ww=w;worst=b;} }
+    items.push({a:S.table,b:worst});
+    items=items.slice(0,S.q);
+  } else {
+    const pairs=[]; for(let a=2;a<=9;a++) for(let b=2;b<=9;b++){ const w=weightOf(a,b); pairs.push({a,b,w:S.weak?w*w:w}); }
+    const used=new Set();
+    while(items.length<S.q){
+      const pool=pairs.filter(p=>!used.has(key(p.a,p.b)));
+      if(!pool.length) break;
+      let sum=pool.reduce((s,p)=>s+p.w,0), r=Math.random()*sum;
+      const p=pool.find(p=>(r-=p.w)<=0)||pool[0];
+      used.add(key(p.a,p.b)); items.push({a:p.a,b:p.b});
+    }
+  }
+  game={mode:'stage', stage:n, table:S.table, input:state.settings.input, queue:items, total:items.length, pos:0,
+    firstCorrect:0, combo:0, maxCombo:0, typed:'', locked:false, waiting:false, t:null};
+  go('play'); nextQ();
+}
+function finishStage(){
+  const d=ensureDaily(), m=me(), S=STAGES[game.stage-1];
+  const score=game.firstCorrect, total=game.total, need=Math.ceil(total*0.8);
+  const cleared=score>=need;
+  const stars = score===total?3 : score>=total-1?2 : (cleared?1:0);
+  const prev=m.stages[game.stage], firstClear=cleared && !prev;
+  let coins=0, capped=false;
+  if(cleared){
+    if(firstClear) coins = stars===3?2:1;
+    else if(d.p.stageCoins<STAGE_COIN_CAP) coins = 1;
+    else capped = true;
+    if(coins){ m.coins+=coins; if(!firstClear) d.p.stageCoins+=coins; }
+    m.stages[game.stage]={cleared:true, stars:Math.max(stars, prev?prev.stars:0)};
+    d.p.stagesCleared++;
+  }
+  m.stars+=stars;
+  d.p.rounds++;
+  if(S.table) d.p.tables[S.table]=true; else d.p.mix++;
+  if(score===total) d.p.perfect=1;
+  markPlayed();
+  game.result={timed:false, stage:game.stage, cleared, firstClear, coins, capped, need,
+    score, total, stars, maxCombo:game.maxCombo, newBest:false};
+  save(); checkQuests();
+  clearTimeout(game.t);
+  go('result');
+}
 function startTimed(){
   endGame();
   lastSetup={mode:'timed'};
@@ -736,9 +1166,9 @@ function updateTimeBar(){
 }
 function nextQ(){
   if(!game) return;
-  if(game.mode==='practice' && game.pos>=game.queue.length) return finishRound();
+  if(game.mode!=='timed' && game.pos>=game.queue.length) return finishRound();
   let it;
-  if(game.mode==='practice') it=game.queue[game.pos];
+  if(game.mode!=='timed') it=game.queue[game.pos];
   else {
     do{ const a=2+rnd(8), b=2+rnd(8); it={a,b}; } while(game.last && key(it.a,it.b)===game.last);
     game.last=key(it.a,it.b);
@@ -748,7 +1178,7 @@ function nextQ(){
   const slot=$('#slot'); slot.textContent='?'; slot.classList.remove('typed');
   $('#fb').innerHTML='';
   const qc=$('#qcard'); qc.className='qcard'; void qc.offsetWidth; qc.classList.add('enter');
-  if(game.mode==='practice'){
+  if(game.mode!=='timed'){
     $('#trackfill').style.width=(game.pos/game.queue.length*100)+'%';
     $('#qnum').textContent=`${Math.min(game.pos+1,game.queue.length)}/${game.queue.length}`;
   } else {
@@ -798,7 +1228,7 @@ function submit(val){
   if(ok){
     game.combo++; game.maxCombo=Math.max(game.maxCombo,game.combo);
     d.p.correct++; d.p.maxCombo=Math.max(d.p.maxCombo,game.combo);
-    if(game.mode==='practice'){ if(!it.retry) game.firstCorrect++; } else { game.score++; $('#qnum').textContent=`✅ ${game.score}`; }
+    if(game.mode!=='timed'){ if(!it.retry) game.firstCorrect++; } else { game.score++; $('#qnum').textContent=`✅ ${game.score}`; }
     slot.textContent=ans; qc.classList.add('right');
     const msg = game.combo>0 && game.combo%5===0 ? `連續 ${game.combo} 題，火力全開！` : PRAISE[rnd(PRAISE.length)];
     fb.innerHTML=`<div class="praise">${msg}</div><div class="chant">${chant(it.a,it.b)}</div>`;
@@ -812,7 +1242,7 @@ function submit(val){
     slot.innerHTML=`<s>${val}</s>${ans}`; qc.classList.add('wrong');
     const ch=chant(it.a,it.b);
     let html=`<div class="wrongmsg">正確答案是 <b>${ans}</b></div><div class="chant">${ch}${canSpeak?`<button class="say" data-act="say" data-arg="${ch}" aria-label="唸口訣">🔊</button>`:''}</div>`;
-    if(game.mode==='practice'){
+    if(game.mode!=='timed'){
       if(!it.retry){ game.queue.push({a:it.a,b:it.b,retry:true}); html+='<div class="retrynote">這題等一下會再出現一次</div>'; }
       fb.innerHTML=html;
       $('#inputArea').innerHTML='<div class="nextwrap"><button class="btn big sun" data-act="next">下一題</button></div>';
@@ -830,17 +1260,18 @@ function submit(val){
 function advance(){
   if(!game) return;
   clearTimeout(game.t);
-  if(game.mode==='practice') game.pos++;
-  if(game.mode==='practice' && game.input==='type' && !document.querySelector('#inputArea .pad')) $('#inputArea').innerHTML='';
+  if(game.mode!=='timed') game.pos++;
+  if(game.mode!=='timed' && game.input==='type' && !document.querySelector('#inputArea .pad')) $('#inputArea').innerHTML='';
   nextQ();
 }
 function finishRound(){
+  if(game.mode==='stage') return finishStage();
   const d=ensureDaily();
   const score=game.firstCorrect, total=game.total, acc=score/total;
   const stars=acc>=.9?3:acc>=.7?2:1;
-  state.stars+=stars;
+  me().stars+=stars;
   d.p.rounds++;
-  if(game.table) d.p.tables[game.table]=true;
+  if(game.table) d.p.tables[game.table]=true; else d.p.mix++;
   if(score===total) d.p.perfect=1;
   markPlayed();
   game.result={timed:false, score, total, stars, maxCombo:game.maxCombo, newBest:false};
@@ -853,9 +1284,9 @@ function finishTimed(){
   clearInterval(game.timer); clearTimeout(game.t);
   const d=ensureDaily(), score=game.score;
   const stars=score>=15?3:score>=8?2:1;
-  const newBest=score>state.timedBest && score>0;
-  if(newBest) state.timedBest=score;
-  state.stars+=stars;
+  const newBest=score>me().timedBest && score>0;
+  if(newBest) me().timedBest=score;
+  me().stars+=stars;
   d.p.timedBest=Math.max(d.p.timedBest,score);
   markPlayed();
   game.result={timed:true, score, stars, maxCombo:game.maxCombo, newBest};
@@ -869,38 +1300,54 @@ function askQuit(){
 }
 
 /* ---------- rewards ---------- */
-function claimQuest(i){
-  const d=ensureDaily();
-  if(d.claimed[i] || !questDone(i)) return;
-  d.claimed[i]=true; state.coins++;
+function claimQuest(arg){
+  const parts=String(arg).split(':'), tier=parts[0], i=+parts[1];
+  const d=ensureDaily(), t=d&&d.tiers[tier];
+  if(!t || t.claimed[i] || !questDone(tier,i)) return;
+  t.claimed[i]=true; me().coins++;
   save(); sfx.coin();
-  const btn=document.querySelector(`[data-act="claim"][data-arg="${i}"]`);
-  burstAt(btn,20);
+  burstAt(document.querySelector(`[data-act="claim"][data-arg="${arg}"]`),20);
   toast('得到 1 枚扭蛋幣！🪙');
   setTimeout(()=>go('home'),250);
 }
-function claimBonus(){
-  const d=ensureDaily();
-  if(d.bonus || !d.claimed.every(Boolean)) return;
-  d.bonus=true; state.coins++;
+function claimBonus(tier){
+  const d=ensureDaily(), t=d&&d.tiers[tier], T=TIER_BY[tier];
+  if(!t || t.bonus || !t.claimed.every(Boolean)) return;
+  t.bonus=true; me().coins+=T.bonus;
   save(); sfx.fanfare();
   burstAt(document.querySelector('[data-act="bonus"]'),40);
-  toast('全部任務完成！額外得到 1 枚扭蛋幣 🎁');
+  toast(`${T.name}全部完成！額外得到 ${T.bonus} 枚扭蛋幣 🎁`);
   setTimeout(()=>go('home'),250);
+}
+function askRename(id){
+  const p=state.players.find(x=>x.id===id); if(!p) return;
+  formAvatar=p.avatar;
+  showModal(`<h3>改名字</h3>
+    <div style="width:100%;text-align:left">
+      <input id="nameInput" class="field" maxlength="10" value="${esc(p.name)}" autocomplete="off">
+      <span class="flab">換個頭貼</span>${avaGrid(p.avatar)}
+    </div>
+    <div class="row"><button class="btn" data-act="closeModal">取消</button><button class="btn sun" data-act="renameOk" data-arg="${esc(id)}">存檔</button></div>`);
+  focusName();
+}
+function askDelete(id){
+  const p=state.players.find(x=>x.id===id); if(!p) return;
+  showModal(`<h3>刪除「${esc(p.name)}」？</h3><p>這位挑戰者的星星、扭蛋幣和貼紙都會不見，沒辦法復原喔。</p>
+    <div class="row"><button class="btn sun" data-act="closeModal">不要刪</button><button class="btn" data-act="delYes" data-arg="${esc(id)}">確定刪除</button></div>`);
 }
 let drawing=false;
 function draw(){
-  if(drawing || state.coins<1) return;
-  const pool=STICKERS.filter(s=>!state.owned[s.id]);
+  if(drawing || me().coins<1) return;
+  const pool=STICKERS.filter(s=>!me().owned[s.id]);
   drawing=true;
-  state.coins--;
+  me().coins--;
   let s=null;
   if(pool.length){
     let sum=pool.reduce((t,p)=>t+RAR_WEIGHT[p.rar],0), r=Math.random()*sum;
     s=pool.find(p=>(r-=RAR_WEIGHT[p.rar])<=0)||pool[0];
-    state.owned[s.id]=todayStr();
+    me().owned[s.id]=todayStr();
   } else {
-    state.stars+=5;
+    me().stars+=5;
   }
   save(); updateTop();
   const btn=$('#drawbtn'); if(btn) btn.disabled=true;
@@ -916,18 +1363,81 @@ function draw(){
   }, reduceMotion?100:1000);
 }
 function showReveal(s,isNew){
-  const got=state.owned[s.id];
+  const got=me().owned[s.id];
   showModal(`
     <div class="reveal">${isNew?'<div class="rays"></div>':''}<div class="sticker r-${s.rar}" style="--sbg:${THEMES[s.theme].bg}"><span class="emo">${s.emo}</span></div></div>
     <h3>${isNew?'得到新貼紙！':s.name}</h3>
     ${isNew?`<p style="font-size:20px;color:var(--ink);font-weight:700">${s.name}</p>`:''}
     <span class="rar ${s.rar}">${RAR_LABEL[s.rar]}</span>
-    <p>${THEMES[s.theme].name}${got?`，${got.replace(/^(\d+)-(\d+)-(\d+)$/,(m,y,mo,d)=>`${+mo} 月 ${+d} 日`)}收集到`:''}</p>
+    <p>${THEMES[s.theme].name}${DATE_RE.test(got||'')?`，${got.replace(/^(\d+)-(\d+)-(\d+)$/,(m,y,mo,d)=>`${+mo} 月 ${+d} 日`)}收集到`:''}</p>
     <div class="row"><button class="btn sun" data-act="closeBook">${isNew?'放進貼紙簿':'好'}</button></div>`);
   if(isNew){ sfx.reveal(); setTimeout(()=>burstAt(document.querySelector('.reveal'), s.rar==='s'?60:30),200); }
 }
+/* ---------- 複習模式 ---------- */
+function startReview(table){
+  endGame(); stopAuto();
+  reviewTable=table; revOpen={};
+  go('review');
+}
+function flipCard(b){
+  if(currentView!=='review') return;
+  const open=!revOpen[b];
+  revOpen[b]=open;
+  const el=document.querySelector(`.fcard[data-arg="${b}"]`);
+  if(el) el.classList.toggle('on', open);
+  sfx.tap();
+  if(open){
+    say(chant(reviewTable,b));
+    markReviewed();
+  }
+  updateFlipCount();
+}
+function updateFlipCount(){
+  const n=[1,2,3,4,5,6,7,8,9].filter(b=>revOpen[b]).length;
+  const el=document.querySelector('.note b');
+  if(el) el.textContent=`${n}/9`;
+}
+function markReviewed(){
+  const d=ensureDaily(); if(!d) return;
+  for(let b=1;b<=9;b++) if(!revOpen[b]) return;
+  if(!d.p.revk[reviewTable]){
+    d.p.revk[reviewTable]=1; d.p.reviews++;
+    save(); checkQuests();
+    toast(`${reviewTable} 的乘法複習完成！🃏`);
+  }
+}
+function flipAll(open){
+  for(let b=1;b<=9;b++) revOpen[b]=open;
+  document.querySelectorAll('.fcard').forEach(c=>c.classList.toggle('on',open));
+  sfx.tap();
+  if(open) markReviewed();
+  updateFlipCount();
+}
+function setAutoBtn(){
+  const b=document.querySelector('[data-act="auto"]');
+  if(!b) return;
+  b.textContent = autoT?'⏸ 停止':'▶️ 自動播放';
+  b.classList.toggle('sun', !autoT); b.classList.toggle('mint', !!autoT);
+}
+function stopAuto(){ if(autoT){ clearTimeout(autoT); autoT=null; setAutoBtn(); } }
+function startAuto(){
+  if(autoT){ stopAuto(); return; }
+  flipAll(false);
+  autoI=0;
+  const step=()=>{
+    autoI++;
+    if(autoI>9 || currentView!=='review'){ autoT=null; setAutoBtn(); return; }
+    flipCard(autoI);
+    autoT=setTimeout(step, reduceMotion?1200:2300);
+  };
+  autoT=setTimeout(step, 250);
+  setAutoBtn();
+}
+
 function showCell(arg){
   const [a,b]=arg.split(',').map(Number), ch=chant(a,b);
+  const d=ensureDaily(), ck=key(a,b);
+  if(d && !d.p.cellk[ck]){ d.p.cellk[ck]=1; d.p.cells++; save(); checkQuests(); }
   document.querySelectorAll('.cell.sel').forEach(c=>c.classList.remove('sel'));
   const c=document.querySelector(`.cell[data-arg="${arg}"]`); if(c) c.classList.add('sel');
   const lv=['還沒練習過','要再加油','快學會了','已經熟練了！'][level(a,b)];
@@ -945,14 +1455,43 @@ document.addEventListener('click', e=>{
     case 'home':
       if(currentView==='play' && game && !game.result){ askQuit(); break; }
       closeModal(); endGame(); go('home'); break;
-    case 'pick': go('pick'); break;
+    case 'pick': pickFor='practice'; go('pick'); break;
+    case 'reviewPick': pickFor='review'; go('pick'); break;
+    case 'flip': flipCard(+arg); break;
+    case 'flipall': flipAll(true); break;
+    case 'flipnone': flipAll(false); break;
+    case 'auto': startAuto(); break;
     case 'input': state.settings.input=arg; save(); go('pick'); break;
-    case 'start': startPractice(arg==='mix'?0:+arg); break;
+    case 'start': if(pickFor==='review') startReview(+arg); else startPractice(arg==='mix'?0:+arg); break;
     case 'timed': startTimed(); break;
+    case 'stages': go('stages'); break;
+    case 'stage': startStage(+arg); break;
     case 'book': go('book'); break;
     case 'grid': go('grid'); break;
-    case 'claim': claimQuest(+arg); break;
-    case 'bonus': claimBonus(); break;
+    case 'claim': claimQuest(arg); break;
+    case 'bonus': claimBonus(arg); break;
+    case 'tier': uiTier=arg; sfx.tap(); go('home'); break;
+    case 'players': closeModal(); if(currentView==='play' && game && !game.result){ askQuit(); break; } endGame(); go('players'); break;
+    case 'addForm': go('addPlayer'); break;
+    case 'ava': formAvatar=arg; document.querySelectorAll('.ava-opt').forEach(b=>b.classList.toggle('on', b.dataset.arg===arg)); sfx.tap(); break;
+    case 'createPlayer': {
+      const n=readName();
+      if(!n){ toast('先輸入名字喔 ✏️'); focusName(); break; }
+      addPlayer(n, formAvatar); updateTop(); go('home');
+      toast(`${formAvatar} ${n}，開始冒險吧！`); sfx.fanfare();
+      break;
+    }
+    case 'use': usePlayer(arg); break;
+    case 'rename': askRename(arg); break;
+    case 'renameOk': {
+      const p=state.players.find(x=>x.id===arg), n=readName();
+      if(!p) { closeModal(); break; }
+      if(!n){ toast('名字不能空白喔'); focusName(); break; }
+      p.name=n; p.avatar=AVA_SET.has(formAvatar)?formAvatar:p.avatar; save(); closeModal(); updateTop(); go('players');
+      break;
+    }
+    case 'delp': askDelete(arg); break;
+    case 'delYes': removePlayer(arg); closeModal(); updateTop(); go(hasPlayer()?'players':'home'); toast('已經刪除了'); break;
     case 'key': pressKey(arg); break;
     case 'choice': submit(+arg); break;
     case 'next': advance(); break;
@@ -961,7 +1500,7 @@ document.addEventListener('click', e=>{
     case 'quitYes': closeModal(); endGame(); go('home'); break;
     case 'closeModal': closeModal(); break;
     case 'closeBook': closeModal(); go('book'); break;
-    case 'again': if(lastSetup){ lastSetup.mode==='timed'?startTimed():startPractice(lastSetup.table); } break;
+    case 'again': if(lastSetup){ lastSetup.mode==='timed'?startTimed():lastSetup.mode==='stage'?startStage(lastSetup.stage):startPractice(lastSetup.table); } break;
     case 'draw': draw(); break;
     case 'peek': { const s=STICKERS.find(x=>x.id===arg); if(s) showReveal(s,false); break; }
     case 'cell': showCell(arg); break;
@@ -969,6 +1508,13 @@ document.addEventListener('click', e=>{
   }
 });
 document.addEventListener('keydown', e=>{
+  if(e.target && e.target.id==='nameInput'){
+    if(e.key==='Enter'){
+      const b=document.querySelector('[data-act="renameOk"]') || document.querySelector('[data-act="createPlayer"]');
+      if(b){ e.preventDefault(); b.click(); }
+    }
+    return;
+  }
   if(e.key==='Escape' && document.getElementById('modal')){ closeModal(); return; }
   if(currentView!=='play' || !game || document.getElementById('modal')) return;
   unlockAudio();
