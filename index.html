@@ -101,6 +101,7 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 .mode span{font-size:14px;line-height:1.4;opacity:.85}
 .m1{background:var(--sun)} .m2{background:#FF8A8A} .m3{background:#B9A8FF} .m4{background:#7FE0B5}
 .m5{background:#FFB38A} .m6{background:#FFC2DE} .m7{background:#9ED6FF} .m8{background:#8CE6BC}
+.m9{background:#D7E86B}
 .mode.wide{grid-column:1/-1;min-height:96px;display:grid;grid-template-columns:auto 1fr;align-items:center;column-gap:14px}
 .mode.wide .mi{grid-row:1/3;font-size:40px}
 .mode.wide b{margin-top:0}
@@ -294,6 +295,46 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 .pk.right{grid-column:3;grid-row:2} .pk.down{grid-column:2;grid-row:3}
 .pk.hide{grid-column:3;grid-row:1;background:var(--surface2);font-size:14px;height:34px;align-self:start}
 
+/* 配對消消樂 */
+.snlvs.three{grid-template-columns:repeat(3,1fr)}
+.snlv.s-same.on{background:#FFC2DE} .snlv.s-diff.on{background:#B9A8FF}
+.pgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.pgrid.two{grid-template-columns:repeat(2,1fr)}
+.pcard{aspect-ratio:1;display:grid;place-items:center;gap:1px;background:var(--surface);border:3px solid var(--edge);border-radius:18px;box-shadow:0 4px 0 var(--drop);padding:4px;cursor:pointer;font-family:var(--num);font-weight:700;font-size:clamp(15px,4.8vw,24px);color:var(--ink);transition:transform .08s,box-shadow .08s}
+.pcard:active:not(:disabled){transform:translateY(4px);box-shadow:0 0 0 var(--drop)}
+.pcard:disabled{cursor:default}
+.pcard small{color:var(--muted);font-size:.68em;margin:0 1px}
+.pcard .pv{font-style:normal;font-size:.72em}
+.pcard.sel{background:var(--sun);color:var(--on-color);transform:translateY(3px);box-shadow:0 1px 0 var(--drop)}
+.pcard.ok{background:var(--mint);color:#06281A;animation:bounce .45s}
+.pcard.ok small{color:#06281A;opacity:.7}
+.pcard.bad{background:var(--tomato);color:#fff;animation:shake .4s}
+.pcard.bad small{color:#fff;opacity:.8}
+.pcard.no{opacity:.5}
+.pcard.two{aspect-ratio:4/3;font-size:clamp(15px,4.4vw,22px)}
+.pcard .peq{font-style:normal;font-size:.8em;color:var(--muted)}
+.pcard.ok .peq,.pcard.bad .peq{color:inherit}
+
+/* 認識乘法 */
+.lask{font-family:var(--zh);font-size:clamp(21px,6vw,29px)}
+.lbox{background:var(--surface);border:3px solid var(--edge);border-radius:24px;box-shadow:0 5px 0 var(--drop);padding:12px 8px;display:flex;flex-direction:column;gap:7px;align-items:center}
+.lrow{display:flex;gap:3px;align-items:center;justify-content:center;background:var(--surface2);border:2px dashed var(--edge);border-radius:14px;padding:3px 7px}
+.lrow .ln{font-family:var(--num);font-weight:700;color:var(--muted);font-size:13px;min-width:1.1em;opacity:0;transition:opacity .25s}
+.lbox.count .ln{opacity:1}
+.li{font-size:clamp(15px,5vw,30px);line-height:1.15}
+.lbox.bad{animation:shake .4s}
+.lslots{display:flex;align-items:center;justify-content:center;gap:7px;font-family:var(--num);font-weight:700;font-size:clamp(26px,8vw,40px);margin:14px 0 2px}
+.lslots .op{color:var(--muted);font-size:.66em}
+.lslot{min-width:1.8em;padding:2px 8px;border:3px dashed var(--edge);border-radius:16px;background:var(--surface);color:var(--muted);cursor:pointer;font:inherit}
+.lslot.on{border-style:solid;background:var(--sun);color:var(--on-color)}
+.lslot.has{border-style:solid;color:var(--ink)}
+.lans{min-width:1.6em;text-align:center;color:var(--muted)}
+.lans.on{color:var(--mint)}
+.lkeys{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:8px}
+.lkey{font-family:var(--num);font-weight:700;font-size:26px;height:54px;border:3px solid var(--edge);border-radius:16px;background:var(--surface);color:var(--ink);box-shadow:0 4px 0 var(--drop);cursor:pointer;touch-action:manipulation;transition:transform .06s,box-shadow .06s}
+.lkey:active{transform:translateY(4px);box-shadow:0 0 0 var(--drop)}
+.lkey.fn{background:var(--surface2);font-size:21px}
+
 /* 說明小幫手 */
 .helper{display:flex;gap:9px;align-items:flex-start;background:var(--surface2);border:2px dashed var(--edge);border-radius:16px;padding:9px 12px;margin:0 0 14px;font-size:15px;line-height:1.45}
 .helper b{font-size:21px;line-height:1.15;flex:none}
@@ -446,6 +487,22 @@ const SNAKE_LV = [
   {id:'b', icon:'👑', name:'閃電', seq:false, step:false, ms:450, min:300, up:50, decoys:5, hearts:3, size:13, rocks:true}
 ];
 const SNAKE_BY = {}; SNAKE_LV.forEach(l=>{ SNAKE_BY[l.id]=l; });
+
+/* 配對消消樂：同一個答案的算式配成一對（4x4 和 8x2），或找出兩邊不一樣的那一張 */
+const PAIR_LV = [
+  {id:'e', icon:'🌱', name:'簡單', pairs:4, cards:3, rounds:5, hi:6},
+  {id:'m', icon:'⚡', name:'普通', pairs:6, cards:4, rounds:7, hi:9},
+  {id:'h', icon:'🔥', name:'挑戰', pairs:8, cards:4, rounds:9, hi:9}
+];
+const PAIR_BY = {}; PAIR_LV.forEach(l=>{ PAIR_BY[l.id]=l; });
+const PAIR_STYLES = [
+  {id:'same', icon:'👯', name:'找一樣', desc:'答案一樣的兩張配成一對'},
+  {id:'diff', icon:'🔍', name:'找不同', desc:'找出兩個算式答案不一樣的那一張'}
+];
+
+/* 認識乘法：幾排、每排幾個，看圖說出算式 */
+const LEARN_EMO = ['🍡','🍎','🍪','🧁','🐣','⭐','🐟','🌸','🍬','🚗','🏀','🦆','🍄','🐞','🍊','🎈'];
+const LEARN_N = 8;
 
 const STAGE_FIRST_CAP = 4;  /* 首次通關每天最多拿幾枚（關卡全開，避免一天把扭蛋幣領光）*/
 
@@ -797,9 +854,9 @@ const TIERS = [
 ];
 const TIER_BY = {}; TIERS.forEach(T=>{ TIER_BY[T.id]=T; });
 const TIER_POOL = {
-  e:['correct','rounds','table','combo','timed','review','hunt','snake'],
-  m:['correct','rounds','table','combo','timed','perfect','mix','stage','hunt','snake'],
-  h:['correct','rounds','table','combo','timed','perfect','mix','master','stage','hunt','snake']
+  e:['correct','rounds','table','combo','timed','review','hunt','snake','learn','pair'],
+  m:['correct','rounds','table','combo','timed','perfect','mix','stage','hunt','snake','pair'],
+  h:['correct','rounds','table','combo','timed','perfect','mix','master','stage','hunt','snake','pair']
 };
 const TIER_TARGET = {
   correct:{e:[8,10,12],  m:[15,18,20], h:[20,25,30]},
@@ -810,6 +867,8 @@ const TIER_TARGET = {
   stage:  {e:[1],        m:[1,2],      h:[2,3]},
   hunt:   {e:[1],        m:[1,2],      h:[2]},
   snake:  {e:[1],        m:[1,2],      h:[2,3]},
+  learn:  {e:[1],        m:[1],        h:[1]},
+  pair:   {e:[1],        m:[1,2],      h:[2]},
   master: {e:[1],        m:[2],        h:[2,3]}
 };
 const TABLE_RANGE = {e:[2,5], m:[5,9], h:[3,9]};
@@ -824,7 +883,7 @@ function makeQuests(date, tier){
     return {type, target:pick(TIER_TARGET[type][tier])};
   });
 }
-const QUEST_ICON = {correct:'✅', rounds:'📘', table:'🎯', combo:'🔥', timed:'⏱️', perfect:'💯', mix:'🎲', master:'🌟', review:'🃏', stage:'🗺️', hunt:'🔍', snake:'🐍'};
+const QUEST_ICON = {correct:'✅', rounds:'📘', table:'🎯', combo:'🔥', timed:'⏱️', perfect:'💯', mix:'🎲', master:'🌟', review:'🃏', stage:'🗺️', hunt:'🔍', snake:'🐍', learn:'🍡', pair:'🧩'};
 function questText(q){
   switch(q.type){
     case 'correct': return `答對 ${q.target} 題`;
@@ -836,6 +895,8 @@ function questText(q){
     case 'stage':   return q.target>1?`闖關通過 ${q.target} 關`:'闖關通過 1 關';
     case 'hunt':    return q.target>1?`完成 ${q.target} 張尋寶畫`:'完成一張尋寶畫';
     case 'snake':   return q.target>1?`用蛇蛇吃出 ${q.target} 條彩虹`:'用蛇蛇吃出一條彩虹';
+    case 'learn':   return '玩一回「認識乘法」';
+    case 'pair':    return q.target>1?`完成 ${q.target} 回配對消消樂`:'完成一回配對消消樂';
     case 'mix':     return '完成一回綜合挑戰';
     case 'master':  return `讓 ${q.target} 組題目變熟練`;
     default:        return '一回練習全部答對';
@@ -843,7 +904,7 @@ function questText(q){
 }
 function blankP(){ return {correct:0, rounds:0, maxCombo:0, timedBest:0, tables:{}, perfect:0,
   mix:0, mastered:0, reviews:0, revk:{}, stagesCleared:0, stageCoins:0, firstCoins:0, hunts:0,
-  snakes:0, rainbows:0}; }
+  snakes:0, rainbows:0, learns:0, pairs:0}; }
 function blankTier(date,id){ return {quests:makeQuests(date,id), claimed:[false,false,false], bonus:false, notified:[false,false,false]}; }
 function ensureDaily(){
   const m = me();
@@ -877,6 +938,8 @@ function progressOf(q){
     case 'stage':   return p.stagesCleared;
     case 'hunt':    return p.hunts;
     case 'snake':   return p.rainbows;
+    case 'learn':   return p.learns;
+    case 'pair':    return p.pairs;
     case 'mix':     return p.mix;
     case 'master':  return p.mastered;
     default:        return p.perfect;
@@ -1047,6 +1110,21 @@ const HELP = {
     '吃對會長大，而且換一個彩虹色 🌈',
     '吃錯或打結會扣一顆 ❤️，愛心用完才結束',
     '撞到牆不會死，會從另一邊鑽出來']},
+  learn:{t:'認識乘法怎麼玩？', li:[
+    '先數數看圖裡有幾排 🍡',
+    '再數每一排有幾個',
+    '點下面的數字填進「□ × □」',
+    '答對會唸出來：3、4、12',
+    '數不清楚就按 🔍 提示']},
+  pairPick:{t:'配對消消樂', li:[
+    '👯 找一樣：答案相同的兩張配成一對',
+    '🔍 找不同：找出兩邊答案不一樣的那張',
+    '再選難度，數字越大越難']},
+  pair:{t:'怎麼配對？', li:[
+    '4×4 和 8×2 的答案都是 16，就是一對',
+    '點兩張答案一樣的卡片',
+    '配對成功會把兩句口訣都唸一次',
+    '配錯沒關係，卡片會留在原地']},
   book:{t:'扭蛋貼紙簿', li:[
     '1 枚扭蛋幣可以轉一次扭蛋',
     '每次都會拿到還沒有的貼紙，不會重複',
@@ -1183,8 +1261,10 @@ const VIEWS = {
         <div class="bonus">${bonus}</div>
       </section>
       <section class="modes">
+        <button class="mode m1 wide" data-act="learn"><span class="mi">🍡</span><b>認識乘法</b><span>看圖數數看，這是幾乘幾呢？算式唸給你聽</span></button>
         <button class="mode m6 wide" data-act="reviewPick"><span class="mi">🃏</span><b>複習翻翻樂</b><span>翻牌看答案，一起練乘法口訣</span></button>
         <button class="mode m5 wide" data-act="stages"><span class="mi">🗺️</span><b>練習闖關</b><span>12 關都可以直接玩，自己打數字或選答案　已過 ${clearedStages}/${STAGES.length} 關</span></button>
+        <button class="mode m9 wide" data-act="pairPick"><span class="mi">🧩</span><b>配對消消樂</b><span>答案一樣的算式配成一對，像 4×4 和 8×2 都是 16</span></button>
         <button class="mode m7 wide" data-act="huntPick"><span class="mi">🔍</span><b>尋寶</b><span>答案用同一個顏色藏在畫面裡，要瞇著眼睛找${(m.art||[]).length?`　🖼️ 畫廊 ${(m.art||[]).length} 張`:''}</span></button>
         <button class="mode m8 wide" data-act="snakePick"><span class="mi">🐍</span><b>蛇蛇彩虹路</b><span>吃到正確答案就長大變色，集滿七彩完成一條彩虹 🌈${m.snakeBest?`　最長 ${m.snakeBest} 個`:''}</span></button>
         <button class="mode m2" data-act="timed"><span class="mi">⏱️</span><b>限時挑戰</b><span>60 秒能答對幾題？最佳紀錄 ${m.timedBest} 題</span></button>
@@ -1336,6 +1416,85 @@ const VIEWS = {
     paintSnake();
   },
 
+  learn(){
+    if(!game || game.mode!=='learn') return VIEWS.home();
+    const g=game, q=g.cur;
+    const rows=Array.from({length:q.a},(_,i)=>
+      `<div class="lrow"><span class="ln">${i+1}</span>${Array.from({length:q.b},()=>`<span class="li">${q.emo}</span>`).join('')}</div>`).join('');
+    const p1=g.pick[0], p2=g.pick[1], done=g.locked;
+    view.innerHTML=`
+      <div class="playbar">
+        <button class="iconbtn" data-act="quit" aria-label="離開">✕</button>
+        <div class="track" id="track"><i id="trackfill" style="width:${g.qi/g.total*100}%"></i></div>
+        <span class="qnum" id="qnum">${Math.min(g.qi+1,g.total)}/${g.total}</span>
+      </div>
+      <div class="hask lask">這是幾乘幾呢？<span class="hchant">有幾排？每一排有幾個？</span></div>
+      <div class="lbox ${g.hinted?'count':''}" id="lbox">${rows}</div>
+      <div class="lslots">
+        <button class="lslot ${p1==null?'on':'has'}" data-act="lslot" data-arg="0">${p1==null?'?':p1}</button>
+        <span class="op">×</span>
+        <button class="lslot ${p1!=null&&p2==null?'on':(p2!=null?'has':'')}" data-act="lslot" data-arg="1">${p2==null?'?':p2}</button>
+        <span class="op">=</span>
+        <span class="lans ${done?'on':''}">${done?q.a*q.b:'?'}</span>
+      </div>
+      <div class="fb" id="lfb"></div>
+      <div class="lkeys">${[1,2,3,4,5,6,7,8,9].map(n=>`<button class="lkey" data-act="lkey" data-arg="${n}">${n}</button>`).join('')}
+        <button class="lkey fn" data-act="lkey" data-arg="del" aria-label="刪除">⌫</button></div>
+      <div class="hbtns"><button class="btn small" data-act="lhint">🔍 提示</button><span class="note" id="lnote">先數有幾排，再數每排幾個</span></div>`;
+  },
+
+  pairPick(){
+    const lv=pairLv();
+    const styles=PAIR_STYLES.map(x=>`<button class="snlv s-${x.id} ${x.id===pairStyle?'on':''}" data-act="pstyle" data-arg="${x.id}" aria-pressed="${x.id===pairStyle}">
+      <b>${x.icon} ${x.name}</b><span>${x.desc}</span></button>`).join('');
+    const lvs=PAIR_LV.map(l=>`<button class="snlv ${l.id} ${l.id===lv.id?'on':''}" data-act="plv" data-arg="${l.id}" aria-pressed="${l.id===lv.id}">
+      <b>${l.icon} ${l.name}</b>
+      <span class="snmeta">${pairStyle==='same'?`${l.pairs} 組・${l.pairs*2} 張`:`${l.rounds} 題・每題 ${l.cards} 張`}<br>乘數 2~${l.hi}</span></button>`).join('');
+    view.innerHTML=`
+      <div class="backrow"><button class="iconbtn" data-act="home" aria-label="返回">←</button><h2>🧩 配對消消樂</h2></div>
+      ${helper('答案一樣的算式可以配成一對，像 4×4 和 8×2 都是 16')}
+      <div class="snlvs">${styles}</div>
+      <div class="snlvs three">${lvs}</div>
+      <div style="text-align:center;margin-top:16px"><button class="btn sun big" data-act="pstart">開始 ▶</button></div>
+      <p class="note">${pairStyle==='same'?'配對成功會把兩句口訣都唸一次，順便記起來'
+        :'兩個算式答案一樣的是對的，找出不一樣的那一張'}</p>`;
+  },
+
+  pair(){
+    if(!game || game.mode!=='pair') return VIEWS.home();
+    const g=game;
+    if(g.style==='same'){
+      const cells=g.cards.map((c,i)=>`<button class="pcard ${c.ok?'ok':''}${g.sel===i?' sel':''}${c.bad?' bad':''}" data-act="ptap" data-arg="${i}"${c.ok?' disabled':''}>
+        <b>${c.a}<small>×</small>${c.b}</b>${c.ok?`<i class="pv">${c.p}</i>`:''}</button>`).join('');
+      view.innerHTML=`
+        <div class="playbar">
+          <button class="iconbtn" data-act="quit" aria-label="離開">✕</button>
+          <div class="track" id="track"><i id="trackfill" style="width:${g.done/g.total*100}%"></i></div>
+          <span class="qnum">${g.done}/${g.total}</span>
+        </div>
+        <div class="hask lask">找出答案一樣的兩張<span class="hchant">例如 4×4 和 8×2 都是 16</span></div>
+        <div class="pgrid">${cells}</div>
+        <p class="note" id="pnote">點兩張答案一樣的卡片，就會配成一對</p>`;
+    } else {
+      const cells=g.cards.map((c,i)=>{
+        const lp=c.l[0]*c.l[1], rp=c.r[0]*c.r[1], show=c.found||c.tried;
+        return `<button class="pcard two ${c.found?'ok':''}${c.tried?' no':''}" data-act="ptap" data-arg="${i}"${g.locked?' disabled':''}>
+          <b>${c.l[0]}<small>×</small>${c.l[1]}</b>
+          <i class="peq">${show?(lp===rp?'=':'≠'):'=?'}</i>
+          <b>${c.r[0]}<small>×</small>${c.r[1]}</b></button>`;
+      }).join('');
+      view.innerHTML=`
+        <div class="playbar">
+          <button class="iconbtn" data-act="quit" aria-label="離開">✕</button>
+          <div class="track" id="track"><i id="trackfill" style="width:${g.qi/g.total*100}%"></i></div>
+          <span class="qnum">${Math.min(g.qi+1,g.total)}/${g.total}</span>
+        </div>
+        <div class="hask lask">哪一張的答案不一樣？<span class="hchant">兩個算式算算看，答案不同的就是它</span></div>
+        <div class="pgrid two">${cells}</div>
+        <p class="note" id="pnote">其他幾張的兩個算式，答案都是一樣的</p>`;
+    }
+  },
+
   stages(){
     const m=me(), sv=m.stages||{}, d=ensureDaily(), mode=state.settings.input;
     const cards=STAGES.map(S=>{
@@ -1399,7 +1558,7 @@ const VIEWS = {
       ? `<div class="stat"><b>${r.eaten}</b><span>吃到的答案</span></div>`
       : r.timed
       ? `<div class="stat"><b>${r.score}</b><span>60 秒答對題數</span></div>`
-      : `<div class="stat"><b>${r.score}/${r.total}</b><span>${r.hunt?'一次就找到':`第一次就答對${r.stage?`（過關要 ${r.need}）`:''}`}</span></div>`;
+      : `<div class="stat"><b>${r.score}/${r.total}</b><span>${r.slabel ? r.slabel : r.hunt?'一次就找到':`第一次就答對${r.stage?`（過關要 ${r.need}）`:''}`}</span></div>`;
     let badge='';
     if(r.newBest) badge='<div class="badge">🏆 新紀錄！</div>';
     else if(r.coins) badge=`<div class="badge">🪙 得到 ${r.coins} 枚扭蛋幣</div>`;
@@ -1675,7 +1834,7 @@ function finishTimed(){
   save(); checkQuests();
   go('result');
 }
-function inGame(){ return (currentView==='play'||currentView==='hunt'||currentView==='snake') && !!game && !game.result; }
+function inGame(){ return (currentView==='play'||currentView==='hunt'||currentView==='snake'||currentView==='learn'||currentView==='pair') && !!game && !game.result; }
 function askQuit(){
   showModal(`<h3>要離開嗎？</h3><p>這一回還沒完成，答對的題數會保留，但不會拿到星星喔。</p>
     <div class="row"><button class="btn sun" data-act="closeModal">繼續玩</button><button class="btn" data-act="quitYes">離開</button></div>`);
@@ -2211,6 +2370,266 @@ function startAuto(){
 }
 
 
+/* ---------- 認識乘法 ---------- */
+function learnQ(){
+  const hi = (game && game.qi<3) ? 5 : 9;
+  let a,b,guard=0;
+  do{ a=2+rnd(hi-1); b=2+rnd(hi-1); guard++; }
+  while(guard<30 && game && game.cur && a===game.cur.a && b===game.cur.b);
+  return {a, b, emo:LEARN_EMO[rnd(LEARN_EMO.length)]};
+}
+function startLearn(){
+  endGame();
+  lastSetup={mode:'learn'};
+  game={mode:'learn', qi:0, total:LEARN_N, first:0, combo:0, maxCombo:0,
+        cur:null, pick:[], miss:0, hinted:false, locked:false, t:null};
+  game.cur=learnQ();
+  go('learn');
+}
+function lnote(msg){ const el=document.getElementById('lnote'); if(el) el.textContent=msg; }
+function lfb(html){ const el=document.getElementById('lfb'); if(el) el.innerHTML=html; }
+function learnNext(){
+  if(!game || game.mode!=='learn') return;
+  if(game.qi>=game.total) return finishLearn();
+  game.cur=learnQ(); game.pick=[]; game.miss=0; game.hinted=false; game.locked=false;
+  go('learn');
+}
+function learnSlot(i){
+  const g=game; if(!g || g.mode!=='learn' || g.locked) return;
+  g.pick=g.pick.slice(0,+i); sfx.tap(); go('learn');
+}
+function learnKey(k){
+  const g=game; if(!g || g.mode!=='learn' || g.locked) return;
+  sfx.tap();
+  if(k==='del'){ if(g.pick.length) g.pick.pop(); go('learn'); return; }
+  if(g.pick.length>=2) return;
+  g.pick.push(+k);
+  if(g.pick.length<2){ go('learn'); return; }
+  learnCheck();
+}
+function learnHint(){
+  const g=game; if(!g || g.mode!=='learn' || g.locked) return;
+  const again=g.hinted;
+  g.hinted=true; sfx.tap();
+  go('learn');
+  lnote(again ? `有 ${g.cur.a} 排，每排 ${g.cur.b} 個` : '左邊的號碼就是第幾排，一排一排數數看');
+}
+function learnCheck(){
+  const g=game, q=g.cur, x=g.pick[0], y=g.pick[1], p=q.a*q.b, d=ensureDaily();
+  if((x===q.a && y===q.b) || (x===q.b && y===q.a)){
+    g.locked=true;
+    const clean = g.miss===0 && !g.hinted;
+    if(clean){
+      record(q.a,q.b,true);
+      g.first++; g.combo++; g.maxCombo=Math.max(g.maxCombo,g.combo);
+      d.p.correct++; d.p.maxCombo=Math.max(d.p.maxCombo,g.combo);
+    }
+    g.qi++;
+    go('learn');
+    const ch=chant(x,y);
+    lnote(x===q.a ? PRAISE[rnd(PRAISE.length)] : `${x} × ${y} 和 ${q.a} × ${q.b} 都是 ${p}，交換也對！`);
+    lfb(`<div class="chant">${ch}${canSpeak?`<button class="say" data-act="say" data-arg="${ch}" aria-label="再唸一次">🔊</button>`:''}</div>`);
+    sfx.right(g.combo);
+    say(`${x}、${y}、${p}`);
+    save(); checkQuests();
+    g.t=setTimeout(()=>{ if(game && game.mode==='learn') learnNext(); }, reduceMotion?600:2200);
+  } else {
+    if(g.miss===0) record(q.a,q.b,false);
+    g.miss++; g.combo=0;
+    const wrong=`${x} × ${y} = ${x*y}`;
+    if(g.miss>=2) g.hinted=true;
+    g.pick=[];
+    go('learn');
+    const box=document.getElementById('lbox');
+    if(box){ box.classList.remove('bad'); void box.offsetWidth; box.classList.add('bad'); }
+    lnote(g.miss===1 ? `${wrong}，再數一次有幾排、每排幾個` : `提示：有 ${q.a} 排，每排 ${q.b} 個`);
+    sfx.wrong();
+  }
+}
+function finishLearn(){
+  const d=ensureDaily(), m=me(), g=game;
+  const score=g.first, total=g.total, acc=score/total;
+  const stars=acc>=.9?3:acc>=.7?2:1;
+  m.stars+=stars;
+  d.p.rounds++; d.p.learns++;
+  if(score===total) d.p.perfect=1;
+  markPlayed();
+  g.result={learn:true, slabel:'一次就答對', score, total, stars, maxCombo:g.maxCombo, newBest:false};
+  save(); checkQuests();
+  go('result');
+}
+
+/* ---------- 配對消消樂 ---------- */
+let pairLvId='e', pairStyle='same';
+function pairLv(){ return PAIR_BY[pairLvId] || PAIR_LV[0]; }
+function pairExprs(p, lo, hi){
+  const out=[];
+  for(let a=lo;a<=hi;a++){ if(p%a===0){ const b=p/a; if(b>=lo && b<=hi) out.push([a,b]); } }
+  return out;
+}
+function pairProducts(lo, hi, min){
+  const seen={}, out=[];
+  for(let a=lo;a<=hi;a++) for(let b=lo;b<=hi;b++){
+    const p=a*b;
+    if(!seen[p]){ seen[p]=1; if(pairExprs(p,lo,hi).length>=min) out.push(p); }
+  }
+  return out;
+}
+/* 有兩種以上「不同寫法」的答案（16 = 4x4 = 8x2），這種最能看出乘法的規律 */
+function pairRich(p, lo, hi){
+  const seen={}; let k=0;
+  pairExprs(p,lo,hi).forEach(e=>{ const x=Math.min(e[0],e[1])+'x'+Math.max(e[0],e[1]); if(!seen[x]){ seen[x]=1; k++; } });
+  return k>=2;
+}
+/* 一半挑這種答案，一半挑交換律（3x4 / 4x3），兩種規律都能練到 */
+function pairPool(lo, hi, n){
+  const all=pairProducts(lo,hi,2);
+  const rich=shuffle(all.filter(p=>pairRich(p,lo,hi)));
+  const plain=shuffle(all.filter(p=>!pairRich(p,lo,hi)));
+  const want=Math.min(rich.length, Math.ceil(n/2));
+  return shuffle(rich.slice(0,want).concat(plain, rich.slice(want)).slice(0,n));
+}
+/* 同一個答案挑兩個「不同寫法」的算式，優先挑 4x4 / 8x2 這種，沒有才用 3x4 / 4x3 */
+function twoExprs(p, lo, hi){
+  const ex=shuffle(pairExprs(p,lo,hi)), uniq=[], seen={};
+  ex.forEach(e=>{ const k=Math.min(e[0],e[1])+'x'+Math.max(e[0],e[1]); if(!seen[k]){ seen[k]=1; uniq.push(e); } });
+  return uniq.length>=2 ? [uniq[0],uniq[1]] : ex.slice(0,2);
+}
+function pairDeck(lv){
+  const lo=2, hi=lv.hi, out=[];
+  pairPool(lo,hi,lv.pairs).forEach((p,i)=>{
+    const two=twoExprs(p,lo,hi);
+    out.push({a:two[0][0], b:two[0][1], p, g:i, ok:false, tried:false, bad:false},
+             {a:two[1][0], b:two[1][1], p, g:i, ok:false, tried:false, bad:false});
+  });
+  return shuffle(out);
+}
+/* 找不同：每張卡有兩個算式，只有一張的兩邊答案不一樣 */
+function diffRound(lv){
+  const lo=2, hi=lv.hi, n=Math.max(2,lv.cards);
+  const ps=pairPool(lo,hi,n);
+  const cards=[];
+  for(let i=0;i<n-1;i++){
+    const p=ps[i%ps.length], two=twoExprs(p,lo,hi);
+    cards.push({l:two[0], r:two[1], bad:false, tried:false, found:false});
+  }
+  const p=ps[(n-1)%ps.length], ex=shuffle(pairExprs(p,lo,hi)), l=ex[0];
+  let r=null, guard=0;
+  while(!r && guard++<60){
+    const base=ex[ex.length>1?1:0];
+    const d=rnd(2)?1:-1, w=rnd(2);
+    const a=w?base[0]+d:base[0], b=w?base[1]:base[1]+d;
+    if(a>=lo && a<=hi && b>=lo && b<=hi && a*b!==p) r=[a,b];
+  }
+  if(!r){ let a,b; do{ a=lo+rnd(hi-lo+1); b=lo+rnd(hi-lo+1); }while(a*b===p); r=[a,b]; }
+  cards.push({l, r, bad:true, tried:false, found:false});
+  return shuffle(cards);
+}
+function startPair(style, lvId){
+  endGame();
+  if(style) pairStyle = style==='diff' ? 'diff' : 'same';
+  if(lvId && PAIR_BY[lvId]) pairLvId=lvId;
+  const lv=pairLv();
+  lastSetup={mode:'pair', style:pairStyle, lv:pairLvId};
+  game = pairStyle==='same'
+    ? {mode:'pair', style:'same', lv:lv.id, cards:pairDeck(lv), sel:-1, done:0, total:lv.pairs,
+       first:0, combo:0, maxCombo:0, locked:false, t:null}
+    : {mode:'pair', style:'diff', lv:lv.id, cards:diffRound(lv), qi:0, total:lv.rounds, miss:0,
+       first:0, combo:0, maxCombo:0, locked:false, t:null};
+  go('pair');
+}
+function pnote(msg){ const el=document.getElementById('pnote'); if(el) el.textContent=msg; }
+function pairClear(){
+  const g=game; if(!g || g.mode!=='pair') return;
+  g.cards.forEach(c=>{ c.bad=false; });
+  if(g.style==='same') g.sel=-1;
+}
+function pairTap(i){
+  const g=game; if(!g || g.mode!=='pair' || g.locked) return;
+  if(g.style==='diff') return diffTap(i);
+  const c=g.cards[i]; if(!c || c.ok) return;
+  g.cards.forEach(x=>{ x.bad=false; });
+  if(g.sel===i){ g.sel=-1; sfx.tap(); go('pair'); return; }
+  if(g.sel<0){
+    g.sel=i; sfx.tap(); go('pair');
+    pnote(`${c.a} × ${c.b} 是多少？再找一張答案一樣的`);
+    return;
+  }
+  const f=g.cards[g.sel], d=ensureDaily();
+  if(f.g===c.g){
+    const clean = !f.tried && !c.tried;
+    if(clean){
+      record(f.a,f.b,true); record(c.a,c.b,true);
+      g.first++; g.combo++; g.maxCombo=Math.max(g.maxCombo,g.combo);
+      d.p.correct++; d.p.maxCombo=Math.max(d.p.maxCombo,g.combo);
+    }
+    f.ok=c.ok=true; g.sel=-1; g.done++;
+    const full=g.done>=g.total;
+    if(full) g.locked=true;
+    go('pair');
+    pnote(`${f.a} × ${f.b} 和 ${c.a} × ${c.b} 都是 ${c.p}！`);
+    sfx.right(g.combo);
+    say(chant(f.a,f.b)+'，'+chant(c.a,c.b));
+    const el=document.querySelector(`.pcard[data-arg="${i}"]`); if(el) burstAt(el, clean?14:8);
+    save(); checkQuests();
+    if(full) g.t=setTimeout(()=>{ if(game && game.mode==='pair') finishPair(); }, reduceMotion?400:1500);
+  } else {
+    f.tried=c.tried=true; f.bad=c.bad=true; g.combo=0; g.sel=-1;
+    record(c.a,c.b,false);
+    go('pair');
+    pnote(`${f.a} × ${f.b} = ${f.p}，${c.a} × ${c.b} = ${c.p}，不一樣喔`);
+    sfx.wrong();
+    g.t=setTimeout(()=>{
+      if(game && game.mode==='pair' && !game.locked){ pairClear(); go('pair'); pnote('再找找看，哪兩張的答案一樣？'); }
+    }, 1200);
+  }
+}
+function diffTap(i){
+  const g=game; if(!g || g.mode!=='pair' || g.style!=='diff' || g.locked) return;
+  const c=g.cards[i]; if(!c || c.found) return;
+  const lp=c.l[0]*c.l[1], rp=c.r[0]*c.r[1], d=ensureDaily();
+  if(c.bad){
+    const clean = g.miss===0;
+    if(clean){
+      record(c.l[0],c.l[1],true); record(c.r[0],c.r[1],true);
+      g.first++; g.combo++; g.maxCombo=Math.max(g.maxCombo,g.combo);
+      d.p.correct++; d.p.maxCombo=Math.max(d.p.maxCombo,g.combo);
+    }
+    c.found=true; g.locked=true; g.qi++;
+    go('pair');
+    pnote(`答對了！${c.l[0]} × ${c.l[1]} = ${lp}，但 ${c.r[0]} × ${c.r[1]} = ${rp}`);
+    sfx.right(g.combo);
+    say(chant(c.l[0],c.l[1])+'，'+chant(c.r[0],c.r[1]));
+    save(); checkQuests();
+    g.t=setTimeout(()=>{ if(game && game.mode==='pair') diffNext(); }, reduceMotion?500:1900);
+  } else {
+    if(g.miss===0) record(c.l[0],c.l[1],false);
+    g.miss++; g.combo=0; c.tried=true;
+    go('pair');
+    pnote(`${c.l[0]} × ${c.l[1]} 和 ${c.r[0]} × ${c.r[1]} 都是 ${lp}，這兩個一樣喔`);
+    sfx.wrong();
+  }
+}
+function diffNext(){
+  const g=game; if(!g || g.mode!=='pair' || g.style!=='diff') return;
+  if(g.qi>=g.total) return finishPair();
+  g.cards=diffRound(pairLv()); g.miss=0; g.locked=false;
+  go('pair');
+}
+function finishPair(){
+  const d=ensureDaily(), m=me(), g=game;
+  const score=g.first, total=g.total, acc=score/total;
+  const stars=acc>=.9?3:acc>=.7?2:1;
+  m.stars+=stars;
+  d.p.rounds++; d.p.pairs++;
+  if(score===total) d.p.perfect=1;
+  markPlayed();
+  g.result={pair:true, style:g.style, slabel:g.style==='same'?'一次就配對成功':'一次就找到',
+    score, total, stars, maxCombo:g.maxCombo, newBest:false};
+  save(); checkQuests();
+  go('result');
+}
+
 /* ---------- events ---------- */
 document.addEventListener('click', e=>{
   const el=e.target.closest('[data-act]'); if(!el || el.disabled) return;
@@ -2223,6 +2642,15 @@ document.addEventListener('click', e=>{
     case 'reviewPick': pickFor='review'; go('pick'); break;
     case 'huntPick': pickFor='hunt'; go('pick'); break;
     case 'snakePick': go('snakePick'); break;
+    case 'learn': startLearn(); break;
+    case 'lkey': learnKey(arg); break;
+    case 'lslot': learnSlot(arg); break;
+    case 'lhint': learnHint(); break;
+    case 'pairPick': go('pairPick'); break;
+    case 'pstyle': pairStyle = arg==='diff'?'diff':'same'; sfx.tap(); go('pairPick'); break;
+    case 'plv': if(PAIR_BY[arg]) pairLvId=arg; sfx.tap(); go('pairPick'); break;
+    case 'pstart': startPair(pairStyle, pairLvId); break;
+    case 'ptap': pairTap(+arg); break;
     case 'snlv': snakeLvId=arg; sfx.tap(); go('snakePick'); break;
     case 'snstart': startSnake(arg==='mix'?0:+arg, snakeLvId); break;
     case 'sdir': snakeDir(arg); break;
@@ -2282,6 +2710,8 @@ document.addEventListener('click', e=>{
         lastSetup.mode==='timed' ? startTimed()
         : lastSetup.mode==='hunt' ? startHunt(lastSetup.table)
         : lastSetup.mode==='snake' ? startSnake(lastSetup.table, lastSetup.lv)
+        : lastSetup.mode==='learn' ? startLearn()
+        : lastSetup.mode==='pair' ? startPair(lastSetup.style, lastSetup.lv)
         : startStage(lastSetup.stage);
       } break;
     case 'draw': draw(); break;
@@ -2304,6 +2734,12 @@ document.addEventListener('keydown', e=>{
     const k={ArrowUp:'u',ArrowDown:'d',ArrowLeft:'l',ArrowRight:'r',w:'u',s:'d',a:'l',d:'r',W:'u',S:'d',A:'l',D:'r'}[e.key];
     if(k){ snakeDir(k); e.preventDefault(); }
     else if(e.key===' '){ snakePause(); e.preventDefault(); }
+    return;
+  }
+  if(currentView==='learn' && game && !document.getElementById('modal')){
+    unlockAudio();
+    if(/^[1-9]$/.test(e.key)){ learnKey(e.key); e.preventDefault(); }
+    else if(e.key==='Backspace'){ learnKey('del'); e.preventDefault(); }
     return;
   }
   if(currentView!=='play' || !game || document.getElementById('modal')) return;
