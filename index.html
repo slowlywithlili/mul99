@@ -97,19 +97,14 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 .modes{display:grid;grid-template-columns:1fr 1fr;gap:22px 12px;margin-top:22px}
 .bal{background:none;border:0;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;text-align:center;
   animation:balfloat var(--t,4.6s) ease-in-out var(--d,0s) infinite}
-.bal .env{position:relative;width:100%;max-width:154px;aspect-ratio:1/1.12;border:3px solid var(--edge);
-  border-radius:50% 50% 44% 44% / 56% 56% 44% 44%;
-  background:repeating-linear-gradient(100deg,var(--c1) 0 13%,var(--c2) 13% 26%);
-  box-shadow:inset -12px -16px 26px rgba(0,0,0,.16),inset 13px 15px 22px rgba(255,255,255,.45),0 5px 0 rgba(28,42,74,.18);
-  display:grid;place-items:center;transition:transform .09s}
-.bal .env::after{content:"";position:absolute;left:50%;bottom:-9px;translate:-50% 0;width:0;height:0;
-  border-left:10px solid transparent;border-right:10px solid transparent;border-top:11px solid var(--c2);
-  filter:drop-shadow(0 2px 0 var(--edge)) drop-shadow(-2px 0 0 var(--edge)) drop-shadow(2px 0 0 var(--edge))}
-.bal .env i{font-style:normal;font-size:clamp(32px,11vw,46px);line-height:1;filter:drop-shadow(0 2px 2px rgba(60,40,20,.3))}
-.bal .rope{width:34%;max-width:52px;height:11px;border-left:3px solid var(--edge);border-right:3px solid var(--edge);box-sizing:border-box}
-.bal .tag{font-family:var(--zh);font-size:12px;font-weight:700;line-height:1.5;padding:1px 9px 2px;border:3px solid var(--edge);
-  border-radius:5px 5px 10px 10px;background:#E0A866;color:#3A2410;white-space:nowrap;box-shadow:0 3px 0 rgba(28,42,74,.25)}
-.bal b{margin-top:9px;font-size:18px;line-height:1.25}
+.bal .env{position:relative;width:100%;max-width:140px;aspect-ratio:100/130;transition:transform .1s;
+  filter:drop-shadow(0 5px 3px rgba(28,42,74,.18))}
+.bal .env svg{display:block;width:100%;height:100%;color:var(--edge)}
+.bal .env i{position:absolute;left:50%;top:33%;translate:-50% -50%;font-style:normal;
+  font-size:clamp(26px,8.6vw,37px);line-height:1;filter:drop-shadow(0 2px 2px rgba(60,40,20,.32))}
+.bal .tag{margin-top:5px;font-family:var(--zh);font-size:12px;font-weight:700;line-height:1.6;padding:1px 11px 2px;
+  border:2px solid var(--edge);border-radius:999px;background:var(--surface);color:var(--muted);white-space:nowrap}
+.bal b{margin-top:7px;font-size:18px;line-height:1.25}
 .bal .sub{font-size:13px;line-height:1.4;color:var(--muted);margin-top:1px}
 .bal:active .env{transform:scale(.94)}
 .bal:active .tag{transform:translateY(3px);box-shadow:none}
@@ -1100,11 +1095,41 @@ const MODES = [
   {act:'book',       icon:'🎰', name:'扭蛋貼紙簿',   tag:'乘法遊戲', c:['#D5C6FF','#AB90FF'],
     sub:m=>m.coins>0?`有 ${m.coins} 枚扭蛋幣可以轉！`:'用扭蛋幣收集可愛貼紙'}
 ];
+/* 熱氣球是手繪的：六片布幅從頂端收到氣球口，加上受光面、暗面、燃燒器、吊索和藤籃 */
+const BAL_GORE=[-1,-0.667,-0.333,0,0.333,0.667,1];
+function balEdge(k){
+  const a=(50+32*k).toFixed(1), b=(50+46*k).toFixed(1), c=(50+26*k).toFixed(1), d=(50+9*k).toFixed(1);
+  return { f:`M50,3C${a},4 ${b},26 ${b},48C${b},72 ${c},87 ${d},94`,
+           r:`L${d},94C${c},87 ${b},72 ${b},48C${b},26 ${a},4 50,3Z` };
+}
+function balGore(k1,k2){ return balEdge(k1).f + balEdge(k2).r; }
+const BAL_SVG = (()=>{
+  let gores='';
+  for(let i=0;i<BAL_GORE.length-1;i++)
+    gores+=`<path d="${balGore(BAL_GORE[i],BAL_GORE[i+1])}" fill="var(--c${i%2?2:1})" stroke="#000" stroke-opacity=".09" stroke-width=".7"/>`;
+  return `<svg viewBox="0 0 100 130" aria-hidden="true" focusable="false">
+    ${gores}
+    <ellipse cx="34" cy="31" rx="12" ry="16.5" fill="#fff" opacity=".32" transform="rotate(-18 34 31)"/>
+    <path d="${balGore(0.58,1)}" fill="#000" opacity=".14"/>
+    <path d="${balGore(-1,-0.8)}" fill="#000" opacity=".07"/>
+    <path d="${balGore(-1,1)}" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/>
+    <ellipse cx="50" cy="4.2" rx="3.6" ry="1.5" fill="#000" opacity=".18"/>
+    <path d="M41.2,93.5H58.8L56.2,100H43.8Z" fill="var(--c2)"/>
+    <path d="M41.2,93.5H58.8L56.2,100H43.8Z" fill="#000" opacity=".2"/>
+    <path d="M41.2,93.5H58.8L56.2,100H43.8Z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/>
+    <rect x="46.4" y="99" width="7.2" height="5" rx="1.6" fill="#9A7340" stroke="currentColor" stroke-width="1.8"/>
+    <path d="M44.5,103.5 38.6,111M55.5,103.5 61.4,111M47.8,104 45.6,111M52.2,104 54.4,111"
+      stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <path d="M38.2,110.5h23.6l-2.4,13.2a2.4,2.4 0 0 1 -2.4,2.1H43a2.4,2.4 0 0 1 -2.4,-2.1Z"
+      fill="#D59A58" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/>
+    <path d="M39.3,115.6h21.4M40.1,120.4h19.8M45,111.6v14M50,111.6v14.2M55,111.6v14"
+      stroke="#8A5A2B" stroke-width="1.1" opacity=".5" fill="none"/>
+  </svg>`;
+})();
 function balloonsHTML(m){
   return MODES.map((x,i)=>`<button class="bal" data-act="${x.act}"
       style="--c1:${x.c[0]};--c2:${x.c[1]};--d:${(i*0.41).toFixed(2)}s;--t:${(4.2+(i%3)*0.7).toFixed(1)}s">
-      <span class="env" aria-hidden="true"><i>${x.icon}</i></span>
-      <span class="rope" aria-hidden="true"></span>
+      <span class="env">${BAL_SVG}<i aria-hidden="true">${x.icon}</i></span>
       <span class="tag">${x.tag}</span>
       <b>${x.name}</b>
       <span class="sub">${x.sub(m)}</span></button>`).join('');
