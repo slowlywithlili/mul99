@@ -93,18 +93,27 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 .bonus b{color:var(--ink)}
 
 /* modes */
-.modes{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px}
-.mode{border:3px solid var(--edge);border-radius:22px;box-shadow:0 5px 0 var(--drop);padding:16px 14px;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:4px;color:var(--on-color);transition:transform .08s,box-shadow .08s;min-height:140px}
-.mode:active{transform:translateY(5px);box-shadow:0 0 0 var(--drop)}
-.mode .mi{font-size:34px;line-height:1}
-.mode b{font-size:20px;margin-top:6px}
-.mode span{font-size:14px;line-height:1.4;opacity:.85}
-.m1{background:var(--sun)} .m2{background:#FF8A8A} .m3{background:#B9A8FF} .m4{background:#7FE0B5}
-.m5{background:#FFB38A} .m6{background:#FFC2DE} .m7{background:#9ED6FF} .m8{background:#8CE6BC}
-.m9{background:#D7E86B}
-.mode.wide{grid-column:1/-1;min-height:96px;display:grid;grid-template-columns:auto 1fr;align-items:center;column-gap:14px}
-.mode.wide .mi{grid-row:1/3;font-size:40px}
-.mode.wide b{margin-top:0}
+/* 熱氣球選單：每個玩法一顆，慢慢上下漂浮 */
+.modes{display:grid;grid-template-columns:1fr 1fr;gap:22px 12px;margin-top:22px}
+.bal{background:none;border:0;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;text-align:center;
+  animation:balfloat var(--t,4.6s) ease-in-out var(--d,0s) infinite}
+.bal .env{position:relative;width:100%;max-width:154px;aspect-ratio:1/1.12;border:3px solid var(--edge);
+  border-radius:50% 50% 44% 44% / 56% 56% 44% 44%;
+  background:repeating-linear-gradient(100deg,var(--c1) 0 13%,var(--c2) 13% 26%);
+  box-shadow:inset -12px -16px 26px rgba(0,0,0,.16),inset 13px 15px 22px rgba(255,255,255,.45),0 5px 0 rgba(28,42,74,.18);
+  display:grid;place-items:center;transition:transform .09s}
+.bal .env::after{content:"";position:absolute;left:50%;bottom:-9px;translate:-50% 0;width:0;height:0;
+  border-left:10px solid transparent;border-right:10px solid transparent;border-top:11px solid var(--c2);
+  filter:drop-shadow(0 2px 0 var(--edge)) drop-shadow(-2px 0 0 var(--edge)) drop-shadow(2px 0 0 var(--edge))}
+.bal .env i{font-style:normal;font-size:clamp(32px,11vw,46px);line-height:1;filter:drop-shadow(0 2px 2px rgba(60,40,20,.3))}
+.bal .rope{width:34%;max-width:52px;height:11px;border-left:3px solid var(--edge);border-right:3px solid var(--edge);box-sizing:border-box}
+.bal .tag{font-family:var(--zh);font-size:12px;font-weight:700;line-height:1.5;padding:1px 9px 2px;border:3px solid var(--edge);
+  border-radius:5px 5px 10px 10px;background:#E0A866;color:#3A2410;white-space:nowrap;box-shadow:0 3px 0 rgba(28,42,74,.25)}
+.bal b{margin-top:9px;font-size:18px;line-height:1.25}
+.bal .sub{font-size:13px;line-height:1.4;color:var(--muted);margin-top:1px}
+.bal:active .env{transform:scale(.94)}
+.bal:active .tag{transform:translateY(3px);box-shadow:none}
+@keyframes balfloat{0%,100%{translate:0 0} 50%{translate:0 -10px}}
 
 /* picker */
 .seg{display:flex;background:var(--surface2);border:3px solid var(--edge);border-radius:16px;padding:4px;gap:4px;margin-bottom:16px}
@@ -278,7 +287,7 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 .snhearts{font-size:15px;letter-spacing:1px;white-space:nowrap}
 .snbar{display:flex;gap:3px;flex:1;justify-content:center}
 .snbar i{width:9px;height:9px;border-radius:50%;border:2px solid var(--edge);background:var(--track)}
-.snboard{display:grid;grid-template-columns:repeat(var(--n),1fr);gap:2px;width:min(100%,54vh);aspect-ratio:1;margin:0 auto;padding:5px;background:#24365C;border:3px solid var(--edge);border-radius:20px;box-shadow:0 5px 0 var(--drop);touch-action:none;overflow:hidden}
+.snboard{display:grid;grid-template-columns:repeat(var(--n),1fr);grid-template-rows:repeat(var(--n),1fr);gap:2px;width:min(100%,54vh);aspect-ratio:1;margin:0 auto;padding:5px;background:#24365C;border:3px solid var(--edge);border-radius:20px;box-shadow:0 5px 0 var(--drop);touch-action:none;overflow:hidden}
 .sncell{display:grid;place-items:center;border-radius:4px;background:rgba(255,255,255,.055);font-family:var(--num);font-weight:700;font-size:clamp(9px,2.6vw,16px);line-height:1;color:#1C2A4A}
 .snbody{border-radius:6px}
 .snhead{position:relative;border-radius:8px;box-shadow:inset 0 0 0 2px rgba(0,0,0,.3)}
@@ -300,18 +309,18 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 .snlv.s-same.on{background:#FFC2DE} .snlv.s-diff.on{background:#B9A8FF}
 .pgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
 .pgrid.two{grid-template-columns:repeat(2,1fr)}
-.pcard{aspect-ratio:1;display:grid;place-items:center;gap:1px;background:var(--surface);border:3px solid var(--edge);border-radius:18px;box-shadow:0 4px 0 var(--drop);padding:4px;cursor:pointer;font-family:var(--num);font-weight:700;font-size:clamp(15px,4.8vw,24px);color:var(--ink);transition:transform .08s,box-shadow .08s}
+.pcard{aspect-ratio:1;display:grid;place-items:center;gap:1px;background:var(--surface);border:3px solid var(--edge);border-radius:18px;box-shadow:0 4px 0 var(--drop);padding:4px;cursor:pointer;font-family:var(--num);font-weight:700;font-size:clamp(21px,6.6vw,32px);color:var(--ink);transition:transform .08s,box-shadow .08s}
 .pcard:active:not(:disabled){transform:translateY(4px);box-shadow:0 0 0 var(--drop)}
 .pcard:disabled{cursor:default}
 .pcard small{color:var(--muted);font-size:.68em;margin:0 1px}
-.pcard .pv{font-style:normal;font-size:.72em}
+.pcard .pv{font-style:normal;font-size:.8em}
 .pcard.sel{background:var(--sun);color:var(--on-color);transform:translateY(3px);box-shadow:0 1px 0 var(--drop)}
-.pcard.ok{background:var(--mint);color:#06281A;animation:bounce .45s}
-.pcard.ok small{color:#06281A;opacity:.7}
+.pcard.ok{background:var(--pc,var(--mint));color:#1C2A4A;animation:bounce .45s}
+.pcard.ok small{color:#1C2A4A;opacity:.65}
 .pcard.bad{background:var(--tomato);color:#fff;animation:shake .4s}
 .pcard.bad small{color:#fff;opacity:.8}
 .pcard.no{opacity:.5}
-.pcard.two{aspect-ratio:4/3;font-size:clamp(15px,4.4vw,22px)}
+.pcard.two{aspect-ratio:4/3;font-size:clamp(19px,5.8vw,28px)}
 .pcard .peq{font-style:normal;font-size:.8em;color:var(--muted)}
 .pcard.ok .peq,.pcard.bad .peq{color:inherit}
 
@@ -323,7 +332,10 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 .lbox.count .ln{opacity:1}
 .li{font-size:clamp(15px,5vw,30px);line-height:1.15}
 .lbox.bad{animation:shake .4s}
-.lslots{display:flex;align-items:center;justify-content:center;gap:7px;font-family:var(--num);font-weight:700;font-size:clamp(26px,8vw,40px);margin:14px 0 2px}
+.lslots{display:flex;align-items:flex-start;justify-content:center;gap:7px;font-family:var(--num);font-weight:700;font-size:clamp(26px,8vw,40px);margin:14px 0 2px}
+.lpair{display:flex;flex-direction:column;align-items:center;gap:1px}
+.lpair small{font-family:var(--zh);font-weight:400;font-size:12px;color:var(--muted);letter-spacing:.02em}
+.lslots .op{margin-top:.18em}
 .lslots .op{color:var(--muted);font-size:.66em}
 .lslot{min-width:1.8em;padding:2px 8px;border:3px dashed var(--edge);border-radius:16px;background:var(--surface);color:var(--muted);cursor:pointer;font:inherit}
 .lslot.on{border-style:solid;background:var(--sun);color:var(--on-color)}
@@ -495,6 +507,8 @@ const PAIR_LV = [
   {id:'h', icon:'🔥', name:'挑戰', pairs:8, cards:4, rounds:9, hi:9}
 ];
 const PAIR_BY = {}; PAIR_LV.forEach(l=>{ PAIR_BY[l.id]=l; });
+/* 配對成功的每一組各用一個顏色，才看得出哪兩張是一對 */
+const PAIR_COLORS = ['#8CE6BC','#FFD36E','#9ED6FF','#FFAFC9','#C9B6FF','#FFB38A','#B6E86B','#E3CBA0'];
 const PAIR_STYLES = [
   {id:'same', icon:'👯', name:'找一樣', desc:'答案一樣的兩張配成一對'},
   {id:'diff', icon:'🔍', name:'找不同', desc:'找出兩個算式答案不一樣的那一張'}
@@ -1066,6 +1080,36 @@ function showModal(html){
 }
 function closeModal(){ const m=document.getElementById('modal'); if(m) m.remove(); }
 
+/* ---------- 首頁的熱氣球 ---------- */
+/* 標籤分兩種：認識乘法（先學會）排前面，其他都是乘法遊戲 */
+const MODES = [
+  {act:'learn',      icon:'🍡', name:'這是幾乘幾？', tag:'認識乘法', c:['#FFE09A','#FFBF4D'],
+    sub:()=>'看圖數數看，算式唸給你聽'},
+  {act:'reviewPick', icon:'🃏', name:'複習翻翻樂',   tag:'認識乘法', c:['#FFD3E6','#FF9CC8'],
+    sub:()=>'翻牌看答案，一起練乘法口訣'},
+  {act:'stages',     icon:'🗺️', name:'練習闖關',     tag:'乘法遊戲', c:['#FFCBA8','#FF9E68'],
+    sub:m=>`12 關都可以玩　已過 ${Object.keys(m.stages||{}).length}/${STAGES.length} 關`},
+  {act:'pairPick',   icon:'🧩', name:'配對消消樂',   tag:'乘法遊戲', c:['#E3F08C','#C2DC4E'],
+    sub:()=>'答案一樣的算式配成一對'},
+  {act:'huntPick',   icon:'🔍', name:'尋寶',         tag:'乘法遊戲', c:['#B6E2FF','#74C2FF'],
+    sub:m=>`答案藏在畫裡，瞇著眼睛找${(m.art||[]).length?`　🖼️ ${(m.art||[]).length} 張`:''}`},
+  {act:'snakePick',  icon:'🐍', name:'蛇蛇彩虹路',   tag:'乘法遊戲', c:['#A6EDCB','#5FD9A6'],
+    sub:m=>`吃到答案就長大變色 🌈${m.snakeBest?`　最長 ${m.snakeBest} 個`:''}`},
+  {act:'timed',      icon:'⏱️', name:'限時挑戰',     tag:'乘法遊戲', c:['#FFBDBD','#FF8585'],
+    sub:m=>`60 秒答對幾題？最佳 ${m.timedBest} 題`},
+  {act:'book',       icon:'🎰', name:'扭蛋貼紙簿',   tag:'乘法遊戲', c:['#D5C6FF','#AB90FF'],
+    sub:m=>m.coins>0?`有 ${m.coins} 枚扭蛋幣可以轉！`:'用扭蛋幣收集可愛貼紙'}
+];
+function balloonsHTML(m){
+  return MODES.map((x,i)=>`<button class="bal" data-act="${x.act}"
+      style="--c1:${x.c[0]};--c2:${x.c[1]};--d:${(i*0.41).toFixed(2)}s;--t:${(4.2+(i%3)*0.7).toFixed(1)}s">
+      <span class="env" aria-hidden="true"><i>${x.icon}</i></span>
+      <span class="rope" aria-hidden="true"></span>
+      <span class="tag">${x.tag}</span>
+      <b>${x.name}</b>
+      <span class="sub">${x.sub(m)}</span></button>`).join('');
+}
+
 /* ---------- 說明小幫手 ---------- */
 const HELP = {
   home:{t:'這個遊戲怎麼玩？', li:[
@@ -1113,7 +1157,7 @@ const HELP = {
   learn:{t:'認識乘法怎麼玩？', li:[
     '先數數看圖裡有幾排 🍡',
     '再數每一排有幾個',
-    '點下面的數字填進「□ × □」',
+    '照順序填：排數 × 每排幾個',
     '答對會唸出來：3、4、12',
     '數不清楚就按 🔍 提示']},
   pairPick:{t:'配對消消樂', li:[
@@ -1260,16 +1304,7 @@ const VIEWS = {
         <ul class="qlist">${rows}</ul>
         <div class="bonus">${bonus}</div>
       </section>
-      <section class="modes">
-        <button class="mode m1 wide" data-act="learn"><span class="mi">🍡</span><b>認識乘法</b><span>看圖數數看，這是幾乘幾呢？算式唸給你聽</span></button>
-        <button class="mode m6 wide" data-act="reviewPick"><span class="mi">🃏</span><b>複習翻翻樂</b><span>翻牌看答案，一起練乘法口訣</span></button>
-        <button class="mode m5 wide" data-act="stages"><span class="mi">🗺️</span><b>練習闖關</b><span>12 關都可以直接玩，自己打數字或選答案　已過 ${clearedStages}/${STAGES.length} 關</span></button>
-        <button class="mode m9 wide" data-act="pairPick"><span class="mi">🧩</span><b>配對消消樂</b><span>答案一樣的算式配成一對，像 4×4 和 8×2 都是 16</span></button>
-        <button class="mode m7 wide" data-act="huntPick"><span class="mi">🔍</span><b>尋寶</b><span>答案用同一個顏色藏在畫面裡，要瞇著眼睛找${(m.art||[]).length?`　🖼️ 畫廊 ${(m.art||[]).length} 張`:''}</span></button>
-        <button class="mode m8 wide" data-act="snakePick"><span class="mi">🐍</span><b>蛇蛇彩虹路</b><span>吃到正確答案就長大變色，集滿七彩完成一條彩虹 🌈${m.snakeBest?`　最長 ${m.snakeBest} 個`:''}</span></button>
-        <button class="mode m2" data-act="timed"><span class="mi">⏱️</span><b>限時挑戰</b><span>60 秒能答對幾題？最佳紀錄 ${m.timedBest} 題</span></button>
-        <button class="mode m3" data-act="book"><span class="mi">🎰</span><b>扭蛋貼紙簿</b><span>${m.coins>0?`有 ${m.coins} 枚扭蛋幣可以轉！`:'用扭蛋幣收集可愛貼紙'}</span></button>
-      </section>`;
+      <section class="modes">${balloonsHTML(m)}</section>`;
   },
 
   players(){
@@ -1428,14 +1463,14 @@ const VIEWS = {
         <div class="track" id="track"><i id="trackfill" style="width:${g.qi/g.total*100}%"></i></div>
         <span class="qnum" id="qnum">${Math.min(g.qi+1,g.total)}/${g.total}</span>
       </div>
-      <div class="hask lask">這是幾乘幾呢？<span class="hchant">有幾排？每一排有幾個？</span></div>
+      <div class="hask lask">這是幾乘幾呢？<span class="hchant">先填有幾排，再填每排幾個</span></div>
       <div class="lbox ${g.hinted?'count':''}" id="lbox">${rows}</div>
       <div class="lslots">
-        <button class="lslot ${p1==null?'on':'has'}" data-act="lslot" data-arg="0">${p1==null?'?':p1}</button>
+        <span class="lpair"><button class="lslot ${p1==null?'on':'has'}" data-act="lslot" data-arg="0">${p1==null?'?':p1}</button><small>有幾排</small></span>
         <span class="op">×</span>
-        <button class="lslot ${p1!=null&&p2==null?'on':(p2!=null?'has':'')}" data-act="lslot" data-arg="1">${p2==null?'?':p2}</button>
+        <span class="lpair"><button class="lslot ${p1!=null&&p2==null?'on':(p2!=null?'has':'')}" data-act="lslot" data-arg="1">${p2==null?'?':p2}</button><small>每排幾個</small></span>
         <span class="op">=</span>
-        <span class="lans ${done?'on':''}">${done?q.a*q.b:'?'}</span>
+        <span class="lpair"><span class="lans ${done?'on':''}">${done?q.a*q.b:'?'}</span><small>全部</small></span>
       </div>
       <div class="fb" id="lfb"></div>
       <div class="lkeys">${[1,2,3,4,5,6,7,8,9].map(n=>`<button class="lkey" data-act="lkey" data-arg="${n}">${n}</button>`).join('')}
@@ -1464,7 +1499,7 @@ const VIEWS = {
     if(!game || game.mode!=='pair') return VIEWS.home();
     const g=game;
     if(g.style==='same'){
-      const cells=g.cards.map((c,i)=>`<button class="pcard ${c.ok?'ok':''}${g.sel===i?' sel':''}${c.bad?' bad':''}" data-act="ptap" data-arg="${i}"${c.ok?' disabled':''}>
+      const cells=g.cards.map((c,i)=>`<button class="pcard ${c.ok?'ok':''}${g.sel===i?' sel':''}${c.bad?' bad':''}" data-act="ptap" data-arg="${i}"${c.ok?' disabled':''} style="--pc:${PAIR_COLORS[c.g%PAIR_COLORS.length]}">
         <b>${c.a}<small>×</small>${c.b}</b>${c.ok?`<i class="pv">${c.p}</i>`:''}</button>`).join('');
       view.innerHTML=`
         <div class="playbar">
@@ -2416,7 +2451,8 @@ function learnHint(){
 }
 function learnCheck(){
   const g=game, q=g.cur, x=g.pick[0], y=g.pick[1], p=q.a*q.b, d=ensureDaily();
-  if((x===q.a && y===q.b) || (x===q.b && y===q.a)){
+  /* 照課本的寫法：排數 × 每排幾個，所以 3 排每排 5 個只有 3 × 5 算對 */
+  if(x===q.a && y===q.b){
     g.locked=true;
     const clean = g.miss===0 && !g.hinted;
     if(clean){
@@ -2427,22 +2463,25 @@ function learnCheck(){
     g.qi++;
     go('learn');
     const ch=chant(x,y);
-    lnote(x===q.a ? PRAISE[rnd(PRAISE.length)] : `${x} × ${y} 和 ${q.a} × ${q.b} 都是 ${p}，交換也對！`);
+    lnote(PRAISE[rnd(PRAISE.length)]);
     lfb(`<div class="chant">${ch}${canSpeak?`<button class="say" data-act="say" data-arg="${ch}" aria-label="再唸一次">🔊</button>`:''}</div>`);
     sfx.right(g.combo);
-    say(`${x}、${y}、${p}`);
+    /* 數字唸國字，語速和口訣、翻翻樂一致 */
+    say(`${zhNum(x)}、${zhNum(y)}、${zhNum(p)}`);
     save(); checkQuests();
     g.t=setTimeout(()=>{ if(game && game.mode==='learn') learnNext(); }, reduceMotion?600:2200);
   } else {
-    if(g.miss===0) record(q.a,q.b,false);
+    const swapped = x===q.b && y===q.a;      /* 答案對、順序反了 */
+    if(g.miss===0 && !swapped) record(q.a,q.b,false);
     g.miss++; g.combo=0;
-    const wrong=`${x} × ${y} = ${x*y}`;
     if(g.miss>=2) g.hinted=true;
     g.pick=[];
     go('learn');
     const box=document.getElementById('lbox');
     if(box){ box.classList.remove('bad'); void box.offsetWidth; box.classList.add('bad'); }
-    lnote(g.miss===1 ? `${wrong}，再數一次有幾排、每排幾個` : `提示：有 ${q.a} 排，每排 ${q.b} 個`);
+    lnote(swapped ? `${x} × ${y} 是「${x} 排、每排 ${y} 個」喔，這裡是 ${q.a} 排，要寫 ${q.a} × ${q.b}`
+      : g.miss===1 ? `${x} × ${y} = ${x*y}，再數一次有幾排、每排幾個`
+      : `提示：有 ${q.a} 排，每排 ${q.b} 個`);
     sfx.wrong();
   }
 }
