@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>乘乘熱氣球 · 風格原型</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Huninn&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* 淡彩色系 */
+  --blue:#829BAE;      /* 主色 霧感灰藍（線條、文字用的深錨點） */
+  --cream:#FDF8E9;     /* 底色 淡奶油黃（提亮） */
+  --oat:#D9CBB8;       /* 輔色 燕麥米 */
+  --sage:#A8B5A0;      /* 點綴 淡鼠尾草綠 */
+  /* 大面積填充用的明亮淡彩：同色相、提高明度，不加彩度 */
+  --blue-l:#AFC9DA; --oat-l:#EBDECA; --sage-l:#C6D4BB;
+  --paper:#FFFEF8;
+  --ink:#44525C;
+  --muted:#8795A0;
+  --edge:#8A969E;
+  --line:#D6CAB5;
+  --shadow:rgba(140,118,76,.11);
+  --f2:#EBDECA; --f3:#FDF8E9;   /* 只給圖案用，亮暗模式都不變 */
+  --ic2:var(--blue);
+  --zh:'Huninn','Noto Sans TC','PingFang TC','Microsoft JhengHei',system-ui,sans-serif;
+  --num:'Fredoka','Huninn','Arial Rounded MT Bold',system-ui,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --cream:#2B3137; --paper:#343C43; --oat:#4B4337; --ink:#F2EDDC; --muted:#A7B2BA;
+    --edge:#97A4AC; --line:#5B6670; --blue:#9DB6C6; --sage:#B4C2AA;
+    --blue-l:#9DB6C6; --oat-l:#6E614A; --sage-l:#B4C2AA;
+    --shadow:rgba(0,0,0,.38); --ic2:#9DB6C6; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --cream:#2B3137; --paper:#343C43; --oat:#4B4337; --ink:#F2EDDC; --muted:#A7B2BA;
+  --edge:#97A4AC; --line:#5B6670; --blue:#9DB6C6; --sage:#B4C2AA;
+  --blue-l:#9DB6C6; --oat-l:#6E614A; --sage-l:#B4C2AA;
+  --shadow:rgba(0,0,0,.38); --ic2:#9DB6C6; color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--cream);color:var(--ink);font-family:var(--zh);font-size:17px;line-height:1.55;
+  -webkit-tap-highlight-color:transparent;overflow-x:hidden}
+h1,h2,h3,p{margin:0}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--blue);outline-offset:3px;border-radius:14px}
+
+/* 紙張顆粒 */
+.grain{position:fixed;inset:0;z-index:90;pointer-events:none;opacity:.038;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E")}
+.defs{position:absolute;width:0;height:0;overflow:hidden}
+
+/* 紙片卡：手撕邊 + 疊印錯位 */
+.paper{position:relative;isolation:isolate;padding:16px 16px 18px}
+.paper::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--paper);
+  border-radius:26px 20px 28px 22px/20px 28px 22px 26px;filter:url(#rough);box-shadow:0 6px 16px var(--shadow)}
+.paper.offset::after{content:"";position:absolute;inset:0;z-index:-2;background:var(--oat);
+  border-radius:26px 20px 28px 22px/20px 28px 22px 26px;transform:translate(3px,4px);
+  filter:url(#rough);mix-blend-mode:multiply;opacity:.34}
+
+.topbar{position:relative;z-index:5;background:var(--paper)}
+.topbar .in{max-width:1080px;margin:0 auto;display:flex;align-items:center;gap:8px;padding:10px 16px}
+.torn{display:block;width:100%;height:14px;margin-top:-1px;color:var(--paper)}
+.brand{display:flex;align-items:center;gap:7px;background:none;border:0;padding:2px;cursor:pointer;font-weight:700;font-size:18px}
+.brand span.b{width:24px;display:block;flex:none}
+.spacer{flex:1}
+.pill{display:inline-flex;align-items:center;gap:6px;background:var(--cream);border-radius:999px;padding:4px 12px;font-family:var(--num);font-weight:600;font-size:16px}
+.pill svg{width:19px;height:19px;flex:none}
+.ghost{background:var(--cream);border:0;border-radius:999px;width:38px;height:38px;cursor:pointer;display:grid;place-items:center;flex:none}
+.ghost svg{width:20px;height:20px}
+
+.devbar{max-width:1080px;margin:0 auto;padding:8px 16px 0;display:flex;gap:8px;align-items:center}
+.devbar b{font-size:12px;color:var(--muted);font-weight:400}
+.devbar button{border:1.5px dashed var(--line);background:transparent;color:var(--muted);border-radius:999px;padding:2px 11px;font-size:13px;cursor:pointer}
+.devbar button[aria-pressed="true"]{color:var(--ink);border-style:solid;background:var(--paper)}
+
+main{max-width:1080px;margin:0 auto;padding:10px 16px 140px}
+
+/* 標題 */
+.bunting{margin:0 -4px 2px;line-height:0}
+.hero{text-align:center;padding:2px 0 20px}
+.hero .big{position:relative;display:inline-block;white-space:nowrap;
+  font-size:clamp(36px,10vw,68px);font-weight:700;letter-spacing:.05em;line-height:1.1}
+.hero .big::before{content:attr(data-txt);position:absolute;left:4px;top:5px;white-space:nowrap;
+  color:var(--blue);mix-blend-mode:multiply;opacity:.8;z-index:-1}
+.hero .sub{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:10px;font-size:clamp(15px,3.6vw,20px);color:var(--muted)}
+.hero .sub .b{width:20px;display:block}
+.who{display:inline-flex;align-items:center;gap:8px;margin-top:14px;background:var(--paper);border:0;border-radius:999px;padding:5px 14px 5px 7px;cursor:pointer;box-shadow:0 3px 10px var(--shadow)}
+.who .av{width:26px;display:block;flex:none}
+.who b{font-size:16px}
+.who i{font-style:normal;font-size:13px;color:var(--muted)}
+
+.guestbar{display:flex;align-items:center;gap:10px;margin:0 auto 18px;max-width:580px;padding:10px 14px;
+  border-radius:18px 14px 20px 12px/14px 20px 12px 18px;background:color-mix(in srgb,var(--oat-l) 62%,var(--paper));font-size:15px}
+.guestbar svg{width:24px;height:24px;flex:none;color:var(--ink);--ic2:var(--paper)}
+.guestbar .btn{margin-left:auto}
+
+.btn{font-weight:700;border:0;border-radius:16px 13px 17px 12px/13px 17px 12px 16px;padding:9px 16px;
+  background:var(--blue-l);color:#2F3D47;cursor:pointer;box-shadow:0 3px 0 color-mix(in srgb,var(--blue) 82%,#000 4%);
+  transition:transform .08s,box-shadow .08s;font-size:16px}
+.btn:active{transform:translateY(3px);box-shadow:0 0 0}
+.btn.soft{background:var(--cream);color:var(--ink);box-shadow:0 3px 0 var(--line)}
+.btn.sage{background:var(--sage-l);color:#303A2B;box-shadow:0 3px 0 color-mix(in srgb,var(--sage) 82%,#000 4%)}
+.btn.small{font-size:14px;padding:6px 12px}
+.btn.big{font-size:19px;padding:13px 24px}
+.btn svg{vertical-align:-3px;--ic2:currentColor}
+
+/* 祭典攤販 */
+.sec-h{display:flex;align-items:baseline;gap:9px;margin:0 2px 12px}
+.sec-h h2{font-size:21px}
+.sec-h small{color:var(--muted);font-size:14px}
+.stalls{display:grid;gap:14px;grid-template-columns:1fr}
+@media (min-width:700px){ .stalls{grid-template-columns:repeat(3,1fr);gap:18px} }
+.stall{display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 14px 16px}
+.stall svg.sv{width:100%;max-width:240px;display:block}
+.stall .qt{font-size:17px;font-weight:700;margin-top:-4px}
+.stall .dots{display:flex;gap:5px;margin:9px 0 11px}
+.stall .dots i{width:11px;height:11px;border-radius:50%;background:var(--cream);box-shadow:inset 0 0 0 1.5px var(--line)}
+.stall .dots i.on{background:var(--sage-l);box-shadow:none}
+.stall .done{display:inline-flex;align-items:center;gap:6px;font-size:14px;color:var(--muted)}
+.stall .done svg{width:17px;height:17px;--ic2:var(--paper)}
+
+/* 熱氣球：填滿畫面，橫式三個一排 */
+.modes{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:30px}
+@media (min-width:700px){ .modes{grid-template-columns:repeat(3,1fr);gap:24px} }
+.bal{background:none;border:0;padding:0 2px 10px;cursor:pointer;display:flex;flex-direction:column;align-items:center;text-align:center;color:var(--ink)}
+.bal .env{position:relative;container-type:inline-size;width:100%;max-width:220px;
+  animation:float var(--t,5s) ease-in-out var(--d,0s) infinite}
+@media (min-width:700px){ .bal .env{max-width:290px} }
+.bal .env > svg{display:block;width:100%;height:auto;filter:drop-shadow(0 9px 10px var(--shadow))}
+.bal:active .env{animation-play-state:paused}
+/* 分類字印在球身的布帶上，不是貼紙 */
+.bal .tag{position:absolute;top:3.5%;right:-1%;z-index:2;transform:rotate(8deg);pointer-events:none;
+  white-space:nowrap;font-size:clamp(15px,7.4cqw,26px);font-weight:700;padding:5px 14px;line-height:1.35;
+  border-radius:11px 7px 12px 6px/7px 12px 6px 11px;
+  background:var(--oat-l);color:var(--ink);box-shadow:0 2px 6px var(--shadow)}
+.bal .tag.learn{background:var(--sage-l)}
+.bal .sub{font-size:15px;color:var(--muted);line-height:1.45;margin-top:4px;max-width:17em}
+@keyframes float{ 0%,100%{transform:translateY(0) rotate(-.6deg)} 50%{transform:translateY(-11px) rotate(.8deg)} }
+
+/* 扭蛋貼紙簿：漂浮微發光的活頁筆記本 */
+.bookwrap{display:flex;justify-content:center;margin-top:36px}
+.book{position:relative;background:none;border:0;cursor:pointer;color:var(--ink);display:flex;flex-direction:column;align-items:center;
+  animation:float 6.4s ease-in-out .3s infinite}
+.book::before{content:"";position:absolute;left:50%;top:38%;transform:translate(-50%,-50%);
+  width:150%;aspect-ratio:1;border-radius:50%;z-index:-1;pointer-events:none;
+  background:radial-gradient(circle,rgba(243,214,142,.62),rgba(243,214,142,.22) 42%,transparent 66%);
+  animation:glow 3.6s ease-in-out infinite}
+.book svg{width:min(250px,62vw);height:auto;filter:drop-shadow(0 8px 12px var(--shadow))}
+.book b{font-size:19px;margin-top:8px}
+.book .sub{font-size:13.5px;color:var(--muted)}
+@keyframes glow{ 0%,100%{opacity:.55;transform:translate(-50%,-50%) scale(.94)} 50%{opacity:1;transform:translate(-50%,-50%) scale(1.06)} }
+
+/* 說明小幫手：小動物坐熱氣球 */
+.helper{position:fixed;right:20px;bottom:20px;z-index:70;background:none;border:0;cursor:pointer;
+  display:flex;align-items:flex-end;gap:6px;color:var(--ink);animation:drift var(--ht,7s) ease-in-out var(--hd,0s) infinite;width:max-content;max-width:calc(100vw - 32px)}
+.helper svg{width:96px;height:auto;flex:none;filter:drop-shadow(0 6px 8px var(--shadow))}
+.helper .say{flex:none;background:var(--paper);border-radius:14px 12px 15px 4px/12px 15px 10px 14px;padding:5px 11px;
+  font-size:14px;font-weight:700;box-shadow:0 4px 10px var(--shadow);margin-bottom:30px;white-space:nowrap}
+@keyframes drift{ 0%,100%{transform:translate(0,0) rotate(-1.5deg)} 30%{transform:translate(-6px,-13px) rotate(1.5deg)} 65%{transform:translate(0,-6px) rotate(-1deg)} }
+
+/* 入口頁 */
+.entry{max-width:460px;margin:0 auto}
+.entry h2{font-size:22px;text-align:center}
+.entry .fieldlab{font-size:14px;color:var(--muted);margin:16px 0 6px}
+.entry input{width:100%;font:inherit;padding:11px 14px;border:0;border-radius:16px 12px 18px 11px/12px 18px 11px 16px;background:var(--cream);color:var(--ink)}
+.avs{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.avs button{background:var(--cream);border:0;border-radius:50% 48% 52% 50%/50% 52% 48% 50%;padding:7px 6px;cursor:pointer;line-height:0}
+.avs button[aria-pressed="true"]{background:color-mix(in srgb,var(--blue) 32%,var(--cream));box-shadow:0 0 0 2.5px var(--blue)}
+.avs span.b{width:32px;display:block}
+.entry .go{display:grid;gap:10px;margin-top:20px;justify-items:center}
+.guestnote{font-size:13.5px;color:var(--muted);text-align:center;max-width:22em}
+
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:95;background:var(--ink);color:var(--cream);
+  padding:9px 18px;border-radius:999px;font-size:15px;box-shadow:0 8px 20px var(--shadow)}
+@media (prefers-reduced-motion:reduce){ *{animation:none!important} }
+</style>
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+
+<svg class="defs" aria-hidden="true">
+  <filter id="rough" x="-6%" y="-6%" width="112%" height="112%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.028" numOctaves="4" seed="9" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="9" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+  <pattern id="pat-band" patternUnits="userSpaceOnUse" width="100" height="18">
+    <rect width="100" height="9" fill="#fff" opacity=".3"/></pattern>
+  <pattern id="pat-check" patternUnits="userSpaceOnUse" width="16" height="16">
+    <rect width="8" height="8" fill="#fff" opacity=".34"/>
+    <rect x="8" y="8" width="8" height="8" fill="#fff" opacity=".34"/></pattern>
+  <pattern id="pat-zig" patternUnits="userSpaceOnUse" width="15" height="12">
+    <path d="M0,10.5 L7.5,3 L15,10.5" fill="none" stroke="#fff" stroke-opacity=".42" stroke-width="2.6"/></pattern>
+  <pattern id="pat-wave" patternUnits="userSpaceOnUse" width="22" height="13">
+    <path d="M0,9 Q5.5,2 11,9 T22,9" fill="none" stroke="#fff" stroke-opacity=".4" stroke-width="2.4"/></pattern>
+  <pattern id="pat-dot" patternUnits="userSpaceOnUse" width="14" height="14">
+    <circle cx="7" cy="7" r="3" fill="#fff" opacity=".36"/></pattern>
+  <pattern id="pat-leaf" patternUnits="userSpaceOnUse" width="17" height="17">
+    <path d="M8.5,2 C12.5,5.5 12.5,11.5 8.5,15 C4.5,11.5 4.5,5.5 8.5,2Z" fill="#fff" opacity=".32"/></pattern>
+</svg>
+
+<header class="topbar">
+  <div class="in">
+    <button class="brand" data-act="home"><span class="b" id="logoBal"></span><span>乘乘熱氣球</span></button>
+    <span class="spacer"></span>
+    <span class="pill" id="coinPill"></span>
+    <span class="pill" id="bookPill"></span>
+    <button class="ghost" data-act="theme" aria-label="換亮暗" id="themeBtn"></button>
+  </div>
+</header>
+<svg class="torn" viewBox="0 0 1200 14" preserveAspectRatio="none" aria-hidden="true">
+  <path d="M0,0 H1200 V7 C1100,12 1000,3 900,8 C800,13 700,4 600,9 C500,14 400,4 300,9 C200,13 100,4 0,9 Z" fill="currentColor"/>
+</svg>
+
+<div class="devbar"><b>原型切換（正式版不會有）</b>
+  <button data-view="home" aria-pressed="true">首頁</button>
+  <button data-view="entry" aria-pressed="false">入口／訪客</button>
+</div>
+
+<main id="view"></main>
+
+<script>
+/* ========= 熱氣球：圓胖球身、下收窄、裙帶、網索、小藤籃（依參考圖重畫） ========= */
+const GORES=[-1,-0.666,-0.333,0,0.333,0.666,1];
+const K=0.5523;
+function pts(k){
+  return { a:(50+40*K*k).toFixed(2), w:(50+40*k).toFixed(2),
+           d:(50+31*k).toFixed(2), n:(50+11*k).toFixed(2) };
+}
+function edgeF(k){ const p=pts(k);
+  return `M50,4C${p.a},4 ${p.w},21.9 ${p.w},44C${p.w},66 ${p.d},85 ${p.n},96`; }
+function edgeR(k){ const p=pts(k);
+  return `L${p.n},96C${p.d},85 ${p.w},66 ${p.w},44C${p.w},21.9 ${p.a},4 50,4Z`; }
+const ENV = edgeF(-1)+edgeR(1);
+let UID=0;
+function balloon(o){
+  o=o||{}; const id='b'+(++UID), pat=o.pat||'pat-band', mini=!!o.mini;
+  let g='';
+  for(let i=0;i<GORES.length-1;i++) g+=`<path d="${edgeF(GORES[i])+edgeR(GORES[i+1])}" fill="var(--c${i%2?2:1})"/>`;
+  const band = o.band===false ? '' : `
+      <rect x="0" y="62" width="100" height="18" fill="var(--c0,#FBF5DF)" opacity=".93"/>
+      <rect x="0" y="62" width="100" height="1.4" fill="var(--c3)" opacity=".26"/>
+      <rect x="0" y="78.6" width="100" height="1.4" fill="var(--c3)" opacity=".26"/>`;
+  const rig = mini ? '' : `
+    <path d="M39.2,94H60.8L59.2,103H40.8Z" fill="var(--c3)"/>
+    <path d="M41.4,103 44,114M58.6,103 56,114M46,103 47.4,114M54,103 52.6,114M50,103V114"
+      stroke="var(--c3)" stroke-width=".9" fill="none" opacity=".75"/>
+    <path d="M43.4,107h13.2M44,110.8h12" stroke="var(--c3)" stroke-width=".8" fill="none" opacity=".5"/>
+    <rect x="43" y="113.6" width="14" height="11" rx="2.4" fill="#E2C193"/>
+    <rect x="43" y="113.6" width="14" height="11" rx="2.4" fill="none" stroke="#B08B57" stroke-width="1.3"/>
+    <path d="M43.4,117.4h13.2M43.4,121h13.2" stroke="#B08B57" stroke-width=".8" opacity=".6"/>`;
+  return `<svg viewBox="0 0 100 ${mini?102:128}" aria-hidden="true" focusable="false">
+    <defs><clipPath id="c-${id}"><path d="${ENV}"/></clipPath></defs>
+    <g clip-path="url(#c-${id})">
+      ${g}
+      <rect x="0" y="0" width="100" height="100" fill="url(#${pat})"/>
+      <circle cx="31" cy="34" r="29" fill="#fff" opacity=".2"/>
+      <circle cx="73" cy="58" r="33" fill="var(--c3)" opacity=".07"/>
+      ${band}
+      <ellipse cx="29" cy="28" rx="10.5" ry="14" fill="#fff" opacity=".34" transform="rotate(-20 29 28)"/>
+      <path d="M78,8 H101 V102 H78 C88,74 88,34 78,8Z" fill="var(--c3)" opacity=".09"/>
+    </g>
+    <path d="${ENV}" fill="none" stroke="var(--c3)" stroke-width="1.5" stroke-opacity=".45" stroke-linejoin="round"/>
+    ${rig}
+  </svg>`;
+}
+
+/* ========= icon 插畫風符號系統（取代 emoji） ========= */
+/* 主色用 currentColor，第二層用 --ic2 */
+const ICON={
+  coin:`<circle cx="12" cy="12" r="9.2" fill="currentColor"/><circle cx="12" cy="12" r="6" fill="none" stroke="var(--ic2)" stroke-width="1.7"/><path d="M12,9.6v4.8M9.8,12h4.4" stroke="var(--ic2)" stroke-width="1.7" stroke-linecap="round"/>`,
+  book:`<path d="M5,3.8h8.6L19,9.2v11A1.8,1.8 0 0 1 17.2,22H5a1.8,1.8 0 0 1 -1.8,-1.8V5.6A1.8,1.8 0 0 1 5,3.8Z" fill="currentColor"/><path d="M13.6,3.8V9.2H19" fill="var(--ic2)" opacity=".55"/><rect x="6.4" y="12" width="4.6" height="4" rx="1.2" fill="var(--ic2)"/><rect x="12.4" y="15.4" width="4.6" height="4" rx="1.2" fill="var(--ic2)" opacity=".7"/>`,
+  medal:`<path d="M8.2,2.6 10.6,9.4 6.2,10.6Z" fill="var(--ic2)"/><path d="M15.8,2.6 13.4,9.4 17.8,10.6Z" fill="var(--ic2)"/><circle cx="12" cy="15" r="6.8" fill="currentColor"/><path d="M12,10.8 13.4,13.8 16.6,14.2 14.2,16.4 14.9,19.6 12,18 9.1,19.6 9.8,16.4 7.4,14.2 10.6,13.8Z" fill="var(--ic2)"/>`,
+  array:`<g fill="currentColor"><circle cx="7.2" cy="7.2" r="2.1"/><circle cx="12" cy="7.2" r="2.1"/><circle cx="16.8" cy="7.2" r="2.1"/><circle cx="7.2" cy="12" r="2.1"/><circle cx="12" cy="12" r="2.1"/><circle cx="16.8" cy="12" r="2.1"/></g><g fill="var(--ic2)"><circle cx="7.2" cy="16.8" r="2.1"/><circle cx="12" cy="16.8" r="2.1"/><circle cx="16.8" cy="16.8" r="2.1"/></g>`,
+  flip:`<rect x="2.6" y="6.6" width="10.2" height="13.6" rx="2.4" fill="var(--ic2)" transform="rotate(-10 7.7 13.4)"/><rect x="10.6" y="3.4" width="10.4" height="13.8" rx="2.4" fill="currentColor" transform="rotate(9 15.8 10.3)"/><circle cx="16.2" cy="10.2" r="2.2" fill="var(--ic2)"/>`,
+  steps:`<rect x="2.6" y="15" width="5.6" height="5.6" rx="1.3" fill="var(--ic2)"/><rect x="8.8" y="11.2" width="5.6" height="9.4" rx="1.3" fill="currentColor"/><rect x="15" y="7.4" width="5.6" height="13.2" rx="1.3" fill="var(--ic2)"/><path d="M17.8,7V2.2l4.2,1.8-4.2,1.8" fill="currentColor"/>`,
+  pair:`<rect x="2.4" y="3.4" width="8.6" height="8.6" rx="2.6" fill="currentColor"/><rect x="13" y="12" width="8.6" height="8.6" rx="2.6" fill="currentColor"/><path d="M11,12 13,12" stroke="var(--ic2)" stroke-width="2.4" stroke-linecap="round"/><circle cx="6.7" cy="7.7" r="1.9" fill="var(--ic2)"/><circle cx="17.3" cy="16.3" r="1.9" fill="var(--ic2)"/>`,
+  find:`<circle cx="10.4" cy="10.4" r="7.4" fill="currentColor"/><circle cx="10.4" cy="10.4" r="4.2" fill="var(--ic2)" opacity=".75"/><path d="M15.8,15.8 21,21" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/>`,
+  snake:`<path d="M3.4,16.4q3.4,-6 6.8,0t6.8,0" fill="none" stroke="currentColor" stroke-width="4.2" stroke-linecap="round"/><circle cx="18.4" cy="12.4" r="3.8" fill="currentColor"/><circle cx="19.5" cy="11.6" r="1.1" fill="var(--ic2)"/>`,
+  flag:`<rect x="4.6" y="3" width="2.4" height="18" rx="1.2" fill="var(--ic2)"/><path d="M7,4 19.6,8 7,12Z" fill="currentColor"/>`,
+  star:`<path d="M12,2.8 14.9,9 21.4,9.8 16.6,14.3 17.9,20.9 12,17.7 6.1,20.9 7.4,14.3 2.6,9.8 9.1,9Z" fill="currentColor"/>`,
+  check:`<circle cx="12" cy="12" r="9.2" fill="currentColor"/><path d="M7.6,12.4 10.7,15.6 16.4,8.8" fill="none" stroke="var(--ic2)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>`,
+  warn:`<path d="M12,3.4 22,19.8H2Z" fill="currentColor"/><path d="M12,9.4v4.4" stroke="var(--ic2)" stroke-width="2.2" stroke-linecap="round"/><circle cx="12" cy="16.9" r="1.3" fill="var(--ic2)"/>`,
+  moon:`<path d="M19.6,14.8A8.4,8.4 0 0 1 9.2,4.4 8.8,8.8 0 1 0 19.6,14.8Z" fill="currentColor"/>`
+};
+const ic=n=>`<svg viewBox="0 0 24 24" aria-hidden="true">${ICON[n]}</svg>`;
+
+/* ========= 三角旗 ========= */
+const FLAGC=['var(--blue-l)','var(--f2)','var(--sage-l)','var(--f3)'];
+const FLAGP=['pat-check','pat-zig','','pat-dot'];
+function bunting(w){
+  const h=62, sag=13, n=Math.max(6,Math.round(w/52));
+  const pt=t=>[t*w, 4+Math.sin(t*Math.PI)*sag];
+  let fl='',d='';
+  for(let i=0;i<=n;i++){ const p=pt(i/n); d+=(i?' L':'M')+p[0].toFixed(1)+','+p[1].toFixed(1); }
+  for(let i=0;i<n;i++){
+    const a=pt(i/n), b=pt((i+1)/n), mx=(a[0]+b[0])/2, my=(a[1]+b[1])/2+32;
+    const tri=`M${a[0].toFixed(1)},${a[1].toFixed(1)} L${b[0].toFixed(1)},${b[1].toFixed(1)} L${mx.toFixed(1)},${my.toFixed(1)}Z`;
+    fl+=`<path d="${tri}" fill="${FLAGC[i%4]}"/>`;
+    if(FLAGP[i%4]) fl+=`<path d="${tri}" fill="url(#${FLAGP[i%4]})"/>`;
+    fl+=`<path d="${tri}" fill="none" stroke="#3E4A52" stroke-opacity=".18" stroke-width="1.3" stroke-linejoin="round"/>`;
+  }
+  return `<svg viewBox="0 0 ${w} ${h}" width="100%" height="${h}" aria-hidden="true">${fl}<path d="${d}" fill="none" stroke="var(--line)" stroke-width="2.2" stroke-linecap="round"/></svg>`;
+}
+
+/* ========= 祭典攤販 ========= */
+function stall(i){
+  const roof=['var(--blue-l)','var(--sage-l)','var(--f2)'][i];
+  let sc='';
+  for(let k=0;k<6;k++) sc+=`<path d="M${14+k*22},46 a11,11 0 0 0 22,0Z" fill="${k%2?'var(--f3)':roof}"/>`;
+  return `<svg class="sv" viewBox="0 0 160 112" aria-hidden="true">
+    <path d="M12,20h136l6,26H6Z" fill="${roof}"/>
+    <path d="M12,20h136l6,26H6Z" fill="url(#pat-band)"/>
+    <g>${sc}</g>
+    <path d="M12,20h136l6,26H6Z" fill="none" stroke="#3E4A52" stroke-opacity=".22" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M16,46v56M144,46v56" stroke="var(--edge)" stroke-opacity=".55" stroke-width="3.2" stroke-linecap="round"/>
+    <rect x="26" y="74" width="108" height="30" rx="4" fill="var(--f2)" opacity=".5"/>
+    <rect x="26" y="74" width="108" height="30" rx="4" fill="none" stroke="var(--edge)" stroke-opacity=".32" stroke-width="1.8"/>
+    <path d="M80,20V8" stroke="var(--edge)" stroke-opacity=".5" stroke-width="2" stroke-linecap="round"/>
+    <path d="M80,8 95,12.6 80,17.2Z" fill="var(--f3)" stroke="#3E4A52" stroke-opacity=".25" stroke-width="1.5" stroke-linejoin="round"/>
+  </svg>`;
+}
+
+/* ========= 活頁筆記本：封面有獎章 ========= */
+function notebook(){
+  let rings='';
+  for(let i=0;i<5;i++) rings+=`<path d="M${34+i*28},12 a7.5,7.5 0 0 1 0,15" fill="none" stroke="var(--edge)" stroke-width="2.8" stroke-linecap="round"/>`;
+  return `<svg viewBox="0 0 196 150" aria-hidden="true">
+    <path d="M18,22h160a7,7 0 0 1 7,7v105a7,7 0 0 1 -7,7H18a7,7 0 0 1 -7,-7V29a7,7 0 0 1 7,-7Z" fill="var(--paper)" stroke="var(--edge)" stroke-opacity=".45" stroke-width="2.4"/>
+    <path d="M11,30h174" stroke="var(--edge)" stroke-opacity=".2" stroke-width="1.5" stroke-dasharray="4 5"/>
+    <path d="M88,90 80,126 95,116Z" fill="var(--blue-l)"/><path d="M108,90 116,126 101,116Z" fill="var(--blue-l)"/>
+    <circle cx="98" cy="80" r="26" fill="var(--oat-l)"/>
+    <circle cx="98" cy="80" r="26" fill="url(#pat-dot)"/>
+    <circle cx="98" cy="80" r="19.5" fill="var(--sage-l)"/>
+    <path d="M98,68.5 102.2,77 111.6,78.4 104.8,85 106.4,94.4 98,90 89.6,94.4 91.2,85 84.4,78.4 93.8,77Z" fill="var(--f3)"/>
+    <circle cx="98" cy="80" r="26" fill="none" stroke="var(--edge)" stroke-opacity=".3" stroke-width="2"/>
+    <g opacity=".85">
+      <rect x="28" y="112" width="26" height="22" rx="5" fill="var(--blue-l)" transform="rotate(-7 41 123)"/>
+      <rect x="142" y="112" width="26" height="22" rx="5" fill="var(--sage-l)" transform="rotate(6 155 123)"/>
+    </g>
+    ${rings}</svg>`;
+}
+
+/* ========= 小幫手：小熊坐熱氣球 ========= */
+function helperSVG(){
+  return `<svg viewBox="0 0 100 144" aria-hidden="true" style="--c1:#DAEEEE;--c2:#AFDEDF;--c3:#4C9094;--c0:#FDF8E9">
+    <defs><clipPath id="hc"><path d="${ENV}"/></clipPath></defs>
+    <g clip-path="url(#hc)">
+      <path d="${edgeF(-1)+edgeR(0)}" fill="var(--c1)"/><path d="${edgeF(0)+edgeR(1)}" fill="var(--c2)"/>
+      <rect x="0" y="0" width="100" height="100" fill="url(#pat-zig)"/>
+      <circle cx="32" cy="32" r="28" fill="#fff" opacity=".22"/>
+      <ellipse cx="30" cy="27" rx="10" ry="14" fill="#fff" opacity=".34" transform="rotate(-20 30 27)"/>
+    </g>
+    <path d="${ENV}" fill="none" stroke="var(--c3)" stroke-width="1.5" stroke-opacity=".45"/>
+    <path d="M39.2,94H60.8L59.2,103H40.8Z" fill="var(--c3)"/>
+    <path d="M41.6,103 43,111M58.4,103 57,111M50,103V108" stroke="var(--c3)" stroke-width=".9" fill="none" opacity=".7"/>
+    <!-- 小熊 -->
+    <circle cx="42.4" cy="110" r="3.8" fill="#C9A273"/><circle cx="57.6" cy="110" r="3.8" fill="#C9A273"/>
+    <circle cx="50" cy="112" r="9.2" fill="#DCB888"/>
+    <circle cx="46.6" cy="110" r="1.35" fill="#4A3A28"/><circle cx="53.4" cy="110" r="1.35" fill="#4A3A28"/>
+    <ellipse cx="50" cy="114.2" rx="3.8" ry="2.8" fill="#F3E2C8"/>
+    <path d="M50,113.2a1.5,1.5 0 0 0 0,2.4" fill="#4A3A28"/>
+    <rect x="37.6" y="118" width="24.8" height="13" rx="3.2" fill="#E2C193" stroke="#B08B57" stroke-width="1.5"/>
+    <path d="M38,122h24M38,126h24" stroke="#B08B57" stroke-width=".9" opacity=".6"/>
+    <circle cx="42.8" cy="118.8" r="2.3" fill="#C9A273"/><circle cx="57.2" cy="118.8" r="2.3" fill="#C9A273"/>
+  </svg>`;
+}
+
+/* ========= 資料（原型用假資料） ========= */
+const MODES=[
+  {act:'learn', tag:'認識乘法', name:'這是幾乘幾？', sub:'數數看，有幾個？',    ic:'array', pat:'pat-dot',   c:['#FDF0D2','#F8DEA9','#C0944A']},
+  {act:'review',tag:'認識乘法', name:'複習翻翻樂',   sub:'翻開卡片，一起唸',    ic:'flip',  pat:'pat-band',  c:['#FCE0DB','#F5C0B8','#C57C71']},
+  {act:'drill', tag:'乘法遊戲', name:'乘法練習',     sub:'12 關，想比快也可以',  ic:'steps', pat:'pat-check', c:['#D4EEED','#A8DCDD','#46959B']},
+  {act:'pair',  tag:'乘法遊戲', name:'配對消消樂',   sub:'答案一樣的配成一對',  ic:'pair',  pat:'pat-leaf',  c:['#E0E9D5','#C0D1AF','#708C5E']},
+  {act:'hunt',  tag:'乘法遊戲', name:'尋寶遊戲',     sub:'答案藏在畫裡，找找看', ic:'find',  pat:'pat-zig',   c:['#DBEAF3','#B3CFE2','#5A89A6']},
+  {act:'snake', tag:'乘法遊戲', name:'蛇蛇彩虹路',   sub:'吃到對的蘋果就變長',  ic:'snake', pat:'pat-wave',  c:['#FDE4D0','#F8C3A2','#C47D4F']}
+];
+const QUESTS=[{t:'答對 10 題',now:7,max:10},{t:'玩 2 種遊戲',now:2,max:2},{t:'拿到 3 顆星星',now:0,max:3}];
+const AVPAT=['pat-dot','pat-check','pat-zig','pat-wave','pat-leaf','pat-band'];
+const AVC=[['#FDF0D2','#F8DEA9','#C0944A'],['#FCE0DB','#F5C0B8','#C57C71'],['#D4EEED','#A8DCDD','#46959B'],
+           ['#E0E9D5','#C0D1AF','#708C5E'],['#DBEAF3','#B3CFE2','#5A89A6'],['#FDE4D0','#F8C3A2','#C47D4F']];
+const cvar=c=>`--c1:${c[0]};--c2:${c[1]};--c3:${c[2]};--c0:#FDF8E9`;
+
+let MODE='home', GUEST=false, AV=0;
+const view=document.getElementById('view');
+function toast(s){
+  document.querySelectorAll('.toast').forEach(e=>e.remove());
+  const d=document.createElement('div'); d.className='toast'; d.textContent=s;
+  document.body.appendChild(d); setTimeout(()=>d.remove(),2200);
+}
+
+function renderHome(){
+  const w=Math.min(window.innerWidth-32,1080);
+  const stalls=QUESTS.map((q,i)=>{
+    let dots=''; for(let k=0;k<q.max;k++) dots+=`<i class="${k<q.now?'on':''}"></i>`;
+    const done=q.now>=q.max;
+    return `<div class="stall paper offset">${stall(i)}
+      <div class="qt">${q.t}</div><div class="dots" aria-label="${q.now}／${q.max}">${dots}</div>
+      ${ i===1 ? `<span class="done">${ic('check')} 領過了</span>`
+        : done ? `<button class="btn small sage" data-act="claim">拿 ${ic('coin')} 1 枚</button>`
+        : `<span class="done">${ic('flag')} 還差 ${q.max-q.now} 個</span>` }</div>`;
+  }).join('');
+  const bal=MODES.map((m,i)=>`
+    <button class="bal" data-act="${m.act}" style="${cvar(m.c)};--d:${(i*0.43).toFixed(2)}s;--t:${(4.6+(i%3)*0.8).toFixed(1)}s">
+      <span class="env">${balloon({pat:m.pat,band:false})}<span class="tag ${m.tag==='認識乘法'?'learn':''}">${m.name}</span></span>
+      <span class="sub">${m.sub}</span></button>`).join('');
+  view.innerHTML=`
+    <div class="bunting">${bunting(w)}</div>
+    <section class="hero">
+      <h1 class="big" data-txt="乘乘熱氣球">乘乘熱氣球</h1>
+      <div class="sub"><span>九九乘法冒險嘉年華</span><span class="b" style="${cvar(AVC[2])}">${balloon({pat:'pat-band',mini:true,band:false})}</span></div>
+      ${ GUEST ? '' : `<button class="who" data-act="players"><span class="av" style="${cvar(AVC[AV])}">${balloon({pat:AVPAT[AV],mini:true,band:false})}</span><b>小莉</b><i>換人 ▾</i></button>` }
+    </section>
+    ${ GUEST ? `<div class="guestbar">${ic('warn')}<span><b>訪客模式</b>：金幣和貼紙不會留下來</span><button class="btn small soft" data-act="named">取名字</button></div>` : '' }
+    <div class="sec-h"><h2>今天的攤子</h2><small>每天都不一樣</small></div>
+    <section class="stalls">${stalls}</section>
+    <section class="modes">${bal}</section>
+    <div class="bookwrap"><button class="book" data-act="book">${notebook()}<b>貼紙簿</b><span class="sub">用金幣換貼紙</span></button></div>`;
+  /* 把符號印在球身上（跟球一起，不是貼上去的） */
+  view.querySelectorAll('.bal').forEach((b,i)=>{
+    const svg=b.querySelector('.env > svg'), g=svg.querySelector('g[clip-path]');
+    const wrap=document.createElementNS('http://www.w3.org/2000/svg','g');
+    wrap.setAttribute('transform','translate(25,20) scale(2.08)');
+    wrap.setAttribute('style','color:var(--c3);--ic2:color-mix(in srgb,var(--c3) 58%,var(--c0))');
+    wrap.innerHTML=ICON[MODES[i].ic];
+    g.appendChild(wrap);
+  });
+}
+
+function renderEntry(){
+  const avs=AVC.map((c,i)=>`<button data-act="av" data-i="${i}" aria-pressed="${i===AV}" aria-label="頭貼 ${i+1}"><span class="b" style="${cvar(c)}">${balloon({pat:AVPAT[i],mini:true,band:false})}</span></button>`).join('');
+  view.innerHTML=`
+    <div class="bunting">${bunting(Math.min(window.innerWidth-32,1080))}</div>
+    <section class="hero" style="padding-bottom:12px">
+      <h1 class="big" data-txt="乘乘熱氣球">乘乘熱氣球</h1>
+      <div class="sub"><span>九九乘法冒險嘉年華</span><span class="b" style="${cvar(AVC[2])}">${balloon({pat:'pat-band',mini:true,band:false})}</span></div>
+    </section>
+    <section class="entry paper offset">
+      <h2>你叫什麼名字？</h2>
+      <div class="fieldlab">打名字，金幣和貼紙才留得住</div>
+      <input placeholder="例如：小莉" maxlength="8">
+      <div class="fieldlab">挑一顆你的熱氣球</div>
+      <div class="avs">${avs}</div>
+      <div class="go">
+        <button class="btn big" data-act="start">開始玩</button>
+        <button class="btn soft small" data-act="guest">先玩玩看就好</button>
+        <p class="guestnote">先玩玩看也可以，<br>但金幣、貼紙不會留下來喔。</p>
+      </div>
+    </section>`;
+}
+
+function helper(){
+  let h=document.querySelector('.helper');
+  if(!h){
+    h=document.createElement('button'); h.className='helper'; h.dataset.act='help';
+    h.innerHTML=`<span class="say">不會玩按我</span>${helperSVG()}`;
+    document.body.appendChild(h);
+  }
+  h.style.setProperty('--ht',(6.2+Math.random()*3).toFixed(1)+'s');
+  h.style.setProperty('--hd',(-Math.random()*4).toFixed(1)+'s');
+}
+function chrome(){
+  document.getElementById('logoBal').innerHTML=`<span style="${cvar(AVC[2])};display:block">${balloon({pat:'pat-zig',mini:true,band:false})}</span>`;
+  document.getElementById('coinPill').innerHTML=ic('coin')+(GUEST?'0':'6');
+  document.getElementById('bookPill').innerHTML=ic('book')+(GUEST?'0':'11')+'<span style="font-size:13px;color:var(--muted)">/40</span>';
+  document.getElementById('themeBtn').innerHTML=ic('moon');
+}
+function render(){ MODE==='home'?renderHome():renderEntry(); chrome(); helper(); }
+
+document.addEventListener('click',e=>{
+  const dv=e.target.closest('.devbar button');
+  if(dv){ MODE=dv.dataset.view; document.querySelectorAll('.devbar button').forEach(b=>b.setAttribute('aria-pressed',b===dv)); render(); return; }
+  const b=e.target.closest('[data-act]'); if(!b) return;
+  const a=b.dataset.act, setv=v=>document.querySelectorAll('.devbar button').forEach(x=>x.setAttribute('aria-pressed',x.dataset.view===v));
+  if(a==='theme'){ const d=document.documentElement; d.dataset.theme=(d.dataset.theme==='dark'?'light':'dark'); return; }
+  if(a==='av'){ AV=+b.dataset.i; render(); return; }
+  if(a==='guest'){ GUEST=true; MODE='home'; setv('home'); render(); return; }
+  if(a==='start'){ GUEST=false; MODE='home'; setv('home'); render(); return; }
+  if(a==='named'){ MODE='entry'; setv('entry'); render(); return; }
+  if(a==='help'){ toast('怎麼玩？（原型：這裡會開說明）'); return; }
+  toast('原型畫面，之後接上遊戲');
+});
+let rt; addEventListener('resize',()=>{ clearTimeout(rt); rt=setTimeout(render,180); });
+render();
+</script>
+</body>
+</html>
