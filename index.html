@@ -483,18 +483,19 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 .toast.show{transform:translateX(-50%) translateY(0);opacity:1;visibility:visible}
 #fx{position:fixed;inset:0;pointer-events:none;z-index:25;overflow:hidden}
 /* 陪我玩的小夥伴：貼紙在畫面上到處飄，偶爾講話、偶爾冒閃亮 */
-.buddy{position:fixed;z-index:12;pointer-events:none;width:max-content;
+.buddy{position:fixed;z-index:16;pointer-events:none;width:max-content;
   transition:left 5s cubic-bezier(.42,0,.3,1),top 5s cubic-bezier(.42,0,.3,1)}
-.buddy .bart{display:block;width:clamp(52px,15vw,76px);height:auto;aspect-ratio:1;
-  animation:bbob 2.6s ease-in-out infinite;box-shadow:0 5px 12px var(--shadow)}
-.buddy .bart .emo{font-size:clamp(28px,8.4vw,42px)}
+.buddy .bart{display:grid;place-items:center;line-height:0;
+  animation:bbob 2.6s ease-in-out infinite;
+  filter:drop-shadow(0 1px 0 rgba(90,68,53,.10)) drop-shadow(0 5px 8px var(--shadow))}
+.buddy .bart .emo{font-size:clamp(62px,17vw,88px);line-height:0}
 .buddy .bsay{position:absolute;left:50%;bottom:100%;translate:-50% 0;margin-bottom:6px;
   background:var(--surface);color:var(--ink);font-size:15px;font-weight:700;line-height:1.3;
   white-space:nowrap;padding:4px 10px;border-radius:13px 11px 14px 4px/11px 14px 9px 13px;
   box-shadow:0 3px 9px var(--shadow);opacity:0;scale:.7;transform-origin:50% 120%;
   transition:opacity .22s,scale .22s}
 .buddy .bsay.on{opacity:1;scale:1}
-@keyframes bbob{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-7px) rotate(2deg)}}
+@keyframes bbob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 .bspark{position:fixed;width:20px;height:20px;line-height:0;pointer-events:none;
   animation:bsparkle 1.4s ease-out forwards}
 .bspark svg{width:100%;height:100%;fill:currentColor}
@@ -2128,7 +2129,7 @@ function floatBuddy(){
   if(el.dataset.sid !== s.id){      /* 換夥伴才重畫，免得把說話泡泡洗掉 */
     el.dataset.sid = s.id;
     el.innerHTML = `<span class="bsay"></span>
-      <span class="bart sticker r-${s.rar}" style="--sbg:${THEMES[s.theme].bg}"><span class="emo">${art(s.emo)}</span></span>`;
+      <span class="bart"><span class="emo">${art(s.emo)}</span></span>`;
   }
   if(!buddyT) buddyT = setTimeout(buddyTick, 1200);
 }
