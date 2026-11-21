@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="img-src 'self' data:; font-src https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="img-src 'self' data:; font-src 'self' https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; object-src 'none'; base-uri 'none'; form-action 'none'">
 <title>乘乘熱氣球｜九九乘法冒險嘉年華</title>
 <meta name="theme-color" content="#DCEFFA">
 <!-- 主視覺 icon：寫著 9×9 的熱氣球，直接畫成 SVG 塞進 data: URI，不用外部檔案 -->
@@ -18,7 +18,17 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Huninn&display=swap" rel="stylesheet">
+<link rel="preload" href="fonts/bpmf-gensen-r.woff2" as="font" type="font/woff2" crossorigin>
 <style>
+/* 源泉注音圓體（BpmfGenSenRounded，SIL OFL 1.1）。注音是畫在字裡面的，
+   所以只要換字型就有注音，不用任何標記。檔案是切過子集的，只留遊戲用得到的字。
+   unicode-range 限定漢字，數字和英文還是走 Fredoka / 粉圓。 */
+@font-face{
+  font-family:'BpmfGenSen';
+  src:url('fonts/bpmf-gensen-r.woff2') format('woff2');
+  font-weight:100 900;font-style:normal;font-display:swap;
+  unicode-range:U+3400-9FFF,U+F900-FAFF,U+E0100-E01EF;
+}
 :root{
   /* 明亮淡彩：底色淡奶油黃、主色霧感灰藍、輔色燕麥米、點綴淡鼠尾草綠 */
   --bg:#FDFAF0; --dot:#F5EEDC; --surface:#FFFFFA; --surface2:#FBF5E8; --ink:#4A5862; --muted:#8C99A3;
@@ -51,6 +61,21 @@
   --sky1:#2F3A43; --sky2:#2C3339; --hill1:#3C4D3E; --hill2:#354537; --hill3:#2E3C30; --hill4:#283429;
   --on-color:#1E272E; color-scheme:dark;
 }
+/* 注音開著的時候，整站的中文都換成注音圓體。
+   注音是畫在字裡面的，所以漢字會變寬 1.5 倍 —— 不能換行的地方要把字縮小一點 */
+:root[data-zy="on"]{
+  --zh:'BpmfGenSen','Huninn','Noto Sans TC','PingFang TC',system-ui,sans-serif;
+  --num:'Fredoka','BpmfGenSen','Huninn','Arial Rounded MT Bold',system-ui,sans-serif;
+}
+:root[data-zy="on"] .hero .big{font-size:clamp(25px,6.6vw,44px);letter-spacing:0}
+:root[data-zy="on"] .hero .big::before{display:none}   /* 疊印的套色錯位碰上注音會糊成一團 */
+:root[data-zy="on"] .hero .subt{font-size:clamp(11px,2.6vw,15px)}
+:root[data-zy="on"] .topbar .logo span:last-child{font-size:12px;white-space:nowrap}
+:root[data-zy="on"] .bal .tag{font-size:clamp(11px,5.2cqw,19px);padding:4px 10px}
+:root[data-zy="on"] .stall .roofname{font-size:clamp(10px,3vw,15px)}
+:root[data-zy="on"] .stall .deskline{font-size:clamp(8px,2.1vw,12px)}
+:root[data-zy="on"] .sdhead{font-size:11px}
+:root[data-zy="on"] .gbtn b{font-size:10px}
 *,*::before,*::after{box-sizing:inherit}
 html{scroll-padding-top:env(safe-area-inset-top,0px);background:var(--bg)}
 body{
@@ -618,6 +643,10 @@ body[data-view="home"] .ghelper{bottom:calc(var(--dockh) + 8px + env(safe-area-i
 .iconbtn .ic{width:19px;height:19px}
 .iconbtn .b{width:21px;display:block}
 .iconbtn{overflow:visible}
+/* 注音開關：按鈕上就是一個ㄅ */
+#zybtn{font-family:'Huninn','PingFang TC',system-ui,sans-serif;font-size:19px;font-weight:700;
+  line-height:1;color:var(--ink);padding-bottom:2px}
+#zybtn.off{color:var(--muted);opacity:.55}
 .avas{grid-template-columns:repeat(6,1fr)}
 .ava-opt{font-size:0;padding:5px}
 .ava-opt .b{display:block;width:100%}
@@ -684,6 +713,7 @@ body[data-view="home"] .ghelper{bottom:calc(var(--dockh) + 8px + env(safe-area-i
   <span class="pill" title="星星"><i class="ic" data-ic="star"></i><span id="stars">0</span></span>
   <span class="pill" title="金幣"><i class="ic" data-ic="coin"></i><span id="coins">0</span></span>
   <button class="iconbtn" id="whobtn" data-act="players" aria-label="切換挑戰者"></button>
+  <button class="iconbtn nozy" id="zybtn" data-act="zy" aria-label="注音開關">ㄅ</button>
   <button class="iconbtn" id="mutebtn" data-act="mute" aria-label="音效開關"></button>
 </div></header>
 <svg class="torn" viewBox="0 0 1200 14" preserveAspectRatio="none" aria-hidden="true">
@@ -923,6 +953,95 @@ function chant(a,b){
 }
 const PRAISE = ['答對了！','好棒！','太厲害了！','完全正確！','你好聰明！','漂亮！','就是這樣！'];
 
+/* ---------- 注音 ---------- */
+/* 注音是「源泉注音圓體」直接畫在每個字裡的，所以畫面上不用加任何標記，
+   換字型就有注音。只有「預設讀音不對」的字需要在後面補一個看不見的
+   異體字選擇子（IVS，U+E01E0~5）去挑正確的讀音。 */
+/* ZY-TABLE-START  這一段是 make-font.py 產生的，不要手改 */
+/* 字型自己會畫注音，這裡只放「預設讀音不對」的字：字後面那個看不見的
+   異體字選擇子（U+E01E0~5）會挑出正確的讀音，E01E0 代表不標注音 */
+const ZY_CHAR_SRC = "什\uDB40\uDDE0,喔\uDB40\uDDE1,囉\uDB40\uDDE2";
+const ZY_WORD_SRC = "一個=一\uDB40\uDDE1個,一回=一\uDB40\uDDE2回,一樣=一\uDB40\uDDE1樣,一起=一\uDB40\uDDE2起,一遍=一\uDB40\uDDE1遍,不太=不\uDB40\uDDE1太,不會=不\uDB40\uDDE1會,不用=不\uDB40\uDDE1用,不要=不\uDB40\uDDE1要,數數看=數\uDB40\uDDE1數\uDB40\uDDE1看,重玩=重\uDB40\uDDE1玩,長大=長\uDB40\uDDE1大";
+/* ZY-TABLE-END */
+const ZY_C = {}, ZY_W = {};
+let ZY_WMAX = 0;
+ZY_CHAR_SRC.split(',').forEach(x=>{ if(x) ZY_C[x[0]] = x.slice(1); });
+ZY_WORD_SRC.split(',').forEach(x=>{
+  if(!x) return;
+  const i = x.indexOf('=');
+  if(i<1) return;
+  const w = x.slice(0,i);
+  ZY_W[w] = x.slice(i+1);
+  if(w.length > ZY_WMAX) ZY_WMAX = w.length;
+});
+/* U+E01E0~E01E5 在 JS 裡是代理對，開頭都是 \uDB40 */
+const ZY_VS = /\uDB40[\uDDE0-\uDDE5]/;
+const ZY_HIT = new RegExp('['+Object.keys(ZY_C).join('')+']|'+Object.keys(ZY_W).join('|'));
+let ZY_ON = false;
+
+function zyFix(t){
+  let out='', i=0;
+  while(i<t.length){
+    let hit='';
+    for(let L=Math.min(ZY_WMAX, t.length-i); L>=2; L--){
+      const w=t.substr(i,L);
+      if(ZY_W[w]){ hit=w; break; }
+    }
+    if(hit){ out+=ZY_W[hit]; i+=hit.length; continue; }
+    const c=t[i];
+    out += ZY_C[c] ? c+ZY_C[c] : c;
+    i++;
+  }
+  return out;
+}
+/* 不碰 SVG 裡的文字、表單欄位，也不碰標了 nozy 的地方 */
+function zySkip(el){
+  for(let p=el; p; p=p.parentElement){
+    const t=p.tagName;
+    if(t==='SCRIPT'||t==='STYLE'||t==='TEXTAREA'||t==='INPUT') return true;
+    if(p.namespaceURI==='http://www.w3.org/2000/svg') return true;
+    if(p.classList && p.classList.contains('nozy')) return true;
+  }
+  return false;
+}
+function zyOne(n){
+  const t=n.nodeValue;
+  if(!t || ZY_VS.test(t) || !ZY_HIT.test(t)) return;   /* 已經處理過、或根本沒要改的字 */
+  if(!n.parentElement || zySkip(n.parentElement)) return;
+  n.nodeValue = zyFix(t);
+}
+function zyWalk(root, fn){
+  if(!root) return;
+  if(root.nodeType===3) return fn(root);
+  if(root.nodeType!==1) return;
+  const w=document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  const list=[]; let n;
+  while((n=w.nextNode())) list.push(n);
+  list.forEach(fn);
+}
+function zyStrip(n){
+  const t=n.nodeValue;
+  if(t && ZY_VS.test(t)) n.nodeValue = t.replace(/\uDB40[\uDDE0-\uDDE5]/g,'');
+}
+const zyObs = new MutationObserver(ms=>{
+  if(!ZY_ON) return;
+  for(const m of ms){
+    if(m.type==='characterData') zyOne(m.target);
+    else m.addedNodes.forEach(x=>zyWalk(x, zyOne));
+  }
+});
+function zyApply(){
+  ZY_ON = state.settings.zy !== false;
+  document.documentElement.dataset.zy = ZY_ON ? 'on' : 'off';
+  zyObs.disconnect();
+  if(ZY_ON){
+    zyWalk(document.body, zyOne);
+    zyObs.observe(document.body, {childList:true, subtree:true, characterData:true});
+  } else {
+    zyWalk(document.body, zyStrip);
+  }
+}
+
 /* ---------- state ---------- */
 const LS_KEY = 'mul99-adventure-v1';
 const AVATARS = ['a0','a1','a2','a3','a4','a5'];
@@ -1023,7 +1142,7 @@ function fixPlayer(src){
 function migrate(s){
   const d = defaultState(), raw = obj(s), ss = obj(raw.settings);
   d.settings = { muted: !!ss.muted, input: ss.input==='choice' ? 'choice' : 'type',
-    helped: !!ss.helped, pad: ss.pad!==false };
+    helped: !!ss.helped, pad: ss.pad!==false, zy: ss.zy!==false };
   d.savedAt = num(raw.savedAt, 9e15);
   if(Array.isArray(raw.players)){
     d.players = raw.players.slice(0,MAX_PLAYERS).map(fixPlayer);
@@ -1821,6 +1940,9 @@ function updateTop(){
   wb.setAttribute('aria-label', m?`挑戰者 ${m.name}，點一下切換`:'挑戰者');
   const mb=$('#mutebtn'); mb.innerHTML=ic(state.settings.muted?'mute':'sound');
   mb.setAttribute('aria-label', state.settings.muted?'開啟音效':'關閉音效');
+  const zb=$('#zybtn');
+  if(zb){ zb.classList.toggle('off', !ZY_ON);
+    zb.setAttribute('aria-label', ZY_ON?'關掉注音':'顯示注音'); }
   document.querySelectorAll('[data-ic]').forEach(el=>{ if(!el.firstChild) el.innerHTML=`<svg viewBox="0 0 24 24" aria-hidden="true">${ICON[el.dataset.ic]}</svg>`; });
 }
 let formAvatar = AVATARS[0];
@@ -2113,7 +2235,7 @@ const VIEWS = {
           <div class="track" id="track"><i id="trackfill" style="width:${g.done/g.total*100}%"></i></div>
           <span class="qnum">${g.done}/${g.total}</span>
         </div>
-        <div class="hask lask">找出答案一樣的兩張<span class="hchant">例如 4×4 和 8×2 都是 16</span></div>
+        <div class="hask lask">找出答案一樣的兩張<span class="hchant">例如 4×1 和 2×2 都是 4</span></div>
         <div class="pgrid">${cells}</div>
         <p class="note" id="pnote">點兩張答案一樣的卡片，就會配成一對</p>`;
     } else {
@@ -3441,6 +3563,7 @@ document.addEventListener('click', e=>{
     case 'draw': draw(); break;
     case 'peek': { const s=STICKERS.find(x=>x.id===arg); if(s) showReveal(s,false); break; }
     case 'mute': state.settings.muted=!state.settings.muted; save(); updateTop(); break;
+    case 'zy': state.settings.zy=!ZY_ON; save(); sfx.tap(); zyApply(); updateTop(); break;
     case 'help': showHelp(); break;
   }
 });
@@ -3478,6 +3601,7 @@ document.addEventListener('visibilitychange', ()=>{ if(document.hidden) save(); 
 
 ensureDaily();
 const mdw=document.getElementById('meadow'); if(mdw) mdw.innerHTML=meadowHTML();
+zyApply();          /* 先決定要不要注音，之後畫面一有新文字就會自動補選擇子 */
 updateTop();
 go('home');
 initCloud();
