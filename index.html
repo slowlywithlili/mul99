@@ -1259,8 +1259,24 @@ function migrate(s){
   if(!d.players.some(p=>p.id===d.activeId)) d.activeId = d.players.length?d.players[0].id:'';
   return d;
 }
-function lsLoad(){ try{ const s=localStorage.getItem(LS_KEY); return s?JSON.parse(s):null; }catch(e){ return null; } }
+const LS_BAK = LS_KEY + '-bak';
+function lsRead(k){ try{ const s=localStorage.getItem(k); return s?JSON.parse(s):null; }catch(e){ return null; } }
+/* 讀存檔：主檔壞掉或空了就改讀備份檔，兩份都在同一個瀏覽器裡
+   （不會互相覆蓋：只有「有挑戰者」的狀態才會寫進備份） */
+function lsLoad(){
+  const main = lsRead(LS_KEY);
+  if(main && Array.isArray(main.players) && main.players.length) return main;
+  const bak = lsRead(LS_BAK);
+  if(bak && Array.isArray(bak.players) && bak.players.length){
+    try{ localStorage.setItem(LS_KEY, JSON.stringify(bak)); }catch(e){}
+    return bak;
+  }
+  return main || bak;
+}
 let state = migrate(lsLoad());
+/* 跟瀏覽器要「不要自動清掉我的資料」。Chrome／Firefox 會答應；
+   Safari 只有加到主畫面才算數，所以另外在挑戰者頁面寫了提醒 */
+(function(){ try{ if(navigator.storage && navigator.storage.persist) navigator.storage.persist(); }catch(e){} })();
 /* 訪客模式：不用名字就能玩，但什麼都不存 */
 let GUEST=false;
 function startGuest(){
@@ -1294,7 +1310,9 @@ let cloudRef=null, cloudTimer=null, cloudBusy=false, cloudDirty=false;
 function save(){
   if(GUEST) return;            /* 訪客模式不寫入任何紀錄 */
   state.savedAt = Date.now();
-  try{ localStorage.setItem(LS_KEY, JSON.stringify(state)); }catch(e){}
+  const json = JSON.stringify(state);
+  try{ localStorage.setItem(LS_KEY, json); }catch(e){}
+  if(state.players.length){ try{ localStorage.setItem(LS_BAK, json); }catch(e){} }
   if(cloudRef){ clearTimeout(cloudTimer); cloudTimer=setTimeout(pushCloud, 800); }
 }
 async function pushCloud(){
@@ -2307,7 +2325,7 @@ const VIEWS = {
         <div class="pacts">
           ${on?'':`<button class="btn small mint" data-act="use" data-arg="${esc(p.id)}">換我玩</button>`}
           <button class="iconbtn small" data-act="rename" data-arg="${esc(p.id)}" aria-label="修改 ${esc(p.name)} 的名字">${ic('pencil')}</button>
-          ${state.players.length>1?`<button class="iconbtn small" data-act="delp" data-arg="${esc(p.id)}" aria-label="刪除 ${esc(p.name)}">🗑️</button>`:''}
+          ${state.players.length>1?`<button class="iconbtn small" data-act="delp" data-arg="${esc(p.id)}" aria-label="刪除 ${esc(p.name)}">${ic('trash')}</button>`:''}
         </div></li>`;
     }).join('');
     view.innerHTML=`
@@ -2316,7 +2334,18 @@ const VIEWS = {
       ${state.players.length<MAX_PLAYERS
         ? `<div style="margin-top:16px;text-align:center"><button class="btn sun big" data-act="addForm">＋ 新增挑戰者</button></div>`
         : `<p class="note">最多 ${MAX_PLAYERS} 位挑戰者</p>`}
-      <p class="note">每位挑戰者的金幣、貼紙和每日任務都是分開記錄的。</p>`;
+      <p class="note">每位挑戰者的金幣、貼紙和每日任務都是分開記錄的。</p>
+      <section class="card bak">
+        <h3>備份紀錄</h3>
+        <p class="note">紀錄是存在這台裝置的瀏覽器裡的。<b>手機太久沒玩、清除瀏覽資料、或換一台裝置，紀錄就會不見</b>。
+          存成檔案就帶得走，換手機也還原得回來。</p>
+        <div class="rbtns" style="margin-top:10px">
+          <button class="btn sun" data-act="backup">${ic('book')} 存成檔案</button>
+          <button class="btn" data-act="restore">${ic('back')} 從檔案還原</button>
+        </div>
+        <p class="note" style="margin-top:8px">iPhone、iPad 請用 Safari 的「分享 → 加入主畫面」，
+          從主畫面的圖示進來玩，紀錄才不會被系統清掉。</p>
+      </section>`;
   },
 
   addPlayer(){
@@ -2917,6 +2946,59 @@ function claimBonus(tier){
   burstAt(document.querySelector('[data-act="bonus"]'),40);
   toast(`${T.name}三個都完成！再拿 ${T.bonus} 枚金幣`);
   setTimeout(()=>{ go('home'); openTier(tier); },250);
+}
+/* ---------- 備份／還原紀錄 ---------- */
+/* 手機瀏覽器可能會把網站資料清掉（iPhone 超過一陣子沒玩就會清），
+   所以提供「存成檔案」和「從檔案還原」，換手機、重灌也帶得走 */
+let pendingRestore = null;
+function exportSave(){
+  if(!state.players.length) return toast('還沒有紀錄可以備份喔');
+  try{
+    const blob = new Blob([JSON.stringify(state)], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = `乘乘熱氣球-紀錄-${todayStr()}.json`;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url), 2000);
+    sfx.coin(); toast('紀錄存成檔案了！放在「檔案」或「下載」裡');
+  }catch(e){ toast('這台裝置沒辦法下載檔案'); }
+}
+function importSave(){
+  const inp = document.createElement('input');
+  inp.type = 'file'; inp.accept = 'application/json,.json';
+  inp.style.display = 'none';
+  inp.onchange = ()=>{
+    const f = inp.files && inp.files[0];
+    inp.remove();
+    if(!f) return;
+    const r = new FileReader();
+    r.onload = ()=>{
+      let data = null;
+      try{ data = JSON.parse(String(r.result)); }catch(e){}
+      const next = data ? migrate(data) : null;
+      if(!next || !next.players.length){
+        return showModal(`<h3>這個檔案打不開</h3><p>看起來不是乘乘熱氣球的紀錄檔，<br>請選副檔名是 <b>.json</b> 的那一個。</p>
+          <div class="row"><button class="btn sun" data-act="closeModal">好</button></div>`);
+      }
+      pendingRestore = next;
+      const names = next.players.map(x=>esc(x.name)).join('、');
+      showModal(`<h3>要還原紀錄嗎？</h3>
+        <p>檔案裡有 <b>${next.players.length}</b> 位挑戰者：${names}。</p>
+        <p class="note" style="margin-top:6px">還原之後，<b>這台裝置現在的紀錄會被蓋掉</b>，沒辦法復原喔。</p>
+        <div class="row"><button class="btn" data-act="closeModal">先不要</button><button class="btn sun" data-act="restoreOk">確定還原</button></div>`);
+    };
+    r.onerror = ()=>toast('讀不到這個檔案');
+    r.readAsText(f);
+  };
+  document.body.appendChild(inp);
+  inp.click();
+}
+function restoreSave(){
+  if(!pendingRestore) return;
+  state = pendingRestore; pendingRestore = null;
+  GUEST = false; uiTier = null;
+  save(); closeModal(); zyApply(); updateTop(); go('home');
+  toast('紀錄還原好了！'); sfx.fanfare();
 }
 function askRename(id){
   const p=state.players.find(x=>x.id===id); if(!p) return;
@@ -3846,6 +3928,9 @@ document.addEventListener('click', e=>{
     }
     case 'use': usePlayer(arg); break;
     case 'rename': askRename(arg); break;
+    case 'backup': exportSave(); break;
+    case 'restore': importSave(); break;
+    case 'restoreOk': restoreSave(); break;
     case 'renameOk': {
       const p=state.players.find(x=>x.id===arg), n=readName();
       if(!p) { closeModal(); break; }
