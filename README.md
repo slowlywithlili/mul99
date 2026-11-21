@@ -13,8 +13,13 @@
   底下墊一層偏移的燕麥米疊印；全站覆蓋一層紙張顆粒；標題「乘乘熱氣球」用偏移 4px 的灰藍 multiply 做套色錯位。
   **畫面固定白天模式**，不會跟著手機或電腦的深色模式變暗（要暗版的話在 `<html>` 加 `data-theme="dark"`）
 - **慶典三角旗**：六色輪播、方旗和三角旗交錯、繩結上還有小圓球，比前一版更有嘉年華的感覺
-- **分頁 icon（主視覺符號）**：一顆寫著 **9×9** 的熱氣球，直接畫成 SVG 寫進 `data:` URI 掛在 `<link rel="icon">`，
-  不用另外放圖檔，單檔離線也看得到。另外有 `<meta name="theme-color">` 讓手機瀏覽器的上緣跟著天空色
+- **主視覺 icon**：一顆寫著 **9×9** 的熱氣球，用的就是全站同一套顏色。
+  分頁上的小圖示直接畫成 SVG 寫進 `data:` URI 掛在 `<link rel="icon">`，不用外部檔案，單檔離線也看得到；
+  另有 `<meta name="theme-color">` 讓手機瀏覽器的上緣跟著天空色。
+  **加到主畫面**的圖示 iOS 只吃 PNG，所以另外附了 `icon-180.png`（apple-touch-icon）和
+  `icon-192.png` / `icon-512.png` + `manifest.webmanifest`（Android 用）。
+  四張圖都是從 `icon.svg` 這張原稿輸出的，改圖只要改 `icon.svg` 再重出一次。
+  加到主畫面後會用**獨立視窗**開啟（沒有網址列），跟一般 app 一樣
 - **首頁是一片熱氣球**：六個玩法六顆球，慢慢上下漂浮（節奏各自錯開），
   手機兩個一排、平板和電腦三個一排，填滿畫面。
   氣球是**手繪 SVG**：球身上半部用貝茲近似正圓（0.5523 係數）、下半部收成短頸，
@@ -108,6 +113,24 @@
 直接用瀏覽器打開 `index.html` 即可。
 
 部署到 GitHub Pages：推到 repo 後，在 Settings → Pages 選擇從 `main` 分支根目錄發布。
+
+遊戲本體全部在 `index.html` 裡；根目錄另外的 `icon.svg`、`icon-180/192/512.png`、`manifest.webmanifest`
+只是「加到主畫面」用的圖示，拿掉也不影響遊戲。
+
+重出圖示（改完 `icon.svg` 之後）：
+
+```sh
+cd <repo 根目錄>
+for n in 180 192 512; do
+  printf '<!doctype html><meta charset=utf-8><style>html,body{margin:0;width:%dpx;height:%dpx;overflow:hidden;background:#FDFAF0}img{display:block;width:%dpx;height:%dpx}</style><img src="icon.svg">' $n $n $n $n > _r.html
+  "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new --disable-gpu \
+    --hide-scrollbars --force-device-scale-factor=1 --virtual-time-budget=2500 \
+    --window-size=$n,$n --screenshot=icon-$n.png "file://$PWD/_r.html"
+done
+rm _r.html
+```
+
+（`_r.html` 要跟 `icon.svg` 放在同一層，`<img>` 才找得到圖。）
 
 ## 進度儲存
 
