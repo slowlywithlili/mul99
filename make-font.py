@@ -5,23 +5,25 @@
 用法：
 
     pip install fonttools brotli
-    python3 make-font.py ~/Downloads/BpmfGenSenRounded-R.ttf
+    python3 make-font.py ~/Downloads/BpmfGenSenRounded-M.ttf ~/Downloads/BpmfGenSenRounded-B.ttf
 
-原始字型 8 MB，整套 24.6 MB，所以不放進 repo。
-到 https://github.com/ButTaiwan/bpmfvs/releases 下載 BpmfGenSenRounded.zip，
-解開後把 BpmfGenSenRounded-R.ttf 的路徑傳進來就好。
+第一個是內文用的字重（Medium），第二個是粗體用的（Bold）；只給一個也可以，
+那粗體就讓瀏覽器自己合成（會比較糊）。
+
+原始字型一個字重 8 MB，整套 24.6 MB，所以不放進 repo。
+到 https://github.com/ButTaiwan/bpmfvs/releases 下載 BpmfGenSenRounded.zip 解開就有。
 
 它會做三件事：
   1. 拿 zhuyin.txt 的讀音跟字型的預設讀音對一遍，不一樣的地方印出來
   2. 把需要「異體字選擇子」的字和詞寫進 index.html 的 ZY-TABLE 區塊
-  3. 只留 index.html 真的用到的字，輸出 fonts/bpmf-gensen-r.woff2
+  3. 只留 index.html 真的用到的字，輸出 fonts/bpmf-gensen-{m,b}.woff2
 """
 import io, os, re, sys, unicodedata
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 TXT  = os.path.join(HERE, 'zhuyin.txt')
 HTML = os.path.join(HERE, 'index.html')
-OUT  = os.path.join(HERE, 'fonts', 'bpmf-gensen-r.woff2')
+FONTS = os.path.join(HERE, 'fonts')
 HAN  = re.compile(r'[㐀-鿿豈-﫿]')
 VS0  = 0xE01E0          # 這個選擇子 = 這個字不要標注音
 VSN  = 5                # E01E1~E01E5 = 第 2~6 個讀音
@@ -135,7 +137,7 @@ def font_readings(font):
 def main(argv):
     if len(argv) < 2:
         sys.stderr.write(__doc__ + '\n'); return 2
-    ttf = argv[1]
+    ttfs = argv[1:3]
     try:
         from fontTools.ttLib import TTFont
         from fontTools import subset
@@ -146,7 +148,7 @@ def main(argv):
     if bad:
         sys.stderr.write('\n'.join(bad) + '\n'); return 1
 
-    font = TTFont(ttf)
+    font = TTFont(ttfs[0])
     reads = font_readings(font)
 
     # ---- 對照 ----
@@ -210,14 +212,15 @@ def main(argv):
     keep = set(HAN.findall(html)) | {c for c, _ in chars}
     for w, _ in words: keep |= set(w)
     codes = sorted({ord(c) for c in keep} | {VS0 + i for i in range(VSN + 1)})
-    os.makedirs(os.path.dirname(OUT), exist_ok=True)
-    args = [ttf, '--output-file=' + OUT, '--flavor=woff2', '--no-hinting',
-            '--drop-tables+=vhea,vmtx,gasp', '--layout-features=',
-            '--name-IDs=0,1,2,3,4,5,6,7,13,14,16,17', '--notdef-outline',
-            '--unicodes=' + ','.join('U+%04X' % c for c in codes)]
-    subset.main(args)
-    kb = os.path.getsize(OUT) / 1024.0
-    print('字集 %d 字 → %s（%.0f KB）' % (len(keep), os.path.relpath(OUT, HERE), kb))
+    os.makedirs(FONTS, exist_ok=True)
+    for ttf, tag in zip(ttfs, ('m', 'b')):
+        out = os.path.join(FONTS, 'bpmf-gensen-%s.woff2' % tag)
+        subset.main([ttf, '--output-file=' + out, '--flavor=woff2', '--no-hinting',
+                     '--drop-tables+=vhea,vmtx,gasp', '--layout-features=',
+                     '--name-IDs=0,1,2,3,4,5,6,7,13,14,16,17', '--notdef-outline',
+                     '--unicodes=' + ','.join('U+%04X' % c for c in codes)])
+        print('字集 %d 字 → %s（%.0f KB）'
+              % (len(keep), os.path.relpath(out, HERE), os.path.getsize(out) / 1024.0))
     print('要加選擇子的字 %d 個、詞 %d 個' % (len(char_sel), len(word_sel)))
     return 0
 

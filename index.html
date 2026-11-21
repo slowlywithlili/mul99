@@ -18,15 +18,21 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Huninn&display=swap" rel="stylesheet">
-<link rel="preload" href="fonts/bpmf-gensen-r.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/bpmf-gensen-m.woff2" as="font" type="font/woff2" crossorigin>
 <style>
 /* 源泉注音圓體（BpmfGenSenRounded，SIL OFL 1.1）。注音是畫在字裡面的，
    所以只要換字型就有注音，不用任何標記。檔案是切過子集的，只留遊戲用得到的字。
    unicode-range 限定漢字，數字和英文還是走 Fredoka / 粉圓。 */
 @font-face{
   font-family:'BpmfGenSen';
-  src:url('fonts/bpmf-gensen-r.woff2') format('woff2');
-  font-weight:100 900;font-style:normal;font-display:swap;
+  src:url('fonts/bpmf-gensen-m.woff2') format('woff2');
+  font-weight:400;font-style:normal;font-display:swap;
+  unicode-range:U+3400-9FFF,U+F900-FAFF,U+E0100-E01EF;
+}
+@font-face{
+  font-family:'BpmfGenSen';
+  src:url('fonts/bpmf-gensen-b.woff2') format('woff2');
+  font-weight:700;font-style:normal;font-display:swap;
   unicode-range:U+3400-9FFF,U+F900-FAFF,U+E0100-E01EF;
 }
 :root{
@@ -38,11 +44,12 @@
   --blue:#7FA0B6; --oat:#E0D4C2; --sage:#AEBDA4;
   --blue-l:#BDD6E6; --oat-l:#F1E7D6; --sage-l:#D2DFC6;
   /* 鹿野高台：天空與山坡草地 */
-  --sky1:#DCEFFA; --sky2:#EFF7F0; --hill1:#D3E6C1; --hill2:#BEDAA8; --hill3:#A8CC90; --hill4:#95BE7D;
+  --sky1:#DCEFFA; --sky2:#EFF7F0;
+  --hill0:#C9DCDA; --hill1:#D6E8C6; --hill2:#BEDAA6; --hill3:#A3C98A; --hill4:#8AB670;
   /* 攤位列的寬度；換算成高度，好給主畫面留位置 */
   --sdw:min(100vw - 16px,640px,66vh);
   --credh:48px;   /* 畫面最下面留給「利利寫生活製作」的高度，攤位不能蓋到 */
-  --dockh:calc(min(100vw - 16px,640px,66vh)/3*0.75 + var(--credh) + 10px);
+  --dockh:calc(min(100vw - 16px,640px,66vh)/3*0.86 + var(--credh) + 10px);
   --ic2:color-mix(in srgb,currentColor 42%,var(--surface));   /* 符號的第二層顏色 */
   --on-color:#3A4650;
   --zh:'Huninn','Noto Sans TC','PingFang TC','Microsoft JhengHei',system-ui,sans-serif;
@@ -60,7 +67,7 @@
   --sun:#C9A95F; --tomato:#C58D83; --mint:#8FA47C; --grape:#9B92AE; --sky:#7E9BAE; --peach:#C8906A;
   --blue:#9DB6C6; --oat:#9A8C77; --sage:#B4C2AA;
   --blue-l:#9DB6C6; --oat-l:#6E614A; --sage-l:#B4C2AA;
-  --sky1:#2F3A43; --sky2:#2C3339; --hill1:#3C4D3E; --hill2:#354537; --hill3:#2E3C30; --hill4:#283429;
+  --sky1:#2F3A43; --sky2:#2C3339; --hill0:#3A4750; --hill1:#3C4D3E; --hill2:#354537; --hill3:#2E3C30; --hill4:#283429;
   --on-color:#1E272E; color-scheme:dark;
 }
 /* 注音開著的時候，整站的中文都換成注音圓體。
@@ -74,8 +81,8 @@
 :root[data-zy="on"] .hero .subt{font-size:clamp(11px,2.6vw,15px)}
 :root[data-zy="on"] .topbar .logo span:last-child{font-size:12px;white-space:nowrap}
 :root[data-zy="on"] .bal .tag{font-size:clamp(11px,5.2cqw,19px);padding:4px 10px}
-:root[data-zy="on"] .stall .roofname{font-size:clamp(8px,4cqw,12.5px);letter-spacing:0}
-:root[data-zy="on"] .stall .deskline{font-size:clamp(9px,4.4cqw,14px)}
+:root[data-zy="on"] .stall .roofname{font-size:clamp(8.5px,4.6cqw,17px);letter-spacing:0}
+:root[data-zy="on"] .stall .deskline{font-size:clamp(7.5px,3.85cqw,14px)}
 :root[data-zy="on"] .sdhead{font-size:11px}
 :root[data-zy="on"] .gbtn b{font-size:10px}
 *,*::before,*::after{box-sizing:inherit}
@@ -96,7 +103,8 @@ h1,h2,h3,p{margin:0}
 .logo{background:none;border:0;padding:4px 2px;cursor:pointer;font-weight:700;font-size:19px;display:flex;align-items:center;gap:6px}
 .logo .mini{font-family:var(--num);font-weight:700;background:var(--sun);color:var(--on-color);border:1.5px solid var(--hair);border-radius:9px;padding:0 6px;font-size:16px}
 .spacer{flex:1}
-.pill{display:inline-flex;align-items:center;gap:5px;background:var(--surface2);border:1.5px solid var(--hair);border-radius:999px;padding:2px 11px;font-family:var(--num);font-weight:600;font-size:17px}
+.pill{display:inline-flex;align-items:center;gap:5px;background:var(--surface2);border:1.5px solid var(--hair);border-radius:999px;padding:2px 11px;font-family:var(--num);font-weight:600;font-size:17px;color:var(--ink);cursor:pointer}
+.pill[data-act]:active{transform:translateY(2px)}
 .iconbtn{background:var(--surface2);border:1.5px solid var(--hair);border-radius:999px;width:38px;height:38px;cursor:pointer;font-size:17px;display:grid;place-items:center;flex:none}
 
 main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
@@ -398,6 +406,7 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 .credit{text-align:center;padding:4px 14px calc(7px + env(safe-area-inset-bottom,0px));font-size:15px}
 .credit a{display:inline-block;color:var(--muted);text-decoration:none;padding:4px 12px;border:2px dashed var(--hair);border-radius:999px;background:var(--surface2);opacity:.9}
 .credit a:hover{color:var(--ink);opacity:1}
+.credit .upd{display:inline-block;margin-left:8px;color:var(--muted);font-size:.8em;opacity:.85}
 
 /* 全站的圖案都是手繪 SVG，不再需要幫 emoji 降彩度 */
 
@@ -420,6 +429,8 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 .tt.on i{color:var(--on-color);opacity:.8}
 .tt.e.on{background:var(--mint)} .tt.m.on{background:#9FB7CB} .tt.h.on{background:#B0A7C6}
 .tdesc{font-size:15px;color:var(--muted);margin-bottom:10px}
+.infonow{text-align:center;margin-top:12px;font-size:18px}
+.infonow b{font-family:var(--num);font-size:1.3em;color:var(--blue)}
 
 /* players */
 .plist{list-style:none;margin:0;padding:0;display:grid;gap:12px}
@@ -529,11 +540,16 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 .meadow{position:fixed;inset:0;z-index:-2;pointer-events:none;overflow:hidden;
   background:linear-gradient(180deg,var(--sky1) 0%,var(--sky2) 52%,var(--bg) 86%)}
 .meadow .hills{position:absolute;left:0;right:0;bottom:0;width:100%;
-  height:clamp(170px,34vh,340px);display:block}
-.meadow .far{position:absolute;display:block;width:var(--w,54px);left:var(--x,10%);top:var(--y,14%);
-  opacity:.6;animation:farfloat var(--t,13s) ease-in-out var(--d,0s) infinite}
-@keyframes farfloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-16px)}}
-@media (max-width:520px){ .meadow .far{opacity:.48;width:calc(var(--w,54px)*.7)} }
+  height:clamp(210px,44vh,440px);display:block}
+.meadow .far{position:absolute;display:block;width:var(--w,54px);left:var(--x,10%);top:var(--y,64%);
+  opacity:0;animation:farrise var(--t,70s) linear var(--d,0s) infinite}
+@keyframes farrise{
+  0%{transform:translateY(0) rotate(-2deg);opacity:0}
+  10%{opacity:.62}
+  88%{opacity:.5}
+  100%{transform:translateY(-78vh) rotate(2deg);opacity:0}}
+@media (max-width:520px){ .meadow .far{width:calc(var(--w,54px)*.72)} }
+@media (prefers-reduced-motion:reduce){ .meadow .far{animation:none;opacity:.5;top:24%} }
 
 .grain{position:fixed;inset:0;z-index:90;pointer-events:none;opacity:.038;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E")}
@@ -569,6 +585,9 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
   background:color-mix(in srgb,var(--oat-l) 62%,var(--surface));font-size:15px;line-height:1.4}
 .guestbar .ic{color:var(--ink);--ic2:var(--surface)}
 .guestbar .btn{margin-left:auto;flex:none}
+.guestbox{text-align:center;margin-top:20px;padding-top:16px;border-top:2px dashed var(--hair)}
+.guestbox .note{margin-top:10px;line-height:1.55}
+.guestbox .note b{color:var(--ink)}
 
 /* 今日任務 → 三個祭典攤販，各自分離、固定在畫面最下方 */
 /* 白框貼紙效果：四個方向各描一層白色的 drop-shadow */
@@ -585,8 +604,8 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 .stall > svg{display:block;width:100%;height:auto}
 .stall .roofname{position:absolute;left:3%;right:3%;top:17.5%;white-space:nowrap;
   font-size:clamp(10px,5.4cqw,17px);font-weight:700;color:var(--on-color);letter-spacing:.02em}
-.stall .deskline{position:absolute;left:10%;right:10%;top:60%;line-height:1.3;
-  font-size:clamp(10px,5cqw,16px);color:var(--ink)}
+.stall .deskline{position:absolute;left:11%;right:11%;top:53%;line-height:1.34;
+  font-size:clamp(10px,4.4cqw,15px);color:var(--ink)}
 .stall .deskline b{display:block;font-weight:400;white-space:nowrap}
 .stall .deskline i{display:inline-flex;align-items:center;gap:3px;font-style:normal;
   font-family:var(--num);font-weight:700;font-size:1.15em}
@@ -755,8 +774,8 @@ body[data-view="home"] .ghelper{bottom:calc(var(--dockh) + 10px + env(safe-area-
 <header class="topbar"><div class="in">
   <button class="logo" data-act="home" aria-label="回首頁"><span class="mini" id="logoBal"></span><span>乘乘熱氣球</span></button>
   <div class="spacer"></div>
-  <span class="pill" title="星星"><i class="ic" data-ic="star"></i><span id="stars">0</span></span>
-  <span class="pill" title="金幣"><i class="ic" data-ic="coin"></i><span id="coins">0</span></span>
+  <button class="pill" data-act="info" data-arg="star" aria-label="星星是什麼？"><i class="ic" data-ic="star"></i><span id="stars">0</span></button>
+  <button class="pill" data-act="info" data-arg="coin" aria-label="金幣是什麼？"><i class="ic" data-ic="coin"></i><span id="coins">0</span></button>
   <button class="iconbtn" id="whobtn" data-act="players" aria-label="切換挑戰者"></button>
   <button class="iconbtn nozy" id="zybtn" data-act="zy" aria-label="注音開關">ㄅ</button>
   <button class="iconbtn" id="mutebtn" data-act="mute" aria-label="音效開關"></button>
@@ -769,6 +788,7 @@ body[data-view="home"] .ghelper{bottom:calc(var(--dockh) + 10px + env(safe-area-
 <div class="toast" id="toast" role="status"></div>
 <footer class="credit">
   <a href="https://www.instagram.com/slowlywithlili/" target="_blank" rel="noopener noreferrer">利利寫生活製作</a>
+  <span class="upd" id="upd"></span>
 </footer>
 
 <script>
@@ -1091,14 +1111,17 @@ function zyApply(){
 const LS_KEY = 'mul99-adventure-v1';
 const AVATARS = ['a0','a1','a2','a3','a4','a5'];
 const AVA_ART = {
-  a0:{p:'pat-dot',   c:['#FDF0D2','#F8DEA9','#C0944A']}, a1:{p:'pat-check', c:['#FCE0DB','#F5C0B8','#C57C71']},
-  a2:{p:'pat-zig',   c:['#D4EEED','#A8DCDD','#46959B']}, a3:{p:'pat-leaf',  c:['#E0E9D5','#C0D1AF','#708C5E']},
-  a4:{p:'pat-wave',  c:['#DBEAF3','#B3CFE2','#5A89A6']}, a5:{p:'pat-band',  c:['#FDE4D0','#F8C3A2','#C47D4F']}
+  a0:{s:'solid', p:'pat-dot',   c:['#FDF0D2','#F8DEA9','#C0944A']},
+  a1:{s:'band',  p:'',          c:['#FCE0DB','#F5C0B8','#C57C71']},
+  a2:{s:'solid', p:'pat-zig',   c:['#D4EEED','#A8DCDD','#46959B']},
+  a3:{s:'half',  p:'',          c:['#E0E9D5','#C0D1AF','#708C5E']},
+  a4:{s:'solid', p:'pat-check', c:['#DBEAF3','#B3CFE2','#5A89A6']},
+  a5:{s:'gore',  p:'',          c:['#FDE4D0','#F8C3A2','#C47D4F']}
 };
 const AVA_OLD = {'🦊':'a0','🐱':'a1','🐶':'a2','🐼':'a3','🐯':'a4','🦄':'a5','🐵':'a0','🐸':'a3','🐙':'a1','🐧':'a4','🦖':'a2','🐳':'a4'};
 function avaSVG(id,cls){
   const a=AVA_ART[id]||AVA_ART.a0;
-  return `<span class="b ${cls||''}" style="--c1:${a.c[0]};--c2:${a.c[1]};--c3:${a.c[2]}">${balloon({pat:a.p,mini:true})}</span>`;
+  return `<span class="b ${cls||''}" style="--c1:${a.c[0]};--c2:${a.c[1]};--c3:${a.c[2]}">${balloon({shape:a.s,pat:a.p,mini:true})}</span>`;
 }
 const MAX_PLAYERS = 6;
 function uid(){ return 'p'+Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
@@ -1282,11 +1305,11 @@ function seeded(str){
 }
 const TIERS = [
   {id:'e', name:'初級任務', icon:'star', bonus:1, short:'玩 🔰 遊戲',
-   desc:'只用 🔰 的三個遊戲（乘法翻翻樂、這是幾乘幾？、尋寶遊戲）就能完成'},
+   desc:'玩 🔰 的三個遊戲就能完成'},
   {id:'m', name:'中級任務', icon:'flag', bonus:1, short:'都可以玩',
-   desc:'什麼遊戲都算，玩哪一個都可以'},
+   desc:'玩哪一個遊戲都算'},
   {id:'h', name:'超級任務', icon:'fire', bonus:2, short:'挑戰難的',
-   desc:'要玩配對消消樂、蛇蛇彩虹路、乘法實戰家才會完成，金幣也最多'}
+   desc:'要玩後面三個比較難的遊戲'}
 ];
 const TIER_BY = {}; TIERS.forEach(T=>{ TIER_BY[T.id]=T; });
 /* e 只放「🔰 三個遊戲做得到」的任務；h 只放「難的三個遊戲才做得到」的任務 */
@@ -1523,10 +1546,27 @@ function edgeR(k){ const q=bpts(k); return `L${q.n},96C${q.d},85 ${q.w},66 ${q.w
 const GORES=[-1,-0.666,-0.333,0,0.333,0.666,1];
 const ENV = edgeF(-1)+edgeR(1);
 let BUID=0;
-function balloon(o){
-  o=o||{}; const id='bl'+(++BUID), pat=o.pat||'pat-band', mini=!!o.mini;
+/* 球身的做法：gore＝直的布片、band＝橫的條紋、half＝上下兩色、solid＝單色
+   每顆球只配一種做法＋最多一種花紋，才不會太花 */
+function balloonBody(shape){
+  if(shape==='band'){
+    let r='<rect width="100" height="100" fill="var(--c1)"/>';
+    for(let k=0;k<6;k++) r+=`<rect x="0" y="${4+k*17}" width="100" height="8.5" fill="var(--c2)"/>`;
+    return r;
+  }
+  if(shape==='half')
+    return '<rect width="100" height="100" fill="var(--c1)"/>'+
+      '<path d="M0,44C16,36 34,52 50,46 66,40 84,54 100,46V100H0Z" fill="var(--c2)"/>';
+  if(shape==='solid')
+    return '<rect width="100" height="100" fill="var(--c1)"/>'+
+      '<ellipse cx="50" cy="54" rx="58" ry="60" fill="var(--c2)" opacity=".32"/>';
   let g='';
   for(let i=0;i<GORES.length-1;i++) g+=`<path d="${edgeF(GORES[i])+edgeR(GORES[i+1])}" fill="var(--c${i%2?2:1})"/>`;
+  return g;
+}
+function balloon(o){
+  o=o||{}; const id='bl'+(++BUID), pat=o.pat||'', mini=!!o.mini;
+  const g=balloonBody(o.shape||'gore');
   const rig = mini ? '' : `
     <path d="M39.2,94H60.8L59.2,103H40.8Z" fill="var(--c3)"/>
     <path d="M41.4,103 44,114M58.6,103 56,114M46,103 47.4,114M54,103 52.6,114M50,103V114"
@@ -1539,7 +1579,7 @@ function balloon(o){
     <defs><clipPath id="c-${id}"><path d="${ENV}"/></clipPath></defs>
     <g clip-path="url(#c-${id})">
       ${g}
-      <rect x="0" y="0" width="100" height="100" fill="url(#${pat})"/>
+      ${pat?`<rect x="0" y="0" width="100" height="100" fill="url(#${pat})"/>`:''}
       <circle cx="31" cy="34" r="29" fill="#fff" opacity=".2"/>
       <circle cx="73" cy="58" r="33" fill="var(--c3)" opacity=".07"/>
       <ellipse cx="29" cy="28" rx="10.5" ry="14" fill="#fff" opacity=".34" transform="rotate(-20 29 28)"/>
@@ -1738,22 +1778,30 @@ function bunting(w){
 }
 
 /* 主視覺：鹿野高台的山坡草地，天上飄著幾顆遠方的熱氣球 */
+/* 遠方的小熱氣球：從草坡那邊一直慢慢升空，飄到天上就淡出重來 */
 const FARB=[
-  {x:'6%',  y:'9%',  w:46, t:14, d:0,    c:['#FBEBD2','#F6D7AE','#C9A061'], pat:'pat-band'},
-  {x:'23%', y:'20%', w:34, t:17, d:-3.5, c:['#FBE0DC','#F3C4BD','#C58B82'], pat:'pat-dot'},
-  {x:'44%', y:'6%',  w:40, t:12, d:-6,   c:['#E3EFDC','#C6D9B7','#7B9A6A'], pat:'pat-zig'},
-  {x:'66%', y:'18%', w:30, t:19, d:-1.5, c:['#DEEBF4','#BBD3E2','#6E92A8'], pat:'pat-check'},
-  {x:'84%', y:'8%',  w:38, t:15, d:-8,   c:['#FBE7D6','#F4CDAD','#C58F62'], pat:'pat-wave'},
-  {x:'34%', y:'33%', w:24, t:21, d:-11,  c:['#EDE7F4','#D5CBE5','#8E82A8'], pat:'pat-leaf'}
+  {x:'7%',  y:'62%', w:46, t:62, d:0,    c:['#FBEBD2','#F6D7AE','#C9A061'], s:'band',  pat:''},
+  {x:'24%', y:'70%', w:32, t:84, d:-26,  c:['#FBE0DC','#F3C4BD','#C58B82'], s:'solid', pat:'pat-dot'},
+  {x:'45%', y:'58%', w:40, t:70, d:-48,  c:['#E3EFDC','#C6D9B7','#7B9A6A'], s:'half',  pat:''},
+  {x:'67%', y:'72%', w:28, t:96, d:-14,  c:['#DEEBF4','#BBD3E2','#6E92A8'], s:'solid', pat:'pat-check'},
+  {x:'85%', y:'64%', w:38, t:74, d:-61,  c:['#FBE7D6','#F4CDAD','#C58F62'], s:'gore',  pat:''},
+  {x:'35%', y:'76%', w:22, t:108,d:-33,  c:['#EDE7F4','#D5CBE5','#8E82A8'], s:'solid', pat:'pat-zig'}
 ];
 function meadowHTML(){
   const far=FARB.map(b=>`<span class="far" style="--x:${b.x};--y:${b.y};--w:${b.w}px;--t:${b.t}s;--d:${b.d}s;`+
-    `--c1:${b.c[0]};--c2:${b.c[1]};--c3:${b.c[2]};--c0:var(--surface)">${balloon({pat:b.pat,mini:true})}</span>`).join('');
+    `--c1:${b.c[0]};--c2:${b.c[1]};--c3:${b.c[2]};--c0:var(--surface)">${balloon({shape:b.s,pat:b.pat,mini:true})}</span>`).join('');
+  /* 五層：最遠是帶藍的尖山（高），越近越低、越綠、起伏越平緩 */
   const hills=`<svg class="hills" viewBox="0 0 1200 340" preserveAspectRatio="none" aria-hidden="true">
-    <path d="M0,150C150,104 300,138 430,120 570,100 700,146 850,128 980,112 1100,138 1200,122V340H0Z" fill="var(--hill1)"/>
-    <path d="M0,206C170,166 330,198 480,184 650,168 780,206 930,192 1050,180 1140,196 1200,188V340H0Z" fill="var(--hill2)"/>
-    <path d="M0,258C200,228 370,254 530,244 710,233 860,264 1020,250 1110,242 1160,253 1200,247V340H0Z" fill="var(--hill3)"/>
-    <path d="M0,302C250,286 500,310 760,297 960,287 1100,303 1200,294V340H0Z" fill="var(--hill4)"/>
+    <path d="M0,154Q58,74 122,120Q192,34 268,112Q334,52 404,118Q474,38 548,114Q618,60 688,122Q762,42 838,116Q902,64 972,126Q1046,54 1116,112Q1162,84 1200,130V340H0Z"
+      fill="var(--hill0)" opacity=".9"/>
+    <path d="M0,200C74,140 152,172 234,134 320,96 394,168 488,152 594,134 660,194 762,172 864,150 944,198 1048,178 1120,164 1168,188 1200,178V340H0Z"
+      fill="var(--hill1)"/>
+    <path d="M0,252C110,198 208,242 318,224 442,204 522,260 642,244 766,228 846,270 966,252 1068,236 1144,260 1200,248V340H0Z"
+      fill="var(--hill2)"/>
+    <path d="M0,292C140,256 268,296 408,282 570,266 670,306 830,294 964,284 1100,304 1200,292V340H0Z"
+      fill="var(--hill3)"/>
+    <path d="M0,322C180,308 346,330 526,318 708,306 868,332 1046,320 1126,315 1174,325 1200,320V340H0Z"
+      fill="var(--hill4)"/>
   </svg>`;
   return far+hills;
 }
@@ -1764,18 +1812,18 @@ function stallSVG(i){
   const roof=STALLC[i%3];
   let sc='';
   for(let k=0;k<7;k++) sc+=`<path d="M${12+k*20},52 a10,10 0 0 0 20,0Z" fill="${k%2?'var(--surface)':roof}"/>`;
-  return `<svg class="sticker-edge" viewBox="0 0 160 120" aria-hidden="true">
+  return `<svg class="sticker-edge" viewBox="0 0 160 138" aria-hidden="true">
     <path d="M78.8,16V4" stroke="var(--edge)" stroke-width="2" stroke-linecap="round"/>
     <path d="M80,4 96,9.4 80,14.8Z" fill="${roof}" stroke="#3E4A52" stroke-opacity=".2" stroke-width="1.4" stroke-linejoin="round"/>
     <path d="M14,16h132l8,36H6Z" fill="${roof}"/>
     <path d="M14,16h132l8,36H6Z" fill="url(#pat-band)"/>
     <g>${sc}</g>
     <path d="M14,16h132l8,36H6Z" fill="none" stroke="#3E4A52" stroke-opacity=".2" stroke-width="2" stroke-linejoin="round"/>
-    <path d="M17,52v62M143,52v62" stroke="var(--edge)" stroke-width="3.4" stroke-linecap="round"/>
-    <rect x="24" y="70" width="112" height="36" rx="5" fill="var(--surface)"/>
-    <rect x="24" y="70" width="112" height="36" rx="5" fill="var(--oat-l)" opacity=".7"/>
-    <rect x="24" y="70" width="112" height="36" rx="5" fill="none" stroke="var(--edge)" stroke-width="1.8"/>
-    <path d="M20,106h120" stroke="var(--edge)" stroke-width="3" stroke-linecap="round" opacity=".8"/>
+    <path d="M17,52v80M143,52v80" stroke="var(--edge)" stroke-width="3.4" stroke-linecap="round"/>
+    <rect x="24" y="68" width="112" height="56" rx="5" fill="var(--surface)"/>
+    <rect x="24" y="68" width="112" height="56" rx="5" fill="var(--oat-l)" opacity=".7"/>
+    <rect x="24" y="68" width="112" height="56" rx="5" fill="none" stroke="var(--edge)" stroke-width="1.8"/>
+    <path d="M20,124h120" stroke="var(--edge)" stroke-width="3" stroke-linecap="round" opacity=".8"/>
   </svg>`;
 }
 
@@ -1875,24 +1923,24 @@ function balColor(i){
 }
 const cvar = c => `--c1:${c[0]};--c2:${c[1]};--c3:${c[2]};--c0:var(--surface)`;
 const MODES = [
-  {act:'reviewPick',grp:'easy', name:'乘法翻翻樂',   ic:'flip',  pat:'pat-band',
+  {act:'reviewPick',grp:'easy', name:'乘法翻翻樂',   ic:'flip',  shape:'half',  pat:'',
     sub:()=>'翻開卡片，一起唸'},
-  {act:'learn',     grp:'easy', name:'這是幾乘幾？', ic:'array', pat:'pat-dot',
+  {act:'learn',     grp:'easy', name:'這是幾乘幾？', ic:'array', shape:'solid', pat:'pat-dot',
     sub:()=>'數數看，有幾個？'},
-  {act:'huntPick',  grp:'easy', name:'尋寶遊戲',     ic:'find',  pat:'pat-zig',
+  {act:'huntPick',  grp:'easy', name:'尋寶遊戲',     ic:'find',  shape:'band',  pat:'',
     sub:m=>`答案藏在畫裡，找找看${(m.art||[]).length?`　${(m.art||[]).length} 張`:''}`},
-  {act:'pairPick',  grp:'hard', name:'配對消消樂',   ic:'pair',  pat:'pat-leaf',
+  {act:'pairPick',  grp:'hard', name:'配對消消樂',   ic:'pair',  shape:'solid', pat:'pat-check',
     sub:()=>'答案一樣的配成一對'},
-  {act:'snakePick', grp:'hard', name:'蛇蛇彩虹路',   ic:'snake', pat:'pat-wave',
+  {act:'snakePick', grp:'hard', name:'蛇蛇彩虹路',   ic:'snake', shape:'gore',  pat:'',
     sub:m=>`吃到對的蘋果就變長${m.snakeBest?`　最長 ${m.snakeBest}`:''}`},
-  {act:'stages',    grp:'hard', name:'乘法實戰家',   ic:'steps', pat:'pat-check',
+  {act:'stages',    grp:'hard', name:'乘法實戰家',   ic:'steps', shape:'solid', pat:'pat-zig',
     sub:m=>`12 關，想比快也可以　過了 ${Object.keys(m.stages||{}).length}/${STAGES.length} 關`}
 ];
 const EASY_ACTS = MODES.filter(x=>x.grp==='easy').map(x=>x.act);
 function balloonsHTML(m){
   return MODES.map((x,i)=>`<button class="bal" data-act="${x.act}"
       style="${cvar(balColor(i))};--d:${(i*0.43).toFixed(2)}s;--t:${(4.6+(i%3)*0.8).toFixed(1)}s">
-      <span class="env">${balloon({pat:x.pat,glyph:x.ic})}<span class="tag ${x.grp}">${x.grp==='easy'?ic('rookie'):''}${x.name}</span></span>
+      <span class="env">${balloon({shape:x.shape,pat:x.pat,glyph:x.ic})}<span class="tag ${x.grp}">${x.grp==='easy'?ic('rookie'):''}${x.name}</span></span>
       <span class="sub">${x.sub(m)}</span></button>`).join('');
 }
 
@@ -1964,6 +2012,27 @@ function helper(txt){
 }
 /* 文字裡的 🔰 一律換成手繪的初學者記號（全站不用 emoji）*/
 const mk = t => String(t).replace(/\u{1F530}/gu, ic('rookie'));
+/* 右上角的星星和金幣，點一下說明那是什麼 */
+const INFO = {
+  star:{t:'星星是什麼？', ic:'star', li:[
+    '玩完一關就會拿到星星',
+    '第一次就答對越多題，星星越多，最多 3 顆',
+    '星星是你的紀錄，不能換東西']},
+  coin:{t:'金幣是什麼？', ic:'coin', li:[
+    '完成首頁攤子的任務，就能拿金幣',
+    '乘法實戰家第一次過關也有',
+    `${DRAW_COST} 枚金幣可以轉一次轉蛋`]}
+};
+function showInfo(kind){
+  const f=INFO[kind]; if(!f) return;
+  const m=me(), n = kind==='star' ? (m?m.stars:0) : (m?m.coins:0);
+  showModal(`<h3>${ic(f.ic)} ${f.t}</h3>
+    <ul class="helplist" style="margin-top:10px">${f.li.map(x=>`<li>${mk(x)}</li>`).join('')}</ul>
+    <p class="infonow">你現在有 <b>${n}</b> ${kind==='star'?'顆星星':'枚金幣'}</p>
+    ${GUEST?`<p class="note" style="margin-top:4px">訪客模式不會留下${kind==='star'?'星星':'金幣'}喔</p>`:''}
+    <div class="row"><button class="btn sun big" data-act="closeModal">知道了！</button></div>`);
+  sfx.tap();
+}
 function showHelp(){
   const h = HELP[currentView] || HELP.home;
   showModal(`<div class="owl" aria-hidden="true" style="width:74px">${bearSVG()}</div><h3>${h.t}</h3>
@@ -2131,9 +2200,11 @@ const VIEWS = {
         <h2 style="font-size:21px;text-align:center">你叫什麼名字？</h2>
         <p class="tdesc" style="margin:6px 0 14px;text-align:center">打名字，金幣和貼紙才留得住</p>
         ${nameForm({name:'', avatar:AVATARS[0], act:'createPlayer', btn:'開始玩'})}
-        <div style="text-align:center;margin-top:18px">
-          <button class="btn small" data-act="guestStart">先玩玩看就好</button>
-          <p class="note" style="margin-top:8px;font-size:13.5px">先玩玩看也可以，<br>但金幣、貼紙不會留下來喔。</p>
+        <div class="guestbox">
+          <button class="btn sage" data-act="guestStart">${ic('user')} 用訪客模式玩</button>
+          <p class="note">不用打名字就能玩所有遊戲，<br>
+            但是<b>沒有金幣可以蒐集</b>，貼紙和紀錄也不會留下來。<br>
+            隨時可以回來取名字，變成正式的挑戰者。</p>
         </div>
       </section>`;
     focusName();
@@ -2152,7 +2223,7 @@ const VIEWS = {
           aria-label="${T.name}，完成 ${n} 之 3${ready?'，有金幣可以領':''}">${stallSVG(i)}
         ${ready?`<span class="bang" aria-hidden="true">${ic('bang')}</span>`:''}
         <span class="roofname">${T.name}</span>
-        <span class="deskline"><i>${ready?ic('coin'):''}${fin?'完成了':`${n}/3`}</i></span></button>`;
+        <span class="deskline"><b>${fin?'今天完成了':mk(T.short)}</b><i>${ready?ic('coin'):''}${n}/3</i></span></button>`;
     }).join('');
     const st=streakNow();
     const tip = m.stars===0 ? '第一次玩嗎？先按綠色的 🔰 氣球，從「乘法翻翻樂」開始。'
@@ -2167,7 +2238,7 @@ const VIEWS = {
           <span class="pill">${ic('book')} ${ownedCount}/${STICKERS.length}</span>
         </div>
       </section>
-      ${ GUEST ? `<div class="guestbar">${ic('warn','lg')}<span><b>訪客模式</b>：金幣和貼紙不會留下來</span><button class="btn small" data-act="toName">取名字</button></div>` : '' }
+      ${ GUEST ? `<div class="guestbar">${ic('warn','lg')}<span><b>訪客模式</b>：沒有金幣可以蒐集，貼紙和紀錄也不會留下來</span><button class="btn small" data-act="toName">取名字</button></div>` : '' }
       ${helper(mk(tip))}
       <section class="modes">${balloonsHTML(m)}</section>
       <div class="gdock"><button class="gbtn" data-act="book" aria-label="我的轉蛋機">${gachaSVG()}<b>我的轉蛋機</b></button></div>
@@ -2774,7 +2845,8 @@ function openTier(tier){
   else if(t.claimed.every(Boolean)) bonus=`<span>${ic('gift')} <b>三個都完成了！</b></span><button class="btn small sun" data-act="bonus" data-arg="${tier}">再拿 ${T.bonus} 枚</button>`;
   else bonus=`<span>${ic('gift')} 三個都完成，再送 ${T.bonus} 枚金幣</span>`;
   showModal(`<h3>${ic(T.icon)} ${T.name}</h3>
-    <ul class="qlist" style="margin-top:10px">${rows}</ul>
+    <p class="tdesc" style="text-align:center;margin:4px 0 10px">${mk(T.desc)}</p>
+    <ul class="qlist">${rows}</ul>
     <div class="bonus">${bonus}</div>
     <div class="row" style="margin-top:14px"><button class="btn sun big" data-act="closeModal">知道了！</button></div>`);
 }
@@ -3677,7 +3749,7 @@ document.addEventListener('click', e=>{
     case 'players': closeModal(); if(inGame()){ askQuit(); break; } endGame(); go('players'); break;
     case 'addForm': go('addPlayer'); break;
     case 'ava': formAvatar=arg; document.querySelectorAll('.ava-opt').forEach(b=>b.classList.toggle('on', b.dataset.arg===arg)); sfx.tap(); break;
-    case 'guestStart': startGuest(); updateTop(); go('home'); toast('訪客模式：獎勵不會留下來喔'); break;
+    case 'guestStart': startGuest(); updateTop(); go('home'); toast('訪客模式：沒有金幣可以蒐集喔'); break;
     case 'toName': go('welcome'); break;
     case 'createPlayer': {
       const n=readName();
@@ -3728,6 +3800,7 @@ document.addEventListener('click', e=>{
       if(currentView==='book') go('book');
       break;
     }
+    case 'info': showInfo(arg); break;
     case 'mute': state.settings.muted=!state.settings.muted; save(); updateTop(); break;
     case 'zy': state.settings.zy=!ZY_ON; save(); sfx.tap(); zyApply(); updateTop(); break;
     case 'help': showHelp(); break;
@@ -3765,6 +3838,11 @@ document.addEventListener('keydown', e=>{
 });
 document.addEventListener('visibilitychange', ()=>{ if(document.hidden) save(); });
 
+/* 「最後更新」直接讀這個檔案的 Last-Modified，不用自己維護日期 */
+(function(){
+  const el=document.getElementById('upd'), d=new Date(document.lastModified);
+  if(el && !isNaN(d)) el.textContent=`最後更新：${d.getFullYear()} 年 ${d.getMonth()+1} 月 ${d.getDate()} 日`;
+})();
 ensureDaily();
 const mdw=document.getElementById('meadow'); if(mdw) mdw.innerHTML=meadowHTML();
 zyApply();          /* 先決定要不要注音，之後畫面一有新文字就會自動補選擇子 */
