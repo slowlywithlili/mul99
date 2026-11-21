@@ -166,6 +166,7 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 .dots{display:flex;gap:2px}
 .dots i{width:6px;height:6px;border-radius:50%;background:var(--track)}
 .dots i.on{background:var(--mint)}
+.dots i.half{background:var(--mint);opacity:.42}
 .mixbtn{grid-column:1/-1;flex-direction:row;justify-content:center;gap:10px;font-weight:700;font-size:22px;background:var(--grape);color:var(--on-color);padding:16px}
 .mixbtn small{font-weight:400;font-size:16px;opacity:.9}
 .note{color:var(--muted);font-size:18.5px;text-align:center;margin-top:14px}
@@ -722,15 +723,15 @@ body[data-view="home"] .gdock{bottom:calc(var(--dockh) - 4px + env(safe-area-ins
 .ghelper{position:fixed;right:6px;top:calc(62px + env(safe-area-inset-top,0px));z-index:18;
   background:none;border:0;padding:0;cursor:pointer;display:block;color:var(--ink);
   animation:drift var(--ht,7s) ease-in-out var(--hd,0s) infinite;width:max-content}
-.ghelper svg{width:96px;height:auto;display:block;filter:drop-shadow(0 6px 8px var(--shadow))}
+.ghelper svg{width:clamp(46px,12vw,66px);height:auto;display:block;filter:drop-shadow(0 6px 8px var(--shadow))}
 /* 說明的字做成貼紙標籤，斜斜貼在氣球上（跟遊戲氣球的標籤同一種做法） */
 .ghelper .bub{position:absolute;left:50%;top:18%;translate:-50% 0;rotate:-7deg;
   background:var(--sun);color:var(--on-color);white-space:nowrap;
   font-size:15px;font-weight:700;line-height:1.3;padding:3px 9px;
   border-radius:10px 6px 11px 5px/6px 11px 5px 10px;box-shadow:0 2px 6px var(--shadow)}
+@media (max-width:420px){ .ghelper .bub{font-size:13px;padding:2px 7px} }
 @keyframes drift{0%,100%{transform:translate(0,0) rotate(-1.5deg)}30%{transform:translate(-6px,-13px) rotate(1.5deg)}65%{transform:translate(0,-6px) rotate(-1deg)}}
-@media (max-width:420px){ .ghelper svg{width:78px} .ghelper .bub{font-size:13px;padding:2px 7px}
-  .gbtn b{font-size:13px;padding:2px 7px} }
+@media (max-width:420px){ .gbtn b{font-size:13px;padding:2px 7px} }
 
 /* 頁內小提示（原本的貓頭鷹框） */
 .helper{display:block;background:color-mix(in srgb,var(--oat-l) 46%,var(--surface));border:0;
@@ -811,7 +812,7 @@ body[data-view="home"] .gdock{bottom:calc(var(--dockh) - 4px + env(safe-area-ins
 <header class="topbar"><div class="in">
   <button class="logo" data-act="home" aria-label="回首頁"><span class="mini" id="logoBal"></span><span>乘乘熱氣球</span></button>
   <div class="spacer"></div>
-  <button class="pill" data-act="info" data-arg="coin" aria-label="金幣是什麼？"><i class="ic" data-ic="coin"></i><span id="coins">0</span></button>
+  <button class="pill" data-act="info" data-arg="coin" aria-label="金幣怎麼拿？"><i class="ic" data-ic="coin"></i><span id="coins">0</span></button>
   <button class="iconbtn" id="whobtn" data-act="players" aria-label="切換挑戰者"></button>
   <button class="iconbtn nozy" id="zybtn" data-act="zy" aria-label="注音開關"><b>ㄅ</b><s>/</s><b>國</b></button>
   <button class="iconbtn" id="mutebtn" data-act="mute" aria-label="音效開關"></button>
@@ -1489,6 +1490,16 @@ function level(a,b){
   return 1;
 }
 function weightOf(a,b){ const l=level(a,b); return [2.2,3.5,1.6,0.5][l]; }
+/* 小綠點＝那一張乘法表的熟練度：同一題「連續答對 3 次」才算熟練（亮綠點），
+   已經答對過但還沒連三次是「快熟了」（半亮）。乘法是交換的，所以 5×3 和 3×5 算同一題。
+   翻翻樂不計分，看提示或答錯重來的那一次也不算，所以點點不會動 */
+function masteryDots(t){
+  let full=0, half=0;
+  for(let b=1;b<=9;b++){ const l=level(t,b); if(l===3) full++; else if(l===2) half++; }
+  const cells=Array.from({length:9},(_,i)=>
+    `<i class="${i<full?'on':(i<full+half?'half':'')}"></i>`).join('');
+  return `<span class="dots" title="已熟練 ${full}/9${half?`，快熟了 ${half} 題`:''}">${cells}</span>`;
+}
 
 /* ---------- sound ---------- */
 let actx=null;
@@ -2038,7 +2049,8 @@ const HELP = {
     '不計分，放心亂翻！']},
   pick:{t:'選哪一張？', li:[
     '2~9 點哪一張都可以',
-    '小綠點是這張表記熟幾題']},
+    '小綠點是這張表記熟幾題'],
+   note:'小綠點怎麼亮：同一題<b>連續答對 3 次</b>才會變成亮綠點，答對過但還沒連三次是半亮的。乘法可以交換，所以 5×3 和 3×5 算同一題。翻翻樂不計分，看了提示或答錯重來的那一次也不算。'},
   hunt:{t:'怎麼玩？', li:[
     '先算出答案是多少',
     '答案藏在畫裡，顏色跟畫一樣',
@@ -2092,7 +2104,7 @@ function helper(txt){
 const mk = t => String(t).replace(/\u{1F530}/gu, ic('rookie'));
 /* 右上角的金幣，點一下說明那是什麼 */
 const INFO = {
-  coin:{t:'金幣是什麼？', ic:'coin', li:[
+  coin:{t:'金幣怎麼拿？', ic:'coin', li:[
     '完成首頁攤子的任務，就能拿金幣',
     '乘法實戰家第一次過關也有',
     `${DRAW_COST} 枚金幣可以轉一次轉蛋`]}
@@ -2232,7 +2244,7 @@ function avaGrid(sel){
 }
 function nameForm(o){
   formAvatar = o.avatar || AVATARS[0];
-  return `<label class="flab" for="nameInput">你叫什麼名字？（最多 10 個字）</label>
+  return `<label class="flab" for="nameInput">你的名字是？（最多 10 個字）</label>
     <input id="nameInput" class="field" maxlength="10" placeholder="例如：小安" value="${esc(o.name||'')}" autocomplete="off">
     <span class="flab">挑一顆你的熱氣球</span>
     ${avaGrid(formAvatar)}
@@ -2272,7 +2284,7 @@ const VIEWS = {
     view.innerHTML=`
       ${TITLE()}</section>
       <section class="card" style="max-width:460px;margin:0 auto">
-        <h2 style="font-size:21px;text-align:center">你叫什麼名字？</h2>
+        <h2 style="font-size:21px;text-align:center">你的名字是？</h2>
         <p class="tdesc" style="margin:6px 0 14px;text-align:center">打名字，金幣和貼紙才留得住<br>
           <small>（紀錄存在這台裝置，之後可以到「挑戰者」頁面備份）</small></p>
         ${nameForm({name:'', avatar:AVATARS[0], act:'createPlayer', btn:'開始玩'})}
@@ -2368,11 +2380,8 @@ const VIEWS = {
 
   pick(){
     const rev = pickFor==='review';
-    const btns=[2,3,4,5,6,7,8,9].map(t=>{
-      let m=0; for(let b=1;b<=9;b++) if(level(t,b)===3) m++;
-      const dots=Array.from({length:9},(_,i)=>`<i class="${i<m?'on':''}"></i>`).join('');
-      return `<button class="pickbtn" data-act="start" data-arg="${t}"><span class="n">${t}</span><span class="lbl">${t} 的乘法</span><span class="dots" title="已熟練 ${m}/9">${dots}</span></button>`;
-    }).join('');
+    const btns=[2,3,4,5,6,7,8,9].map(t=>
+      `<button class="pickbtn" data-act="start" data-arg="${t}"><span class="n">${t}</span><span class="lbl">${t} 的乘法</span>${masteryDots(t)}</button>`).join('');
     view.innerHTML=`
       <div class="backrow"><button class="iconbtn" data-act="home" aria-label="返回">${ic('back')}</button><h2>${rev?'要複習哪一張？':'要找哪一張的答案？'}</h2></div>
       ${helper(rev?'選一張乘法表，9 張卡片點一下就翻開，還會唸口訣'
@@ -2398,7 +2407,6 @@ const VIEWS = {
       ${helper(`點卡片翻開，會唸口訣${canSpeak?'':'（這台裝置沒有語音）'}　已翻開 <b id="flipn">${open}/9</b>`)}
       <div class="flipgrid">${cards}</div>
       <div class="rbtns" style="margin-top:20px">
-        <button class="btn small" data-act="flipall">全部翻開</button>
         <button class="btn small" data-act="flipnone">全部蓋起來</button>
         <button class="btn small ${autoT?'mint':'sun'}" data-act="auto">${autoT?ic('pause')+' 停止':ic('play')+' 自動播放'}</button>
       </div>
@@ -2442,11 +2450,8 @@ const VIEWS = {
     const lvs=SNAKE_LV.map(l=>`<button class="snlv ${l.id} ${l.id===lv.id?'on':''}" data-act="snlv" data-arg="${l.id}" aria-pressed="${l.id===lv.id}">
       <b>${l.rookie?ic('rookie'):ic(l.icon)} ${l.name}</b>
       <span>${l.d1}</span><span>${l.d2}</span></button>`).join('');
-    const btns=[2,3,4,5,6,7,8,9].map(t=>{
-      let k=0; for(let b=1;b<=9;b++) if(level(t,b)===3) k++;
-      const dots=Array.from({length:9},(_,i)=>`<i class="${i<k?'on':''}"></i>`).join('');
-      return `<button class="pickbtn" data-act="snstart" data-arg="${t}"><span class="n">${t}</span><span class="lbl">${t} 的乘法</span><span class="dots" title="已熟練 ${k}/9">${dots}</span></button>`;
-    }).join('');
+    const btns=[2,3,4,5,6,7,8,9].map(t=>
+      `<button class="pickbtn" data-act="snstart" data-arg="${t}"><span class="n">${t}</span><span class="lbl">${t} 的乘法</span>${masteryDots(t)}</button>`).join('');
     view.innerHTML=`
       <div class="backrow"><button class="iconbtn" data-act="home" aria-label="返回">${ic('back')}</button><h2>彩虹貪食蛇</h2></div>
       ${helper('吃到正確答案的蘋果，蛇就變長。吃到 14 個放煙火過關！')}
@@ -2481,10 +2486,11 @@ const VIEWS = {
     if(!game || game.mode!=='learn') return VIEWS.home();
     const g=game, q=g.cur;
     const rows=Array.from({length:q.a},(_,i)=>
-      `<div class="lrow ${i===0&&g.hint>=1?'hot':''}"><span class="ln" style="--i:${(i*0.22).toFixed(2)}s">${i+1}</span>${
+      `<div class="lrow ${i===0&&g.hint===1?'hot':''}"><span class="ln" style="--i:${(i*0.22).toFixed(2)}s">${i+1}</span>${
         Array.from({length:q.b},()=>`<span class="li">${art(q.emo)}</span>`).join('')}</div>`).join('');
     /* 提示字自己一行放在最上面，下面的圖案才不會被推歪 */
-    const call = g.hint>=1 ? `<span class="hcall">${ic('down')} 這一排有 ${q.b} 個喔！</span>` : '';
+    const call = g.hint===1 ? `<span class="hcall">${ic('down')} 這一排有 ${q.b} 個喔！</span>`
+      : g.hint===2 ? `<span class="hcall">${ic('down')} 總共有 ${q.a} 排喔！</span>` : '';
     const p1=g.pick[0], p2=g.pick[1], done=g.locked;
     view.innerHTML=`
       <div class="playbar">
@@ -2498,7 +2504,7 @@ const VIEWS = {
       </div>
       <p class="note lhint" id="lnote">先數每排幾個，再數有幾排</p>
       <div class="fb" id="lfb"></div>
-      <div class="lbox ${g.hint>=1?'h1 ':''}${g.hint>=2?'count h2':''}" id="lbox">${call}${rows}</div>
+      <div class="lbox ${g.hint?'h1 ':''}${g.hint===2?'count h2':''}" id="lbox">${call}${rows}</div>
       <div class="lslots">
         <span class="lpair"><button class="lslot ${p1==null?'on':'has'}" data-act="lslot" data-arg="0">${p1==null?'?':p1}</button><small>每排幾個</small></span>
         <span class="op">×</span>
@@ -2562,10 +2568,7 @@ const VIEWS = {
     const cards=STAGES.map(S=>{
       const got=sv[S.n], st=got?got.best:0;
       let dots='';
-      if(S.table){
-        let k=0; for(let b=1;b<=9;b++) if(level(S.table,b)===3) k++;
-        dots=`<span class="dots" title="已熟練 ${k}/9">${Array.from({length:9},(_,i)=>`<i class="${i<k?'on':''}"></i>`).join('')}</span>`;
-      }
+      if(S.table) dots=masteryDots(S.table);
       return `<button class="stage ${got?'done':''} ${S.boss?'boss':''}" data-act="stage" data-arg="${S.n}">
         <span class="q">${S.q} 題</span>
         <span class="sno">第 ${S.n} 關</span>
@@ -2698,7 +2701,7 @@ function startStage(n){
   lastSetup={mode:'stage', stage:n};
   let items=[];
   if(S.table){
-    for(let b=1;b<=9;b++) items.push(Math.random()<.3?{a:b,b:S.table}:{a:S.table,b});
+    for(let b=1;b<=9;b++) items.push({a:S.table, b});   /* 選 5 的乘法就全部寫成 5 × b */
     shuffle(items);
     let worst=2+rnd(8), ww=-1;
     for(let b=2;b<=9;b++){ const w=weightOf(S.table,b)+Math.random(); if(w>ww){ww=w;worst=b;} }
@@ -2853,7 +2856,7 @@ function submit(val){
     game.combo=0;
     slot.innerHTML=`<s>${val}</s>${ans}`; qc.classList.add('wrong');
     const ch=chant(it.a,it.b);
-    let html=`<div class="wrongmsg">正確答案是 <b>${ans}</b></div><div class="chant">${ch}${canSpeak?`<button class="say" data-act="say" data-arg="${ch}" aria-label="唸口訣">🔊</button>`:''}</div>`;
+    let html=`<div class="wrongmsg">慢慢來，答案是 <b>${ans}</b></div><div class="chant">${ch}${canSpeak?`<button class="say" data-act="say" data-arg="${ch}" aria-label="唸口訣">🔊</button>`:''}</div>`;
     if(game.mode!=='timed'){
       if(!it.retry){ game.queue.push({a:it.a,b:it.b,retry:true}); html+='<div class="retrynote">這題等一下會再出現一次</div>'; }
       fb.innerHTML=html;
@@ -3442,7 +3445,7 @@ function huntPick(v, el){
     setTimeout(()=>el.classList.remove('bad'),520);
     sfx.wrong();
     const inTable = v%t===0 && v/t>=1 && v/t<=9;
-    if(game.miss===1) hnote(inTable ? `那是 ${t} × ${v/t} = ${v} 喔，現在要找 ${t} × ${b}` : `${v} 不是 ${t} 的乘法喔`);
+    if(game.miss===1) hnote(inTable ? `慢慢來，那是 ${t} × ${v/t} = ${v}，現在要找 ${t} × ${b}` : `慢慢來，${v} 不是 ${t} 的乘法喔`);
     else if(game.miss===2){ const ch=chant(t,b); hnote(`提示：${ch}`); say(ch); }
     else huntHint();
     save();
@@ -3595,12 +3598,13 @@ function learnKey(k){
   const q=g.cur, v=+k;
   if(g.pick.length===0){
     if(v!==q.b) return learnBad(0,v);
-    g.pick.push(v); go('learn');
+    g.pick.push(v); g.hint=0;      /* 填對了提示就收起來，要再按才會出現 */
+    go('learn');
     lnote('對了！再數數看總共有幾排');
     return;
   }
   if(v!==q.a) return learnBad(1,v);
-  g.pick.push(v);
+  g.pick.push(v); g.hint=0;
   learnCheck();
 }
 function learnBad(slot,v){
@@ -3610,7 +3614,7 @@ function learnBad(slot,v){
   go('learn');
   const box=document.getElementById('lbox');
   if(box){ box.classList.remove('bad'); void box.offsetWidth; box.classList.add('bad'); }
-  lfb(`<div class="lwrong">${ic('close')} ${v} 不對喔，再數一次</div>`);
+  lfb(`<div class="lwrong">${ic('close')} 慢慢來，再數一次</div>`);
   lnote(slot===0 ? '這一排有幾個呢？一個一個數數看' : '總共有幾排呢？一排一排數數看');
   sfx.wrong();
 }
@@ -3822,7 +3826,7 @@ function pairTap(i){
     f.tried=c.tried=true; f.bad=c.bad=true; g.combo=0; g.sel=-1;
     record(c.a,c.b,false);
     go('pair');
-    pnote(`${f.a} × ${f.b} = ${f.p}，${c.a} × ${c.b} = ${c.p}，不一樣喔`);
+    pnote(`慢慢來，${f.a} × ${f.b} = ${f.p}，${c.a} × ${c.b} = ${c.p}，不一樣喔`);
     sfx.wrong();
     g.t=setTimeout(()=>{
       if(game && game.mode==='pair' && !game.locked){ pairClear(); go('pair'); pnote('再找找看，哪兩張的答案一樣？'); }
@@ -3851,7 +3855,7 @@ function diffTap(i){
     if(g.miss===0) record(c.l[0],c.l[1],false);
     g.miss++; g.combo=0; c.tried=true;
     go('pair');
-    pnote(`${c.l[0]} × ${c.l[1]} 和 ${c.r[0]} × ${c.r[1]} 都是 ${lp}，這兩個一樣喔`);
+    pnote(`慢慢來，${c.l[0]} × ${c.l[1]} 和 ${c.r[0]} × ${c.r[1]} 都是 ${lp}，這兩個一樣喔`);
     sfx.wrong();
   }
 }
@@ -3906,7 +3910,6 @@ document.addEventListener('click', e=>{
     case 'gallery': closeModal(); endGame(); go('gallery'); break;
     case 'art': showArt(+arg); break;
     case 'flip': flipCard(+arg); break;
-    case 'flipall': flipAll(true); break;
     case 'flipnone': flipAll(false); break;
     case 'auto': startAuto(); break;
     case 'input': state.settings.input=arg; save(); sfx.tap(); go(currentView); break;
