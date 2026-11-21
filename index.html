@@ -441,6 +441,9 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 .helper{display:flex;gap:9px;align-items:flex-start;background:var(--surface2);border:2px dashed var(--hair);border-radius:16px;padding:9px 12px;margin:0 0 14px;font-size:19.5px;line-height:1.5}
 .helper b{font-size:21px;line-height:1.15;flex:none}
 .helper .q{margin-left:auto;flex:none;font-size:15px;color:var(--muted);white-space:nowrap}
+.helpnote{margin-top:10px;text-align:left;font-size:.78em;line-height:1.5;
+  background:var(--surface2);border-radius:14px 11px 15px 10px/11px 15px 10px 14px;padding:8px 11px}
+.helpnote b{color:var(--ink)}
 .helplist{text-align:left;margin:4px 0 2px;padding-left:22px}
 .helplist li{margin:7px 0;line-height:1.5}
 .sheet .owl{font-size:44px;line-height:1}
@@ -2022,7 +2025,8 @@ const HELP = {
   home:{t:'怎麼玩？', li:[
     '剛開始學乘法，先玩 🔰',
     '闖關遊戲，或完成攤子任務，賺取金幣',
-    '金幣可以玩轉蛋，有 40 種等你蒐集喔！']},
+    '金幣可以玩轉蛋，有 40 種等你蒐集喔！'],
+   note:'給大人：紀錄只存在這台裝置的瀏覽器裡，手機太久沒玩可能會被清掉。<b>請到右上角的「挑戰者」頁面把紀錄存成檔案</b>。iPhone 請用 Safari「加入主畫面」，從圖示進來玩。'},
   stages:{t:'怎麼玩？', li:[
     '每關 10 題，答對 8 題就過關',
     '答錯的題目等一下會再出現',
@@ -2077,7 +2081,9 @@ const HELP = {
   players:{t:'挑戰者', li:[
     '最多 6 位挑戰者',
     '每個人的進度分開記',
-    '點「換我玩」就換人']}
+    '點「換我玩」就換人',
+    '紀錄可以存成檔案帶著走'],
+   note:'紀錄存在這台裝置的瀏覽器裡：清除瀏覽資料、換裝置、或 iPhone 太久沒進來（約一週）都會不見。下面的「存成檔案」會下載一個 .json，換手機時用「從檔案還原」就接得回來。'}
 };
 function helper(txt){
   return `<p class="helper">${txt}</p>`;
@@ -2103,8 +2109,10 @@ function showInfo(kind){
 }
 function showHelp(){
   const h = HELP[currentView] || HELP.home;
+  /* note 是寫給大人看的小字，不占小孩的編號步驟 */
   showModal(`<div class="owl" aria-hidden="true" style="width:74px">${bearSVG()}</div><h3>${h.t}</h3>
     <ol class="helplist">${h.li.map(x=>`<li>${mk(x)}</li>`).join('')}</ol>
+    ${h.note?`<p class="note helpnote">${mk(h.note)}</p>`:''}
     <div class="row"><button class="btn sun big" data-act="closeModal">知道了！</button></div>`);
   sfx.tap();
 }
@@ -2265,7 +2273,8 @@ const VIEWS = {
       ${TITLE()}</section>
       <section class="card" style="max-width:460px;margin:0 auto">
         <h2 style="font-size:21px;text-align:center">你叫什麼名字？</h2>
-        <p class="tdesc" style="margin:6px 0 14px;text-align:center">打名字，金幣和貼紙才留得住</p>
+        <p class="tdesc" style="margin:6px 0 14px;text-align:center">打名字，金幣和貼紙才留得住<br>
+          <small>（紀錄存在這台裝置，之後可以到「挑戰者」頁面備份）</small></p>
         ${nameForm({name:'', avatar:AVATARS[0], act:'createPlayer', btn:'開始玩'})}
         <div class="guestbox">
           <button class="btn sage" data-act="guestStart">${ic('user')} 用訪客模式玩</button>
