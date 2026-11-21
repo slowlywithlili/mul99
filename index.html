@@ -40,7 +40,9 @@
   /* 鹿野高台：天空與山坡草地 */
   --sky1:#DCEFFA; --sky2:#EFF7F0; --hill1:#D3E6C1; --hill2:#BEDAA8; --hill3:#A8CC90; --hill4:#95BE7D;
   /* 攤位列的寬度；換算成高度，好給主畫面留位置 */
-  --sdw:min(100vw - 16px,640px,72vh); --dockh:calc(min(100vw - 16px,640px,72vh)/3*0.75 + 30px);
+  --sdw:min(100vw - 16px,640px,66vh);
+  --credh:48px;   /* 畫面最下面留給「利利寫生活製作」的高度，攤位不能蓋到 */
+  --dockh:calc(min(100vw - 16px,640px,66vh)/3*0.75 + var(--credh) + 10px);
   --ic2:color-mix(in srgb,currentColor 42%,var(--surface));   /* 符號的第二層顏色 */
   --on-color:#3A4650;
   --zh:'Huninn','Noto Sans TC','PingFang TC','Microsoft JhengHei',system-ui,sans-serif;
@@ -72,14 +74,14 @@
 :root[data-zy="on"] .hero .subt{font-size:clamp(11px,2.6vw,15px)}
 :root[data-zy="on"] .topbar .logo span:last-child{font-size:12px;white-space:nowrap}
 :root[data-zy="on"] .bal .tag{font-size:clamp(11px,5.2cqw,19px);padding:4px 10px}
-:root[data-zy="on"] .stall .roofname{font-size:clamp(10px,3vw,15px)}
-:root[data-zy="on"] .stall .deskline{font-size:clamp(8px,2.1vw,12px)}
+:root[data-zy="on"] .stall .roofname{font-size:clamp(8px,4cqw,12.5px);letter-spacing:0}
+:root[data-zy="on"] .stall .deskline{font-size:clamp(9px,4.4cqw,14px)}
 :root[data-zy="on"] .sdhead{font-size:11px}
 :root[data-zy="on"] .gbtn b{font-size:10px}
 *,*::before,*::after{box-sizing:inherit}
 html{scroll-padding-top:env(safe-area-inset-top,0px);background:var(--bg)}
 body{
-  margin:0;min-height:100%;color:var(--ink);font-family:var(--zh);font-size:17px;line-height:1.5;
+  margin:0;min-height:100%;color:var(--ink);font-family:var(--zh);font-size:19px;line-height:1.55;
   background:none;   /* 草原主視覺在 .meadow，body 要透明才看得到 */
   -webkit-tap-highlight-color:transparent;
 }
@@ -153,7 +155,7 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 .dots i.on{background:var(--mint)}
 .mixbtn{grid-column:1/-1;flex-direction:row;justify-content:center;gap:10px;font-weight:700;font-size:19px;background:var(--grape);color:var(--on-color);padding:16px}
 .mixbtn small{font-weight:400;font-size:14px;opacity:.9}
-.note{color:var(--muted);font-size:14px;text-align:center;margin-top:14px}
+.note{color:var(--muted);font-size:16px;text-align:center;margin-top:14px}
 
 /* play */
 .playbar{display:flex;align-items:center;gap:10px;margin-bottom:14px}
@@ -230,7 +232,7 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 .coinline small{display:block;font-size:13px;color:var(--muted);margin-top:2px}
 #drawbtn{line-height:1.2}
 #drawbtn small{display:block;font-size:12px;font-weight:600;opacity:.72;margin-top:2px}
-.hint{font-size:14px;color:var(--muted)}
+.hint{font-size:16px;color:var(--muted)}
 .theme{margin-top:22px}
 .theme h3{font-size:19px;margin-bottom:10px;display:flex;gap:8px;align-items:baseline}
 .theme h3 small{font-family:var(--num);color:var(--muted);font-weight:500;font-size:15px}
@@ -255,15 +257,21 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 .face{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;border:1.5px solid var(--hair);border-radius:20px;box-shadow:0 4px 12px var(--shadow);backface-visibility:hidden;-webkit-backface-visibility:hidden;font-family:var(--num);font-weight:700}
 .face.front{background:var(--surface);color:var(--ink);font-size:clamp(19px,6vw,28px)}
 .face.front small{color:var(--muted);font-size:.72em;margin:0 3px}
-.face.back{background:var(--sun);color:var(--on-color);font-size:clamp(32px,10vw,50px);transform:rotateY(180deg)}
+.face.back{background:var(--sun);color:var(--on-color);font-size:clamp(32px,10vw,50px);transform:rotateY(180deg);overflow:hidden}
+.face.back .shine{position:absolute;right:7%;top:7%;width:30%;max-width:34px;line-height:0;
+  animation:shinepop .7s cubic-bezier(.3,1.5,.5,1) .3s backwards}
+.face.back .shine svg{width:100%;height:auto;display:block;fill:currentColor}
+@keyframes shinepop{0%{opacity:0;scale:.2;rotate:-40deg}100%{opacity:.95;scale:1;rotate:0deg}}
 .fcard:active .fin{transform:scale(.96) rotateY(var(--ry,0deg))}
 .fcard.on:active .fin{--ry:180deg}
 
 /* hunt 尋寶：數字用同色顏料藏在完整場景裡，找到就圈起來 */
 .hask{text-align:center;font-family:var(--num);font-weight:700;font-size:clamp(28px,9vw,44px);line-height:1.15;margin-bottom:8px}
 .hask .op{color:var(--muted);font-weight:600;font-size:.72em;margin:0 2px}
-.hask .hchant{display:block;font-family:var(--zh);font-size:15px;letter-spacing:.04em;color:var(--muted);font-weight:400;margin-top:2px}
-.hask .hchant.ok{color:var(--mint);font-weight:700;letter-spacing:.12em;font-size:18px}
+.hask .hchant{display:block;font-family:var(--zh);font-size:16px;letter-spacing:.04em;color:var(--muted);font-weight:400;margin-top:2px}
+.hask .hchant.big{font-size:clamp(17px,4.6vw,23px);line-height:1.35;margin-top:6px}
+.hask .hchant.ok{color:var(--sage);font-weight:700;letter-spacing:.06em}
+.hask .hchant.big.ok{font-size:clamp(20px,5.6vw,28px)}
 .hstrip{display:flex;gap:5px;justify-content:center;margin:0 0 12px;flex-wrap:wrap}
 .hstrip i{font-style:normal;font-family:var(--num);font-weight:700;font-size:13px;min-width:32px;text-align:center;padding:2px 5px;border:1.5px solid var(--hair);border-radius:99px;background:var(--surface2);color:var(--muted)}
 .hstrip i.ok{background:var(--mint);color:#2B3A31}
@@ -347,8 +355,16 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 .pcard small{color:var(--muted);font-size:.68em;margin:0 1px}
 .pcard .pv{font-style:normal;font-size:.8em}
 .pcard.sel{background:var(--sun);color:var(--on-color);transform:translateY(3px);box-shadow:0 1px 6px var(--shadow)}
-.pcard.ok{background:var(--pc,var(--mint));color:#332F2A;animation:bounce .45s}
+/* 配對成功：先亮著讓小孩看清楚、唸完口訣，然後卡片就不見了 */
+.pcard.ok{background:var(--pc,var(--mint));color:#332F2A}
 .pcard.ok small{color:#332F2A;opacity:.65}
+.pcard.gone{opacity:0;border-color:transparent;box-shadow:none}
+.pcard.gone.pop{animation:popaway 1.8s ease forwards}
+@keyframes popaway{
+  0%{opacity:0;transform:scale(.9)}
+  6%{opacity:1;transform:scale(1.08)}
+  12%,72%{opacity:1;transform:scale(1)}
+  100%{opacity:0;transform:scale(.35) rotate(10deg)}}
 .pcard.bad{background:var(--tomato);color:var(--on-color);animation:shake .4s}
 .pcard.bad small{color:var(--on-color);opacity:.8}
 .pcard.no{opacity:.5}
@@ -379,14 +395,14 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 .lkey:active{transform:translateY(4px);box-shadow:0 1px 3px var(--shadow)}
 .lkey.fn{background:var(--surface2);font-size:21px}
 
-.credit{text-align:center;padding:4px 14px 30px;font-size:13.5px}
+.credit{text-align:center;padding:4px 14px calc(7px + env(safe-area-inset-bottom,0px));font-size:15px}
 .credit a{display:inline-block;color:var(--muted);text-decoration:none;padding:4px 12px;border:2px dashed var(--hair);border-radius:999px;background:var(--surface2);opacity:.9}
 .credit a:hover{color:var(--ink);opacity:1}
 
 /* 全站的圖案都是手繪 SVG，不再需要幫 emoji 降彩度 */
 
 /* 說明小幫手 */
-.helper{display:flex;gap:9px;align-items:flex-start;background:var(--surface2);border:2px dashed var(--hair);border-radius:16px;padding:9px 12px;margin:0 0 14px;font-size:15px;line-height:1.45}
+.helper{display:flex;gap:9px;align-items:flex-start;background:var(--surface2);border:2px dashed var(--hair);border-radius:16px;padding:9px 12px;margin:0 0 14px;font-size:17px;line-height:1.5}
 .helper b{font-size:21px;line-height:1.15;flex:none}
 .helper .q{margin-left:auto;flex:none;font-size:13px;color:var(--muted);white-space:nowrap}
 .helplist{text-align:left;margin:4px 0 2px;padding-left:22px}
@@ -403,7 +419,7 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 .tt.on{color:var(--on-color)}
 .tt.on i{color:var(--on-color);opacity:.8}
 .tt.e.on{background:var(--mint)} .tt.m.on{background:#9FB7CB} .tt.h.on{background:#B0A7C6}
-.tdesc{font-size:13px;color:var(--muted);margin-bottom:10px}
+.tdesc{font-size:15px;color:var(--muted);margin-bottom:10px}
 
 /* players */
 .plist{list-style:none;margin:0;padding:0;display:grid;gap:12px}
@@ -442,6 +458,29 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 .toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(140%);background:var(--ink);color:var(--bg);font-weight:700;padding:11px 18px;border-radius:16px;z-index:30;transition:transform .3s,opacity .3s;opacity:0;visibility:hidden;max-width:calc(100% - 28px);text-align:center;font-size:16px}
 .toast.show{transform:translateX(-50%) translateY(0);opacity:1;visibility:visible}
 #fx{position:fixed;inset:0;pointer-events:none;z-index:25;overflow:hidden}
+/* 陪我玩的小夥伴：貼紙在畫面上到處飄，偶爾講話、偶爾冒閃亮 */
+.buddy{position:fixed;z-index:12;pointer-events:none;width:max-content;
+  transition:left 5s cubic-bezier(.42,0,.3,1),top 5s cubic-bezier(.42,0,.3,1)}
+.buddy .bart{display:block;width:clamp(52px,15vw,76px);height:auto;aspect-ratio:1;
+  animation:bbob 2.6s ease-in-out infinite;box-shadow:0 5px 12px var(--shadow)}
+.buddy .bart .emo{font-size:clamp(28px,8.4vw,42px)}
+.buddy .bsay{position:absolute;left:50%;bottom:100%;translate:-50% 0;margin-bottom:6px;
+  background:var(--surface);color:var(--ink);font-size:13px;font-weight:700;line-height:1.3;
+  white-space:nowrap;padding:4px 10px;border-radius:13px 11px 14px 4px/11px 14px 9px 13px;
+  box-shadow:0 3px 9px var(--shadow);opacity:0;scale:.7;transform-origin:50% 120%;
+  transition:opacity .22s,scale .22s}
+.buddy .bsay.on{opacity:1;scale:1}
+@keyframes bbob{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-7px) rotate(2deg)}}
+.bspark{position:fixed;width:20px;height:20px;line-height:0;pointer-events:none;
+  animation:bsparkle 1.4s ease-out forwards}
+.bspark svg{width:100%;height:100%;fill:currentColor}
+@keyframes bsparkle{0%{opacity:0;scale:.2;translate:0 0}
+  30%{opacity:1;scale:1}100%{opacity:0;scale:.5;translate:0 -36px}}
+.scell.buddyon .sticker{outline:3px solid var(--sage);outline-offset:2px}
+.scell.buddyon .sname::after{content:"　陪玩中";color:var(--sage);font-weight:700}
+@media (prefers-reduced-motion:reduce){
+  .buddy{transition:none} .buddy .bart{animation:none} .bspark{display:none}
+}
 .cf{position:absolute;width:10px;height:14px;border-radius:3px;animation:cf 1.1s ease-out forwards}
 .floaty{position:absolute;font-family:var(--num);font-weight:700;font-size:30px;color:var(--mint);animation:floatup .9s ease-out forwards;-webkit-text-stroke:1px var(--edge)}
 
@@ -532,19 +571,22 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 .guestbar .btn{margin-left:auto;flex:none}
 
 /* 今日任務 → 三個祭典攤販，各自分離、固定在畫面最下方 */
+/* 白框貼紙效果：四個方向各描一層白色的 drop-shadow */
+.sticker-edge{filter:
+  drop-shadow(2px 0 0 var(--surface)) drop-shadow(-2px 0 0 var(--surface))
+  drop-shadow(0 2px 0 var(--surface)) drop-shadow(0 -2px 0 var(--surface))
+  drop-shadow(0 5px 8px var(--shadow))}
 .sdock{position:fixed;left:0;right:0;bottom:0;z-index:14;pointer-events:none;
   display:flex;flex-direction:column;align-items:center;
-  padding:0 8px calc(4px + env(safe-area-inset-bottom,0px))}
-.sdhead{position:relative;z-index:2;margin-bottom:-2px;pointer-events:none;
-  font-size:13px;font-weight:700;line-height:1.5;padding:1px 14px 2px;border-radius:999px;
-  background:var(--surface);box-shadow:0 2px 8px var(--shadow)}
-.sdrow{pointer-events:auto;width:var(--sdw);display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+  padding:0 8px calc(var(--credh) + env(safe-area-inset-bottom,0px))}
+.sdrow{pointer-events:auto;width:var(--sdw);display:grid;grid-template-columns:repeat(3,1fr);gap:12px;
+  container-type:inline-size}
 .stall{position:relative;display:block;background:none;border:0;padding:0;cursor:pointer;color:var(--ink)}
-.stall > svg{display:block;width:100%;height:auto;filter:drop-shadow(0 5px 8px var(--shadow))}
+.stall > svg{display:block;width:100%;height:auto}
 .stall .roofname{position:absolute;left:3%;right:3%;top:17.5%;white-space:nowrap;
-  font-size:clamp(11px,3.1vw,17px);font-weight:700;color:var(--on-color);letter-spacing:.02em}
-.stall .deskline{position:absolute;left:13%;right:13%;top:61.5%;line-height:1.32;
-  font-size:clamp(9.5px,2.5vw,14px);color:var(--ink)}
+  font-size:clamp(10px,5.4cqw,17px);font-weight:700;color:var(--on-color);letter-spacing:.02em}
+.stall .deskline{position:absolute;left:10%;right:10%;top:60%;line-height:1.3;
+  font-size:clamp(10px,5cqw,16px);color:var(--ink)}
 .stall .deskline b{display:block;font-weight:400;white-space:nowrap}
 .stall .deskline i{display:inline-flex;align-items:center;gap:3px;font-style:normal;
   font-family:var(--num);font-weight:700;font-size:1.15em}
@@ -572,7 +614,7 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
   width:155%;aspect-ratio:1;border-radius:50%;z-index:-1;pointer-events:none;
   background:radial-gradient(circle,rgba(248,222,160,.58),rgba(248,222,160,.2) 44%,transparent 68%);
   animation:glowpulse 3.6s ease-in-out infinite}
-.gbtn svg{width:clamp(54px,14vw,78px);height:auto;filter:drop-shadow(0 6px 9px var(--shadow))}
+.gbtn svg{width:clamp(54px,14vw,78px);height:auto}
 .gbtn b{font-size:clamp(10.5px,2.9vw,13px);margin-top:3px;white-space:nowrap;
   background:var(--surface);border-radius:999px;padding:1px 9px 2px;box-shadow:0 2px 6px var(--shadow)}
 
@@ -581,11 +623,11 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 .qrow{display:flex;align-items:center;gap:10px;text-align:left;padding:9px 12px;
   border-radius:16px 12px 18px 11px/12px 18px 11px 16px;background:var(--surface2)}
 .qrow.ok{background:color-mix(in srgb,var(--sage-l) 52%,var(--surface))}
-.qrow .qn{flex:1;font-size:15.5px;line-height:1.35}
+.qrow .qn{flex:1;font-size:17px;line-height:1.4}
 .qrow .qd{display:flex;gap:4px;margin-top:5px}
 .qrow .qd i{width:9px;height:9px;border-radius:50%;background:var(--track)}
 .qrow .qd i.on{background:var(--sage)}
-.qrow .qgo{font-size:13.5px;color:var(--muted);flex:none;display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
+.qrow .qgo{font-size:15px;color:var(--muted);flex:none;display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
 
 /* 熱氣球選單：填滿畫面，橫式三個一排 */
 .modes{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:26px}
@@ -604,12 +646,12 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 .bal .tag.easy{background:var(--sage-l)}
 .bal .tag.hard{background:var(--blue-l)}
 .bal .tag .ic{width:1.18em;height:1.18em;vertical-align:-.2em;margin-right:.22em}
-.bal .sub{font-size:15px;color:var(--muted);line-height:1.45;margin-top:4px;max-width:17em}
+.bal .sub{font-size:16px;color:var(--muted);line-height:1.45;margin-top:4px;max-width:17em}
 @keyframes balfloat{0%,100%{transform:translateY(0) rotate(-.6deg)}50%{transform:translateY(-11px) rotate(.8deg)}}
 
 /* 舊的活頁筆記本樣式（已不在首頁使用）*/
-#view.v-home{padding-bottom:calc(var(--dockh) + 22px)}
-body[data-view="home"] .ghelper{bottom:calc(var(--dockh) + 8px + env(safe-area-inset-bottom,0px))}
+#view.v-home{padding-bottom:calc(var(--dockh) + 10px)}
+body[data-view="home"] .ghelper{bottom:calc(var(--dockh) + 10px + env(safe-area-inset-bottom,0px))}
 .bookwrap{display:flex;justify-content:center;margin-top:30px}
 .bookbtn{position:relative;background:none;border:0;cursor:pointer;color:var(--ink);
   display:flex;flex-direction:column;align-items:center;animation:balfloat 6.4s ease-in-out .3s infinite}
@@ -623,18 +665,21 @@ body[data-view="home"] .ghelper{bottom:calc(var(--dockh) + 8px + env(safe-area-i
 @keyframes glowpulse{0%,100%{opacity:.5;transform:translate(-50%,-50%) scale(.94)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.06)}}
 
 /* 說明小幫手：小熊坐熱氣球，隨機漂浮 */
-.ghelper{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:18;
-  background:none;border:0;padding:0;cursor:pointer;display:flex;align-items:flex-end;gap:6px;color:var(--ink);
-  animation:drift var(--ht,7s) ease-in-out var(--hd,0s) infinite;width:max-content;max-width:calc(100vw - 32px)}
-.ghelper svg{width:86px;height:auto;flex:none;filter:drop-shadow(0 6px 8px var(--shadow))}
-.ghelper .bub{flex:none;width:auto;height:auto;background:var(--surface);border-radius:14px 12px 15px 4px/12px 15px 10px 14px;padding:5px 11px;
-  font-size:14px;font-weight:700;box-shadow:0 4px 10px var(--shadow);margin-bottom:34px;white-space:nowrap}
+.ghelper{position:fixed;right:10px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:18;
+  background:none;border:0;padding:0;cursor:pointer;display:block;color:var(--ink);
+  animation:drift var(--ht,7s) ease-in-out var(--hd,0s) infinite;width:max-content}
+.ghelper svg{width:96px;height:auto;display:block;filter:drop-shadow(0 6px 8px var(--shadow))}
+/* 說明的字做成貼紙標籤，斜斜貼在氣球上（跟遊戲氣球的標籤同一種做法） */
+.ghelper .bub{position:absolute;left:50%;top:18%;translate:-50% 0;rotate:-7deg;
+  background:var(--sun);color:var(--on-color);white-space:nowrap;
+  font-size:13px;font-weight:700;line-height:1.3;padding:3px 9px;
+  border-radius:10px 6px 11px 5px/6px 11px 5px 10px;box-shadow:0 2px 6px var(--shadow)}
 @keyframes drift{0%,100%{transform:translate(0,0) rotate(-1.5deg)}30%{transform:translate(-6px,-13px) rotate(1.5deg)}65%{transform:translate(0,-6px) rotate(-1deg)}}
-@media (max-width:420px){ .ghelper svg{width:68px} .ghelper .bub{font-size:13px;margin-bottom:26px} }
+@media (max-width:420px){ .ghelper svg{width:78px} .ghelper .bub{font-size:11.5px;padding:2px 7px} }
 
 /* 頁內小提示（原本的貓頭鷹框） */
 .helper{display:block;background:color-mix(in srgb,var(--oat-l) 46%,var(--surface));border:0;
-  border-radius:16px 13px 17px 12px/13px 17px 12px 16px;padding:9px 13px;margin:0 0 14px;font-size:15px;line-height:1.45}
+  border-radius:16px 13px 17px 12px/13px 17px 12px 16px;padding:9px 13px;margin:0 0 14px;font-size:17px;line-height:1.5}
 
 /* 頂欄 logo 的小熱氣球 */
 .logo .mini{background:none;border:0;padding:0;width:22px;display:block;flex:none}
@@ -961,7 +1006,7 @@ const PRAISE = ['答對了！','好棒！','太厲害了！','完全正確！','
 /* 字型自己會畫注音，這裡只放「預設讀音不對」的字：字後面那個看不見的
    異體字選擇子（U+E01E0~5）會挑出正確的讀音，E01E0 代表不標注音 */
 const ZY_CHAR_SRC = "什\uDB40\uDDE0,喔\uDB40\uDDE1,囉\uDB40\uDDE2";
-const ZY_WORD_SRC = "一個=一\uDB40\uDDE1個,一回=一\uDB40\uDDE2回,一樣=一\uDB40\uDDE1樣,一起=一\uDB40\uDDE2起,一遍=一\uDB40\uDDE1遍,不太=不\uDB40\uDDE1太,不會=不\uDB40\uDDE1會,不用=不\uDB40\uDDE1用,不要=不\uDB40\uDDE1要,數數看=數\uDB40\uDDE1數\uDB40\uDDE1看,重玩=重\uDB40\uDDE1玩,長大=長\uDB40\uDDE1大";
+const ZY_WORD_SRC = "一下=一\uDB40\uDDE1下,一個=一\uDB40\uDDE1個,一回=一\uDB40\uDDE2回,一定=一\uDB40\uDDE1定,一對=一\uDB40\uDDE1對,一張=一\uDB40\uDDE2張,一排=一\uDB40\uDDE2排,一格=一\uDB40\uDDE2格,一條=一\uDB40\uDDE2條,一樣=一\uDB40\uDDE1樣,一次=一\uDB40\uDDE1次,一步=一\uDB40\uDDE1步,一起=一\uDB40\uDDE2起,一遍=一\uDB40\uDDE1遍,一關=一\uDB40\uDDE2關,一顆=一\uDB40\uDDE2顆,一題=一\uDB40\uDDE2題,一點=一\uDB40\uDDE2點,不一樣=不一\uDB40\uDDE1樣,不到=不\uDB40\uDDE1到,不太=不\uDB40\uDDE1太,不是=不\uDB40\uDDE1是,不會=不\uDB40\uDDE1會,不用=不\uDB40\uDDE1用,不要=不\uDB40\uDDE1要,不見=不\uDB40\uDDE1見,不計=不\uDB40\uDDE1計,數數看=數\uDB40\uDDE1數\uDB40\uDDE1看,重玩=重\uDB40\uDDE1玩,長大=長\uDB40\uDDE1大";
 /* ZY-TABLE-END */
 const ZY_C = {}, ZY_W = {};
 let ZY_WMAX = 0;
@@ -1060,7 +1105,7 @@ function uid(){ return 'p'+Date.now().toString(36)+Math.random().toString(36).sl
 function blankPlayer(name,avatar){
   return { id:uid(), name:name||'挑戰者', avatar:avatar||AVATARS[0], createdAt:Date.now(),
     stars:0, coins:0, owned:{}, facts:{}, stages:{}, art:[], daily:null, streak:{last:'',count:0},
-    timedBest:0, snakeBest:0 };
+    timedBest:0, snakeBest:0, buddy:'' };
 }
 function defaultState(){
   return { v:2, players:[], activeId:'', settings:{muted:false,input:'type',helped:false,pad:true}, savedAt:0 };
@@ -1081,6 +1126,7 @@ function fixFacts(src){
   }
   return out;
 }
+const STICKER_IDS = new Set(STICKERS.map(s=>s.id));
 function fixOwned(src){
   const o=obj(src), out={};
   STICKERS.forEach(s=>{ const v=o[s.id]; if(typeof v==='string' && DATE_RE.test(v)) out[s.id]=v; });
@@ -1131,6 +1177,7 @@ function fixPlayer(src){
   out.timedBest = num(p.timedBest, 999);
   out.snakeBest = num(p.snakeBest, 9999);
   out.owned = fixOwned(p.owned);
+  out.buddy = (STICKER_IDS.has(p.buddy) && out.owned[p.buddy]) ? p.buddy : '';
   out.facts = fixFacts(p.facts);
   out.stages = fixStages(p.stages);
   out.art = fixArt(p.art);
@@ -1717,7 +1764,7 @@ function stallSVG(i){
   const roof=STALLC[i%3];
   let sc='';
   for(let k=0;k<7;k++) sc+=`<path d="M${12+k*20},52 a10,10 0 0 0 20,0Z" fill="${k%2?'var(--surface)':roof}"/>`;
-  return `<svg viewBox="0 0 160 120" aria-hidden="true">
+  return `<svg class="sticker-edge" viewBox="0 0 160 120" aria-hidden="true">
     <path d="M78.8,16V4" stroke="var(--edge)" stroke-width="2" stroke-linecap="round"/>
     <path d="M80,4 96,9.4 80,14.8Z" fill="${roof}" stroke="#3E4A52" stroke-opacity=".2" stroke-width="1.4" stroke-linejoin="round"/>
     <path d="M14,16h132l8,36H6Z" fill="${roof}"/>
@@ -1733,10 +1780,27 @@ function stallSVG(i){
 }
 
 /* 轉蛋機 */
+/* 翻翻樂翻開時隨機冒出來的閃亮小圖案（手繪，不是 emoji） */
+const SHINE = [
+  `<path d="M12,1.4 14.3,9.2 22.2,11.5 14.3,13.8 12,21.6 9.7,13.8 1.8,11.5 9.7,9.2Z"/>`,
+  `<path d="M12,2 14.7,8.6 21.8,9.1 16.4,13.7 18.1,20.6 12,16.8 5.9,20.6 7.6,13.7 2.2,9.1 9.3,8.6Z"/>`,
+  `<path d="M12,20.8C6.6,16.9 3,13.9 3,9.9A4.7,4.7 0 0 1 12,7.3 4.7,4.7 0 0 1 21,9.9C21,13.9 17.4,16.9 12,20.8Z"/>`,
+  `<circle cx="9" cy="9" r="5"/><circle cx="17" cy="16" r="3.4"/><circle cx="17.5" cy="6.5" r="2.2"/>`,
+  `<path d="M12,2.6a4.2,4.2 0 0 1 0,8.4 4.2,4.2 0 0 1 0,-8.4Zm0,10.4a4.2,4.2 0 0 1 0,8.4 4.2,4.2 0 0 1 0,-8.4Zm-5.2,-5.2a4.2,4.2 0 0 1 0,8.4 4.2,4.2 0 0 1 0,-8.4Zm10.4,0a4.2,4.2 0 0 1 0,8.4 4.2,4.2 0 0 1 0,-8.4Z"/>`,
+  `<path d="M12,1.8 13.6,7.6 19.4,6 16.2,11.2 21.4,14.4 15.4,15 16,21 12,16.6 8,21 8.6,15 2.6,14.4 7.8,11.2 4.6,6 10.4,7.6Z"/>`,
+  `<path d="M3,19a9,9 0 0 1 18,0h-3a6,6 0 0 0 -12,0Z"/><path d="M8,19a4,4 0 0 1 8,0h-2.6a1.4,1.4 0 0 0 -2.8,0Z"/>`,
+  `<path d="M12,3 15,10.4 12,21 9,10.4Z"/><path d="M3,12 10.4,9 21,12 10.4,15Z"/>`
+];
+const SHINE_C = ['#F3D179','#F0A9A0','#9EC2A7','#9DBBD4','#BDAFD6','#EDBE8C'];
+function shineHTML(k){
+  const i=((k%SHINE.length)+SHINE.length)%SHINE.length;
+  return `<i class="shine" style="color:${SHINE_C[i%SHINE_C.length]}" aria-hidden="true">
+    <svg viewBox="0 0 24 24">${SHINE[i]}</svg></i>`;
+}
 function gachaSVG(){
   const caps=[[46,44,'#F3C9C1'],[66,40,'#CFDEC3'],[86,46,'#BFD6E5'],[56,60,'#F8DEA9'],[78,62,'#D7CCE6'],[96,62,'#F8C3A2'],[62,78,'#F3C9C1'],[86,80,'#CFDEC3']]
     .map(([x,y,c])=>`<circle cx="${x}" cy="${y}" r="9.4" fill="${c}" stroke="#3E4A52" stroke-opacity=".16" stroke-width="1.1"/>`).join('');
-  return `<svg viewBox="0 0 142 188" aria-hidden="true">
+  return `<svg class="sticker-edge" viewBox="0 0 142 188" aria-hidden="true">
     <path d="M14,118h114v48a8,8 0 0 1 -8,8H22a8,8 0 0 1 -8,-8Z" fill="var(--blue-l)"/>
     <path d="M14,118h114v48a8,8 0 0 1 -8,8H22a8,8 0 0 1 -8,-8Z" fill="url(#pat-check)"/>
     <circle cx="71" cy="58" r="56" fill="var(--surface)"/>
@@ -1797,31 +1861,37 @@ function bearSVG(){
 /* ---------- 首頁的熱氣球 ---------- */
 /* 顏色是「淺 / 中 / 深」三色，深色給輪廓和球面符號用 */
 /* 🔰 三個入門遊戲走淡鼠尾草綠，另外三個走霧感灰藍 */
-const BALC={
-  review:['#EAF3E0','#CDDDBD','#6F8C5B'], learn:['#EFF6E7','#D8E5CA','#7C9868'],
-  hunt:  ['#E5F0D9','#C4D7B1','#687F50'],
-  pair:  ['#E4EEF5','#BED4E2','#5D839A'], snake:['#DDE9F2','#B0CBDB','#547A91'],
-  drill: ['#EAF1F7','#C9DBE8','#6B8FA6']
-};
+/* 球身是隨機的淡彩色，難易分別只看標籤的顏色（🔰 綠 / 藍） */
+const BALP = [
+  ['#FBEFD4','#F2DBA6','#BE9A53'], ['#FBE3DC','#F1C5BA','#BC8175'],
+  ['#E3F0E6','#BFDCC7','#6E9A7C'], ['#E0ECF5','#B9D4E6','#6990AC'],
+  ['#EBE6F3','#CEC5E2','#8578A5'], ['#FCE9D2','#F3CCA6','#BF8B55'],
+  ['#DFF0F0','#B5DCDC','#5D9596'], ['#F6E6EE','#E3C3D4','#A77391']
+];
+let BALMIX = null;
+function balColor(i){
+  if(!BALMIX) BALMIX = shuffle(BALP.map((_,k)=>k));
+  return BALP[BALMIX[i % BALP.length]];
+}
 const cvar = c => `--c1:${c[0]};--c2:${c[1]};--c3:${c[2]};--c0:var(--surface)`;
 const MODES = [
-  {act:'reviewPick',grp:'easy', name:'乘法翻翻樂',   ic:'flip',  pat:'pat-band',  c:BALC.review,
+  {act:'reviewPick',grp:'easy', name:'乘法翻翻樂',   ic:'flip',  pat:'pat-band',
     sub:()=>'翻開卡片，一起唸'},
-  {act:'learn',     grp:'easy', name:'這是幾乘幾？', ic:'array', pat:'pat-dot',   c:BALC.learn,
+  {act:'learn',     grp:'easy', name:'這是幾乘幾？', ic:'array', pat:'pat-dot',
     sub:()=>'數數看，有幾個？'},
-  {act:'huntPick',  grp:'easy', name:'尋寶遊戲',     ic:'find',  pat:'pat-zig',   c:BALC.hunt,
+  {act:'huntPick',  grp:'easy', name:'尋寶遊戲',     ic:'find',  pat:'pat-zig',
     sub:m=>`答案藏在畫裡，找找看${(m.art||[]).length?`　${(m.art||[]).length} 張`:''}`},
-  {act:'pairPick',  grp:'hard', name:'配對消消樂',   ic:'pair',  pat:'pat-leaf',  c:BALC.pair,
+  {act:'pairPick',  grp:'hard', name:'配對消消樂',   ic:'pair',  pat:'pat-leaf',
     sub:()=>'答案一樣的配成一對'},
-  {act:'snakePick', grp:'hard', name:'蛇蛇彩虹路',   ic:'snake', pat:'pat-wave',  c:BALC.snake,
+  {act:'snakePick', grp:'hard', name:'蛇蛇彩虹路',   ic:'snake', pat:'pat-wave',
     sub:m=>`吃到對的蘋果就變長${m.snakeBest?`　最長 ${m.snakeBest}`:''}`},
-  {act:'stages',    grp:'hard', name:'乘法實戰家',   ic:'steps', pat:'pat-check', c:BALC.drill,
+  {act:'stages',    grp:'hard', name:'乘法實戰家',   ic:'steps', pat:'pat-check',
     sub:m=>`12 關，想比快也可以　過了 ${Object.keys(m.stages||{}).length}/${STAGES.length} 關`}
 ];
 const EASY_ACTS = MODES.filter(x=>x.grp==='easy').map(x=>x.act);
 function balloonsHTML(m){
   return MODES.map((x,i)=>`<button class="bal" data-act="${x.act}"
-      style="${cvar(x.c)};--d:${(i*0.43).toFixed(2)}s;--t:${(4.6+(i%3)*0.8).toFixed(1)}s">
+      style="${cvar(balColor(i))};--d:${(i*0.43).toFixed(2)}s;--t:${(4.6+(i%3)*0.8).toFixed(1)}s">
       <span class="env">${balloon({pat:x.pat,glyph:x.ic})}<span class="tag ${x.grp}">${x.grp==='easy'?ic('rookie'):''}${x.name}</span></span>
       <span class="sub">${x.sub(m)}</span></button>`).join('');
 }
@@ -1834,68 +1904,59 @@ const HELP = {
     '完成攤子任務，可以拿金幣',
     '金幣可以玩轉蛋，有 40 種等你蒐集喔！']},
   stages:{t:'怎麼玩？', li:[
-    '先選「自己打數字」或「選答案」',
-    '每關 10 題，第一次就答對 8 題以上就過關',
-    '答錯的題目等一下會再出現一次，不用怕',
-    '第一次過關有金幣，但每天有上限',
-    '所有關卡都可以直接玩，想練哪一張表都行']},
+    '每關 10 題，答對 8 題就過關',
+    '答錯的題目等一下會再出現',
+    '第一次過關有金幣',
+    '12 關都可以直接玩']},
   review:{t:'怎麼玩？', li:[
-    '點一下卡片就會翻開，同時唸出口訣',
-    '9 張全部翻開，就完成一張乘法表',
-    '按「自動播放」可以跟著一起唸',
-    '這裡不計分，放心亂翻！']},
+    '點卡片翻開，同時唸口訣',
+    '9 張翻完就是一張乘法表',
+    '不計分，放心亂翻！']},
   pick:{t:'選哪一張？', li:[
-    '點 2~9 任何一張都可以',
-    '下面的小綠點代表這張表已經記熟幾題']},
+    '2~9 點哪一張都可以',
+    '小綠點是這張表記熟幾題']},
   hunt:{t:'怎麼玩？', li:[
-    '上面有題目，先算出答案是多少',
-    '答案用跟畫面一樣的顏色藏在圖裡，很會躲！',
-    '找到了就點它一下，會圈起來並唸口訣',
-    '真的找不到就按「提示」',
-    '9 個都找到，這張畫就收進畫廊']},
+    '先算出答案是多少',
+    '答案藏在畫裡，顏色跟畫一樣',
+    '找到就點它，會唸口訣',
+    '找不到就按「提示」']},
   play:{t:'怎麼按？', li:[
-    '算出答案後打數字，再按「確定」',
-    '如果是「選答案」，就直接點正確的那一個',
-    '答完會把口訣唸一次，2×2 就是「二二得四」',
-    '答錯沒關係，這一題等一下會再出現']},
+    '打數字，再按「確定」',
+    '答完會唸一次口訣',
+    '答錯沒關係，等一下再出一次']},
   result:{t:'這一關結束了！', li:[
-    '星星是看你「第一次就答對」幾題',
-    '回首頁可以領攤子的金幣']},
+    '星星看你第一次就答對幾題',
+    '回首頁領攤子的金幣']},
   snakePick:{t:'蛇蛇彩虹路', li:[
-    '先選難度：散步最簡單，衝刺最難',
-    '散步的蛇不會自己跑，可以慢慢算',
+    '散步最簡單，衝刺最難',
+    '散步的蛇不會自己跑',
     '再選一張乘法表就開始']},
   snake:{t:'怎麼玩？', li:[
-    '上面有題目，算出答案是多少',
-    '找到寫著正確答案的那顆蘋果',
-    '要轉彎就點蛇頭前面那一格，也可以按方向鍵',
-    '吃對會長大，蛇是一條彩虹，紅色永遠在最前面',
-    '吃到 14 個（兩條彩虹）就放煙火過關',
-    '吃錯或打結會扣一顆愛心，用完才結束',
-    '撞到牆不會死，會從另一邊鑽出來']},
+    '吃到寫著正確答案的蘋果',
+    '點蛇頭前面那一格就轉彎',
+    '吃到 14 個就放煙火過關',
+    '吃錯扣一顆愛心，撞牆不會死']},
   learn:{t:'怎麼玩？', li:[
-    '先數每一排有幾個',
-    '再數數看圖裡有幾排',
+    '先數每排幾個，再數有幾排',
     '照順序填：每排幾個 × 有幾排',
-    '答對會唸出來：5、4、20',
     '數不清楚就按「提示」']},
   pairPick:{t:'配對消消樂', li:[
-    '再選難度，數字越大越難']},
+    '選難度，數字越大越難']},
   pair:{t:'怎麼玩？', li:[
-    '4×1 和 2×2 的答案都是 4，就是一對',
+    '4×1 和 2×2 都是 4，就是一對',
     '點兩張答案一樣的卡片',
-    '配對成功會把兩句口訣都唸一次',
-    '配錯沒關係，卡片會留在原地']},
+    '配對成功會唸口訣，卡片就消失']},
   book:{t:'我的轉蛋機', li:[
-    `${DRAW_COST} 枚金幣可以轉一次轉蛋`,
-    '每次都會拿到還沒有的貼紙，不會重複',
-    '40 張全部收集完就是大冒險家！']},
+    `${DRAW_COST} 枚金幣轉一次`,
+    '每次都是還沒有的貼紙',
+    '點貼紙可以叫它出來陪你玩',
+    '40 張收集完就是大冒險家！']},
   gallery:{t:'我的畫廊', li:[
-    '尋寶完成的畫都收在這裡',
-    '點一張可以看大圖']},
+    '尋寶完成的畫都在這裡',
+    '點一張看大圖']},
   players:{t:'挑戰者', li:[
-    '最多可以有 6 位挑戰者',
-    '每個人的星星、貼紙、任務都分開記錄',
+    '最多 6 位挑戰者',
+    '每個人的進度分開記',
     '點「換我玩」就換人']}
 };
 function helper(txt){
@@ -1910,13 +1971,89 @@ function showHelp(){
     <div class="row"><button class="btn sun big" data-act="closeModal">知道了！</button></div>`);
   sfx.tap();
 }
+/* ---------- 陪我玩的小夥伴 ---------- */
+/* 轉蛋抽到的貼紙可以挑一個出來陪玩：在畫面上到處飄、偶爾說話、偶爾冒閃亮 */
+const BUDDY_SAY = ['加油！','你好棒！','慢慢算沒關係','我陪你！','好厲害！','再一題就好了',
+  '算錯也沒關係','你越來越快了','哇，答對了！','休息一下也可以','這題你一定會',
+  '乘法好好玩','我們一起算','不要急，慢慢來'];
+let buddyT = null, buddyStep = 0;
+function buddyOf(){
+  const m = me();
+  if(!m || !m.buddy) return null;
+  const s = STICKERS.find(x=>x.id===m.buddy);
+  return (s && m.owned[s.id]) ? s : null;
+}
+function buddySpark(el){
+  if(reduceMotion) return;
+  const r = el.getBoundingClientRect(), fx = document.getElementById('fx');
+  if(!fx || !r.width) return;
+  for(let i=0;i<3;i++){
+    const t = document.createElement('i');
+    t.className = 'bspark';
+    t.innerHTML = `<svg viewBox="0 0 24 24">${SHINE[rnd(2)===0?0:2]}</svg>`;
+    t.style.color = SHINE_C[rnd(SHINE_C.length)];
+    t.style.left = (r.left + r.width*(0.05+Math.random()*0.9)) + 'px';
+    t.style.top  = (r.top  + r.height*(0.05+Math.random()*0.7)) + 'px';
+    t.style.animationDelay = (i*0.16) + 's';
+    fx.appendChild(t);
+    setTimeout(()=>t.remove(), 1600);
+  }
+}
+function buddyHop(el){
+  const w = innerWidth, h = innerHeight, bw = el.offsetWidth || 76;
+  /* 避開上面的工具列、右上角的轉蛋機、下面的攤位 */
+  const top = 104, bot = Math.max(top+40, h - (currentView==='home' ? 215 : 150));
+  const sec = +(3.8 + Math.random()*2.8).toFixed(1);
+  if(!reduceMotion){
+    el.style.transitionDuration = sec + 's';
+    el.style.left = Math.round(12 + Math.random()*Math.max(10, w - bw - 24)) + 'px';
+    el.style.top  = Math.round(top + Math.random()*(bot - top)) + 'px';
+  }
+  buddyStep++;
+  if(buddyStep % 3 === 1){
+    const b = el.querySelector('.bsay');
+    if(b){ b.textContent = BUDDY_SAY[rnd(BUDDY_SAY.length)]; b.classList.add('on');
+      setTimeout(()=>b.classList.remove('on'), 3000); }
+  }
+  if(buddyStep % 2 === 0) buddySpark(el);
+  return sec;
+}
+function buddyTick(){
+  const el = document.getElementById('buddy');
+  if(!el){ buddyT = null; return; }
+  const sec = buddyHop(el);
+  buddyT = setTimeout(buddyTick, sec*1000 + 500);
+}
+function floatBuddy(){
+  const s = buddyOf();
+  let el = document.getElementById('buddy');
+  if(!s){
+    clearTimeout(buddyT); buddyT = null;
+    if(el) el.remove();
+    return;
+  }
+  if(!el){
+    el = document.createElement('div');
+    el.id = 'buddy'; el.className = 'buddy'; el.setAttribute('aria-hidden','true');
+    el.style.left = Math.round(innerWidth*0.42) + 'px';
+    el.style.top  = Math.round(innerHeight*0.45) + 'px';
+    document.body.appendChild(el);
+  }
+  if(el.dataset.sid !== s.id){      /* 換夥伴才重畫，免得把說話泡泡洗掉 */
+    el.dataset.sid = s.id;
+    el.innerHTML = `<span class="bsay"></span>
+      <span class="bart sticker r-${s.rar}" style="--sbg:${THEMES[s.theme].bg}"><span class="emo">${art(s.emo)}</span></span>`;
+  }
+  if(!buddyT) buddyT = setTimeout(buddyTick, 1200);
+}
+
 /* 每個頁面都有：小熊坐小熱氣球，在旁邊隨機漂浮 */
 function floatHelper(){
   let h=document.querySelector('.ghelper');
   if(!h){
     h=document.createElement('button');
-    h.className='ghelper'; h.dataset.act='help'; h.setAttribute('aria-label','說明：不會玩按我');
-    h.innerHTML=`<span class="bub">不會玩按我</span>${bearSVG()}`;
+    h.className='ghelper'; h.dataset.act='help'; h.setAttribute('aria-label','說明：我教你玩');
+    h.innerHTML=`${bearSVG()}<span class="bub">我教你玩</span>`;
     document.body.appendChild(h);
   }
   h.style.setProperty('--ht',(6.2+Math.random()*3).toFixed(1)+'s');
@@ -1968,7 +2105,7 @@ function stickerHTML(s, extra=''){
 
 /* ---------- views ---------- */
 let currentView='home', game=null, lastSetup=null, uiTier=null;
-let pickFor='review', reviewTable=2, revOpen={}, autoT=null, autoI=0;
+let pickFor='review', reviewTable=2, revOpen={}, revShine={}, autoT=null, autoI=0;
 function heroW(){ return Math.min(window.innerWidth-28, (currentView==='home'||currentView==='welcome')?1080:620); }
 function go(name){
   stopAuto();
@@ -1979,6 +2116,7 @@ function go(name){
   window.scrollTo(0,0);
   updateTop();
   floatHelper();
+  floatBuddy();
 }
 const TITLE = () => `<div class="bunting">${bunting(heroW())}</div>
   <section class="hero">
@@ -2014,8 +2152,7 @@ const VIEWS = {
           aria-label="${T.name}，完成 ${n} 之 3${ready?'，有金幣可以領':''}">${stallSVG(i)}
         ${ready?`<span class="bang" aria-hidden="true">${ic('bang')}</span>`:''}
         <span class="roofname">${T.name}</span>
-        <span class="deskline"><b>${fin?'今天完成了':mk(T.short)}</b>
-          <i>${ready?ic('coin'):''}${n}/3</i></span></button>`;
+        <span class="deskline"><i>${ready?ic('coin'):''}${fin?'完成了':`${n}/3`}</i></span></button>`;
     }).join('');
     const st=streakNow();
     const tip = m.stars===0 ? '第一次玩嗎？先按綠色的 🔰 氣球，從「乘法翻翻樂」開始。'
@@ -2034,7 +2171,7 @@ const VIEWS = {
       ${helper(mk(tip))}
       <section class="modes">${balloonsHTML(m)}</section>
       <div class="gdock"><button class="gbtn" data-act="book" aria-label="我的轉蛋機">${gachaSVG()}<b>我的轉蛋機</b></button></div>
-      <div class="sdock"><span class="sdhead">${ic('flag')} 今天的攤子</span><div class="sdrow">${stalls}</div></div>`;
+      <div class="sdock"><div class="sdrow">${stalls}</div></div>`;
   },
 
   players(){
@@ -2079,7 +2216,7 @@ const VIEWS = {
     }).join('');
     view.innerHTML=`
       <div class="backrow"><button class="iconbtn" data-act="home" aria-label="返回">${ic('back')}</button><h2>${rev?'要複習哪一張？':'要找哪一張的答案？'}</h2></div>
-      ${helper(rev?'點一張乘法表，就會出現 9 張蓋著的卡片，點一下翻開會唸口訣喔！'
+      ${helper(rev?'選一張乘法表，9 張卡片點一下就翻開，還會唸口訣'
                   :'選一張乘法表，它的九個答案就會藏在同一張圖裡。')}
       <div class="picks">${btns}
         ${rev?'':`<button class="pickbtn mixbtn" style="background:var(--sky)" data-act="gallery">${ic('image')} 我的畫廊 <small>已收藏 ${(me().art||[]).length} 張</small></button>`}
@@ -2094,19 +2231,19 @@ const VIEWS = {
       `<button class="fcard ${revOpen[b]?'on':''}" data-act="flip" data-arg="${b}" aria-label="${t} 乘 ${b}">
         <span class="fin">
           <span class="face front">${t}<small>×</small>${b}</span>
-          <span class="face back">${t*b}</span>
+          <span class="face back">${t*b}${revOpen[b]?shineHTML(revShine[b]||0):''}</span>
         </span></button>`).join('');
     const open=[1,2,3,4,5,6,7,8,9].filter(b=>revOpen[b]).length;
     view.innerHTML=`
       <div class="backrow"><button class="iconbtn" data-act="reviewPick" aria-label="返回">${ic('back')}</button><h2>翻翻樂 ${t} 的乘法</h2></div>
-      ${helper(`點卡片翻面，翻開的同時會唸口訣${canSpeak?'':'（這台裝置沒有語音，只會顯示答案）'}　已翻開 <b id="flipn">${open}/9</b>`)}
+      ${helper(`點卡片翻開，會唸口訣${canSpeak?'':'（這台裝置沒有語音）'}　已翻開 <b id="flipn">${open}/9</b>`)}
       <div class="flipgrid">${cards}</div>
       <div class="rbtns" style="margin-top:20px">
         <button class="btn small" data-act="flipall">全部翻開</button>
         <button class="btn small" data-act="flipnone">全部蓋起來</button>
         <button class="btn small ${autoT?'mint':'sun'}" data-act="auto">${autoT?ic('pause')+' 停止':ic('play')+' 自動播放'}</button>
       </div>
-      <p class="note">翻翻樂不計分，也不會影響熟練度，可以放心亂翻</p>`;
+      <p class="note">翻翻樂不計分，可以放心亂翻</p>`;
   },
 
   hunt(){
@@ -2154,9 +2291,9 @@ const VIEWS = {
     }).join('');
     view.innerHTML=`
       <div class="backrow"><button class="iconbtn" data-act="home" aria-label="返回">${ic('back')}</button><h2>蛇蛇彩虹路</h2></div>
-      ${helper('吃到寫著正確答案的蘋果，蛇就會長大。吃到 14 個就是兩條彩虹，放煙火過關！')}
+      ${helper('吃到正確答案的蘋果，蛇就變長。吃到 14 個放煙火過關！')}
       <div class="snlvs">${lvs}</div>
-      <p class="tdesc">${lv.name}：${lv.step?'蛇不會自己跑，點一下蛇頭前面才走一格':'蛇會自己前進'}，撞牆會從另一邊出來，打結只會變短不會結束</p>
+      <p class="tdesc">${lv.name}：${lv.step?'蛇不會自己跑，點蛇頭前面才走一格':'蛇會自己前進'}，撞牆不會死</p>
       <div class="picks">${btns}
         <button class="pickbtn mixbtn" data-act="snstart" data-arg="mix">${ic('dice')} 綜合挑戰 <small>各種乘法都會出現</small></button>
       </div>
@@ -2195,7 +2332,10 @@ const VIEWS = {
         <div class="track" id="track"><i id="trackfill" style="width:${g.qi/g.total*100}%"></i></div>
         <span class="qnum" id="qnum">${Math.min(g.qi+1,g.total)}/${g.total}</span>
       </div>
-      <div class="hask lask">這是幾乘幾呢？<span class="hchant">先填每排幾個，再填有幾排</span></div>
+      <div class="haskrow">
+        <div class="hask lask">這是幾乘幾呢？<span class="hchant">先填每排幾個，再填有幾排</span></div>
+        <button class="btn small" data-act="lhint">${ic('find')} 提示</button>
+      </div>
       <div class="lbox ${g.hinted?'count':''}" id="lbox">${rows}</div>
       <div class="lslots">
         <span class="lpair"><button class="lslot ${p1==null?'on':'has'}" data-act="lslot" data-arg="0">${p1==null?'?':p1}</button><small>每排幾個</small></span>
@@ -2207,7 +2347,7 @@ const VIEWS = {
       <div class="fb" id="lfb"></div>
       <div class="lkeys">${[1,2,3,4,5,6,7,8,9].map(n=>`<button class="lkey" data-act="lkey" data-arg="${n}">${n}</button>`).join('')}
         <button class="lkey fn" data-act="lkey" data-arg="del" aria-label="刪除">⌫</button></div>
-      <div class="hbtns"><button class="btn small" data-act="lhint">${ic('find')} 提示</button><span class="note" id="lnote">先數每排幾個，再數有幾排</span></div>`;
+      <p class="note" id="lnote">先數每排幾個，再數有幾排</p>`;
   },
 
   pairPick(){
@@ -2220,14 +2360,14 @@ const VIEWS = {
       ${helper('答案一樣的算式配成一對，像 4×1 和 2×2 都是 4')}
       <h3 style="font-size:17px;margin:4px 2px 10px">選一個，點了就開始</h3>
       <div class="snlvs three">${lvs}</div>
-      <p class="note">每一局都一定有一組像 3×8、4×6 這種寫法完全不同的，配對成功會把兩句口訣都唸一次</p>`;
+      <p class="note">配對成功會唸口訣，卡片就消失</p>`;
   },
 
   pair(){
     if(!game || game.mode!=='pair') return VIEWS.home();
     const g=game;
     if(g.style==='same'){
-      const cells=g.cards.map((c,i)=>`<button class="pcard ${c.ok?'ok':''}${g.sel===i?' sel':''}${c.bad?' bad':''}" data-act="ptap" data-arg="${i}"${c.ok?' disabled':''} style="--pc:${PAIR_COLORS[c.g%PAIR_COLORS.length]}">
+      const cells=g.cards.map((c,i)=>`<button class="pcard ${c.ok?'ok gone':''}${c.fresh?' pop':''}${g.sel===i?' sel':''}${c.bad?' bad':''}" data-act="ptap" data-arg="${i}"${c.ok?' disabled':''} style="--pc:${PAIR_COLORS[c.g%PAIR_COLORS.length]}">
         <b>${c.a}<small>×</small>${c.b}</b>${c.ok?`<i class="pv">${c.p}</i>`:''}</button>`).join('');
       view.innerHTML=`
         <div class="playbar">
@@ -2235,9 +2375,8 @@ const VIEWS = {
           <div class="track" id="track"><i id="trackfill" style="width:${g.done/g.total*100}%"></i></div>
           <span class="qnum">${g.done}/${g.total}</span>
         </div>
-        <div class="hask lask">找出答案一樣的兩張<span class="hchant">例如 4×1 和 2×2 都是 4</span></div>
-        <div class="pgrid">${cells}</div>
-        <p class="note" id="pnote">點兩張答案一樣的卡片，就會配成一對</p>`;
+        <div class="hask lask">找出答案一樣的兩張<span class="hchant big" id="pnote">例如 4×1 和 2×2 都是 4</span></div>
+        <div class="pgrid">${cells}</div>`;
     } else {
       const cells=g.cards.map((c,i)=>{
         const lp=c.l[0]*c.l[1], rp=c.r[0]*c.r[1], show=c.found||c.tried;
@@ -2279,7 +2418,7 @@ const VIEWS = {
     const leftNew=Math.max(0, STAGE_FIRST_CAP-d.p.firstCoins);
     view.innerHTML=`
       <div class="backrow"><button class="iconbtn" data-act="home" aria-label="返回">${ic('back')}</button><h2>乘法實戰家 ${cleared}/${STAGES.length}</h2></div>
-      ${helper('一關 10 題。第一次就答對 8 題就過關，答錯的會再出現一次，不用怕！')}
+      ${helper('一關 10 題，答對 8 題就過關。答錯的會再出一次')}
       <div class="seg" role="group" aria-label="作答方式">
         <button class="${mode==='type'?'on':''}" data-act="input" data-arg="type">自己打數字</button>
         <button class="${mode==='choice'?'on':''}" data-act="input" data-arg="choice">選答案</button>
@@ -2368,20 +2507,20 @@ const VIEWS = {
       const list=STICKERS.filter(s=>s.theme===th);
       const have=list.filter(s=>owned[s.id]).length;
       const cells=list.map(s=> owned[s.id]
-        ? `<div class="scell">${stickerHTML(s)}<span class="sname">${s.name}</span></div>`
+        ? `<div class="scell${me().buddy===s.id?' buddyon':''}">${stickerHTML(s)}<span class="sname">${s.name}</span></div>`
         : `<div class="scell"><div class="sticker locked"><span>?</span></div><span class="sname dim">？？？</span></div>`).join('');
       return `<section class="theme"><h3>${THEMES[th].name} <small>${have}/${list.length}</small></h3><div class="sgrid">${cells}</div></section>`;
     }).join('');
     const total=Object.keys(owned).length;
     view.innerHTML=`
       <div class="backrow"><button class="iconbtn" data-act="home" aria-label="返回">${ic('back')}</button><h2>我的轉蛋機 ${total}/${STICKERS.length}</h2></div>
-      ${helper(me().coins>=DRAW_COST?`${DRAW_COST} 枚金幣轉一次，一定會拿到一張還沒有的貼紙！`:`轉一次要 ${DRAW_COST} 枚金幣，完成首頁攤子的任務就能拿到。`)}
+      ${helper(me().coins>=DRAW_COST?`${DRAW_COST} 枚金幣轉一次，點貼紙可以叫它出來陪你玩`:`轉一次要 ${DRAW_COST} 枚金幣，去首頁攤子做任務`)}
       <section class="card gacha">
         <div class="machine" id="machine" aria-hidden="true">${gachaSVG()}</div>
         <div class="gachainfo">
           <p class="coinline">金幣<b>${me().coins}</b>枚<small>一次要 ${DRAW_COST} 枚</small></p>
           <button class="btn big sun" id="drawbtn" data-act="draw" ${me().coins>=DRAW_COST?'':'disabled'}>轉一次<small>${DRAW_COST} 枚金幣</small></button>
-          <p class="hint">${me().coins>=DRAW_COST?`${DRAW_COST} 枚金幣轉一次，每次都會拿到還沒有的貼紙`:`還差 ${DRAW_COST-me().coins} 枚，完成首頁的每日任務就能拿到金幣`}</p>
+          <p class="hint">${me().coins>=DRAW_COST?'每次都會拿到還沒有的貼紙':`還差 ${DRAW_COST-me().coins} 枚金幣`}</p>
         </div>
       </section>
       ${groups}`;
@@ -2635,8 +2774,7 @@ function openTier(tier){
   else if(t.claimed.every(Boolean)) bonus=`<span>${ic('gift')} <b>三個都完成了！</b></span><button class="btn small sun" data-act="bonus" data-arg="${tier}">再拿 ${T.bonus} 枚</button>`;
   else bonus=`<span>${ic('gift')} 三個都完成，再送 ${T.bonus} 枚金幣</span>`;
   showModal(`<h3>${ic(T.icon)} ${T.name}</h3>
-    <p class="tdesc" style="text-align:center;margin-top:6px">${mk(T.desc)}<br>一個任務 1 枚金幣，三個都完成再加 ${T.bonus} 枚</p>
-    <ul class="qlist">${rows}</ul>
+    <ul class="qlist" style="margin-top:10px">${rows}</ul>
     <div class="bonus">${bonus}</div>
     <div class="row" style="margin-top:14px"><button class="btn sun big" data-act="closeModal">知道了！</button></div>`);
 }
@@ -2710,7 +2848,9 @@ function showReveal(s,isNew){
     ${isNew?`<p style="font-size:20px;color:var(--ink);font-weight:700">${s.name}</p>`:''}
     <span class="rar ${s.rar}">${RAR_LABEL[s.rar]}</span>
     <p>${THEMES[s.theme].name}${DATE_RE.test(got||'')?`，${got.replace(/^(\d+)-(\d+)-(\d+)$/,(m,y,mo,d)=>`${+mo} 月 ${+d} 日`)}收集到`:''}</p>
-    <div class="row"><button class="btn sun" data-act="closeBook">${isNew?'放進收藏':'好'}</button></div>`);
+    <div class="row">
+      ${got?`<button class="btn ${me().buddy===s.id?'':'sage'}" data-act="buddy" data-arg="${s.id}">${me().buddy===s.id?'回去休息':'陪我玩'}</button>`:''}
+      <button class="btn sun" data-act="closeBook">${isNew?'放進收藏':'好'}</button></div>`);
   if(isNew){ sfx.reveal(); setTimeout(()=>burstAt(document.querySelector('.reveal'), s.rar==='s'?60:30),200); }
 }
 /* ---------- 蛇蛇彩虹路 ---------- */
@@ -3146,15 +3286,25 @@ function showArt(i){
 /* ---------- 複習模式 ---------- */
 function startReview(table){
   endGame(); stopAuto();
-  reviewTable=table; revOpen={};
+  reviewTable=table; revOpen={}; revShine={};
   go('review');
+}
+/* 翻開的卡片背面補上那個閃亮圖案（翻面只改 class，不重畫整頁，所以要自己塞進去）*/
+function paintShine(b){
+  const back=document.querySelector(`.fcard[data-arg="${b}"] .face.back`);
+  if(!back) return;
+  const old=back.querySelector('.shine');
+  if(old) old.remove();
+  if(revOpen[b]) back.insertAdjacentHTML('beforeend', shineHTML(revShine[b]||0));
 }
 function flipCard(b){
   if(currentView!=='review') return;
   const open=!revOpen[b];
   revOpen[b]=open;
+  if(open) revShine[b]=rnd(SHINE.length);   /* 每翻一次都換一個閃亮圖案 */
   const el=document.querySelector(`.fcard[data-arg="${b}"]`);
   if(el) el.classList.toggle('on', open);
+  paintShine(b);
   sfx.tap();
   if(open){
     say(chant(reviewTable,b));
@@ -3177,8 +3327,9 @@ function markReviewed(){
   }
 }
 function flipAll(open){
-  for(let b=1;b<=9;b++) revOpen[b]=open;
+  for(let b=1;b<=9;b++){ revOpen[b]=open; if(open) revShine[b]=rnd(SHINE.length); }
   document.querySelectorAll('.fcard').forEach(c=>c.classList.toggle('on',open));
+  for(let b=1;b<=9;b++) paintShine(b);
   sfx.tap();
   if(open) markReviewed();
   updateFlipCount();
@@ -3266,8 +3417,7 @@ function learnCheck(){
     lnote(PRAISE[rnd(PRAISE.length)]);
     lfb(`<div class="chant">${ch}${canSpeak?`<button class="say" data-act="say" data-arg="${ch}" aria-label="再唸一次">🔊</button>`:''}</div>`);
     sfx.right(g.combo);
-    /* 數字唸國字，語速和口訣、翻翻樂一致 */
-    say(`${zhNum(x)}、${zhNum(y)}、${zhNum(p)}`);
+    say(ch);   /* 唸法和速度跟翻翻樂一樣：直接唸口訣 */
     save(); checkQuests();
     g.t=setTimeout(()=>{ if(game && game.mode==='learn') learnNext(); }, reduceMotion?600:2200);
   } else {
@@ -3380,7 +3530,12 @@ function startPair(style, lvId){
        first:0, combo:0, maxCombo:0, locked:false, t:null};
   go('pair');
 }
-function pnote(msg){ const el=document.getElementById('pnote'); if(el) el.textContent=msg; }
+function pnote(msg, ok){
+  const el=document.getElementById('pnote');
+  if(!el) return;
+  el.textContent=msg;
+  el.classList.toggle('ok', !!ok);
+}
 function pairClear(){
   const g=game; if(!g || g.mode!=='pair') return;
   g.cards.forEach(c=>{ c.bad=false; });
@@ -3405,11 +3560,12 @@ function pairTap(i){
       g.first++; g.combo++; g.maxCombo=Math.max(g.maxCombo,g.combo);
       d.p.correct++; d.p.maxCombo=Math.max(d.p.maxCombo,g.combo);
     }
-    f.ok=c.ok=true; g.sel=-1; g.done++;
+    f.ok=c.ok=true; f.fresh=c.fresh=true; g.sel=-1; g.done++;
+    setTimeout(()=>{ f.fresh=c.fresh=false; }, 1800);   /* 唸完口訣，卡片就消失 */
     const full=g.done>=g.total;
     if(full) g.locked=true;
     go('pair');
-    pnote(`${f.a} × ${f.b} 和 ${c.a} × ${c.b} 都是 ${c.p}！`);
+    pnote(`${f.a} × ${f.b} 和 ${c.a} × ${c.b} 都是 ${c.p}！`, true);
     sfx.right(g.combo);
     say(chant(f.a,f.b)+'，'+chant(c.a,c.b));
     const el=document.querySelector(`.pcard[data-arg="${i}"]`); if(el) burstAt(el, clean?14:8);
@@ -3562,6 +3718,16 @@ document.addEventListener('click', e=>{
       } break;
     case 'draw': draw(); break;
     case 'peek': { const s=STICKERS.find(x=>x.id===arg); if(s) showReveal(s,false); break; }
+    case 'buddy': {
+      const m=me(), s=STICKERS.find(x=>x.id===arg);
+      if(!m || !s || !m.owned[s.id]) break;
+      const on = m.buddy!==s.id;
+      m.buddy = on ? s.id : '';
+      save(); sfx.tap(); closeModal(); floatBuddy();
+      toast(on ? `${s.name}出來陪你玩了！` : `${s.name}回去休息了`);
+      if(currentView==='book') go('book');
+      break;
+    }
     case 'mute': state.settings.muted=!state.settings.muted; save(); updateTop(); break;
     case 'zy': state.settings.zy=!ZY_ON; save(); sfx.tap(); zyApply(); updateTop(); break;
     case 'help': showHelp(); break;
