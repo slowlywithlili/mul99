@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://slowlywithlili.github.io/mul99/sitemap.xml

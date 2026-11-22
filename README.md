@@ -281,6 +281,39 @@ rm _r.html
 **沒有備份／還原功能**（原本有「存成檔案」和「從檔案還原」，已經移除），
 所以那張卡片是唯一提醒家長紀錄會不見的地方。
 
+## 更新的時候不要弄壞玩家的紀錄
+
+紀錄存在瀏覽器的 `localStorage`，**跟著網址的 origin 走**（`https://slowlywithlili.github.io`），
+跟檔案內容無關。所以改程式、改畫面、改圖、重新部署，**玩家的紀錄都不會動**。
+
+會弄丟紀錄的只有這幾件事，改之前要特別小心：
+
+| 動作 | 後果 |
+|---|---|
+| 改 `LS_KEY`（現在是 `mul99-adventure-v1`） | **所有人的紀錄立刻全部不見** |
+| 換成自己的網域 | origin 變了，**所有人的紀錄不見**（舊網址的資料還在，但新網址讀不到） |
+| 刪掉或改掉貼紙的 id，又沒在 `STICKER_OLD` 補對照 | 那幾張貼紙從收藏裡消失，收集數字會掉 |
+| 減少 `STAGES` 的關卡數 | 超出範圍的過關紀錄會被 `fixStages` 丟掉 |
+| 調低 `MAX_PLAYERS` | 超過的挑戰者會被 `migrate` 砍掉 |
+
+**加東西是安全的**：新貼紙接在 `STICKERS` 後面、新遊戲、新任務、改文案、改圖，
+都不會影響既有欄位。`fixPlayer`／`fixOwned`／`fixStages` 走的是白名單，
+不認得的欄位會被忽略，不會讓整份存檔壞掉。
+
+`localStorage` 是**整個 origin 共用**的，所以同一個 GitHub Pages 帳號下的其他專案
+會跟這個遊戲共用同一個儲存空間。各專案的 key 一定要帶自己的前綴（這裡是 `mul99-`），
+不然會互相覆蓋。
+
+## 搜尋引擎
+
+`index.html` 的 `<head>` 裡有 `description`、Open Graph、Twitter Card、`canonical`
+和 JSON-LD（`VideoGame` 結構化資料）。根目錄有 `robots.txt` 和 `sitemap.xml`。
+分享到 LINE/Facebook 時顯示的預覽圖是 `og.png`（1200×630，用 `og.html` 的版型截圖產生）。
+
+**這些只是讓 Google 讀得懂，不會自動帶來排名。** 實際要被搜到，還是得去
+[Google Search Console](https://search.google.com/search-console) 驗證網站並送出 sitemap，
+再從別的地方（Instagram、部落格、社團）連過來。
+
 ## 進度儲存
 
 所有挑戰者的進度存在瀏覽器的 `localStorage`（key：`mul99-adventure-v1`），換瀏覽器或清除資料會重來。
