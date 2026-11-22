@@ -91,12 +91,15 @@
 :root[data-zy="on"] .snlvs.three .snlv > span{font-size:12.5px;line-height:1.3}
 :root[data-zy="on"] .gbtn b{font-size:13px;padding:2px 7px}
 *,*::before,*::after{box-sizing:inherit}
-html{scroll-padding-top:env(safe-area-inset-top,0px);background:var(--bg)}
+html{scroll-padding-top:env(safe-area-inset-top,0px);background:var(--bg);overscroll-behavior-y:none}
 body{
   margin:0;min-height:100%;color:var(--ink);font-family:var(--zh);font-size:22px;line-height:1.55;
   background:none;   /* 草原主視覺在 .meadow，body 要透明才看得到 */
-  -webkit-tap-highlight-color:transparent;
+  -webkit-tap-highlight-color:transparent;overscroll-behavior-y:none;
 }
+/* 手機往下滑過頭時，畫面底下補一塊跟最近的山一樣的顏色，山才不會被拉起來露出空白 */
+body::after{content:"";position:fixed;left:0;right:0;top:100%;height:70vh;z-index:-3;
+  pointer-events:none;background:var(--hill4)}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
 button{font:inherit;color:inherit}
 :focus-visible{outline:3px solid var(--grape);outline-offset:3px;border-radius:12px}
@@ -224,6 +227,17 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 .stat span{font-size:16px;color:var(--muted)}
 .badge{display:inline-block;background:var(--sun);color:var(--on-color);border:1.5px solid var(--hair);border-radius:99px;padding:2px 12px;font-weight:700;margin-top:6px}
 .rbtns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:8px}
+.pintro{text-align:center;margin-bottom:14px}
+.gcard{margin-bottom:14px;text-align:left}
+.gcard h3{font-size:20px;display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.gcard h3 .ic{width:22px;height:22px;flex:none}
+.gcard .note{font-size:16.5px;line-height:1.7;text-align:left;margin-top:8px}
+.gcard .rbtns{justify-content:flex-start;margin-top:12px}
+.gcard .btn{font-size:17px;padding:9px 15px}
+.gcard .btn .ic{width:19px;height:19px}
+.inqa{display:inline-grid;place-items:center;width:21px;height:21px;margin-left:5px;vertical-align:-3px;
+  border:1.5px solid var(--hair);background:var(--surface2);color:var(--muted);
+  border-radius:50%;font-family:var(--num);font-weight:700;font-size:14px;line-height:1;cursor:pointer;padding:0}
 .qsum{margin:4px 0 16px;color:var(--muted)}
 
 /* gacha */
@@ -260,8 +274,35 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 .sticker.r-r{border-color:var(--sky);border-width:2.5px}
 .sticker.r-s::before{content:"";position:absolute;inset:-30%;background:conic-gradient(from 0deg,#c9918933,#dcc68c66,#a8c3ae66,#a9c0d266,#bbb2d066,#c9918933);animation:spin 4s linear infinite}
 .sticker.r-s{border-color:var(--sun);border-width:2.5px}
-.sname{font-size:15px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+/* 貼紙名字最多兩行；注音模式一個字 1.5 倍寬，所以再縮一點，不然長名字會被切掉 */
+.sname{font-size:15px;text-align:center;max-width:100%;line-height:1.25;min-height:2.5em;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  overflow-wrap:anywhere;word-break:break-word}
+:root[data-zy="on"] .sname{font-size:12.5px}
 .sname.dim{color:var(--muted)}
+.sname.dim.r{color:var(--sky-d,#5A89A6);font-weight:700}
+.sname.dim.s{color:#B88A2E;font-weight:700}
+/* 還沒收集到的稀有／閃亮，框先亮出來，讓小孩知道那一格是特別款 */
+.sticker.locked.r-r{border-style:dashed;border-color:var(--sky);border-width:2.5px}
+.sticker.locked.r-s{border-style:dashed;border-color:var(--sun);border-width:2.5px}
+.sticker.locked.r-s::before{opacity:.42}
+.theme.lockedth{opacity:.72}
+.lockmsg,.nextlock{display:flex;align-items:center;gap:8px;background:var(--surface2);
+  border:1.5px dashed var(--hair);border-radius:16px;padding:11px 14px;color:var(--muted);font-size:17px}
+.nextlock{margin:12px 0 0}
+.lockmsg .ic,.nextlock .ic{width:21px;height:21px;flex:none;color:var(--muted);--ic2:var(--surface2)}
+.lockmsg b,.nextlock b{font-family:var(--num);color:var(--ink)}
+.uprow{display:flex;justify-content:center;gap:8px;margin-bottom:10px}
+.upk{width:52px;height:52px;border-radius:50%;background:var(--sbg);display:grid;place-items:center;
+  box-shadow:0 0 0 3px #fff inset,0 3px 9px var(--shadow)}
+.upk .ar{width:38px;height:38px;display:block}
+/* 貼紙當頭像 */
+.b.sava{display:grid;place-items:center;background:var(--sbg);border-radius:50%;
+  box-shadow:0 0 0 2px rgba(255,255,255,.85) inset;aspect-ratio:1}
+.b.sava .ar{width:80%;height:80%;display:block}
+.avas.stk{grid-template-columns:repeat(6,1fr);margin-top:6px;max-height:166px;overflow-y:auto;padding:2px}
+.flab.sub2{margin-top:12px;display:block}
+.btn.blue{background:var(--blue-l,#BDE3FF);color:var(--on-color)}
 
 /* review flip cards */
 .flipgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
@@ -736,7 +777,8 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 .helpbtn:active{transform:translateY(2px)}
 @media (max-width:420px){ .gbtn b{font-size:13px;padding:2px 7px}
   .helpbtn{font-size:12px;padding:2px 6px 2px 2px;gap:2px} .helpbtn .hbal{width:22px}
-  .topbar .iconbtn{width:34px;height:34px} .topbar #zybtn{font-size:12.5px;padding:0 7px;min-width:34px} }
+  .topbar .iconbtn{width:32px;height:32px} .topbar #zybtn{font-size:12.5px;padding:0 6px;min-width:32px}
+  .topbar .in{padding:10px 6px} }
 /* 很窄的手機：標題列塞不下，「我教你玩」只留小熊氣球（還是點得到說明）*/
 @media (max-width:372px){
   .helpbtn b{display:none}
@@ -828,6 +870,7 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
   <button class="iconbtn" id="whobtn" data-act="players" aria-label="切換挑戰者"></button>
   <button class="iconbtn nozy" id="zybtn" data-act="zy" aria-label="注音開關"><b>ㄅ</b><s>/</s><b>國</b></button>
   <button class="iconbtn" id="mutebtn" data-act="mute" aria-label="音效開關"></button>
+  <button class="iconbtn" id="gearbtn" data-act="parent" aria-label="給大人"><i class="ic" data-ic="gear"></i></button>
 </div></header>
 <svg class="torn" viewBox="0 0 1200 14" preserveAspectRatio="none" aria-hidden="true">
   <path d="M0,0 H1200 V7 C1100,12 1000,3 900,8 C800,13 700,4 600,9 C500,14 400,4 300,9 C200,13 100,4 0,9 Z" fill="currentColor"/>
@@ -843,21 +886,56 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 <script>
 /* ---------- data ---------- */
 const THEMES = {
-  a:{name:'動物朋友', bg:'#E8D2D6'},
-  d:{name:'甜點派對', bg:'#EADCC2'},
-  o:{name:'海洋世界', bg:'#CEDCE4'},
-  m:{name:'奇幻宇宙', bg:'#D8D2E2'}
+  a:{name:'動物朋友',   bg:'#E8D2D6'},
+  d:{name:'甜點派對',   bg:'#EADCC2'},
+  o:{name:'海洋世界',   bg:'#CEDCE4'},
+  v:{name:'交通工具',   bg:'#D8D2E2'},
+  n:{name:'恐龍時代',   bg:'#DDE0C4'},
+  t:{name:'台灣小旅行', bg:'#D4E4D0'},
+  f:{name:'特別節慶',   bg:'#F2DAC8'}
 };
+/* 一開始只開兩類，收集到一定張數才解鎖下一批，收集才有階段目標 */
+const THEME_ORDER = ['a','d','o','v','n','t','f'];
+const THEME_LOCK  = { a:0, d:0, o:12, v:12, n:28, t:28, f:48 };
 const STICKERS = [
-  ['a1','cat','小貓喵喵','n','a'],['a2','dog','小狗汪汪','n','a'],['a3','rabbit','兔兔','n','a'],['a4','hamster','倉鼠','n','a'],['a5','bear','熊熊','n','a'],
-  ['a6','chick','小雞','n','a'],['a7','fox','小狐狸','r','a'],['a8','koala','無尾熊','r','a'],['a9','owl','貓頭鷹','r','a'],['a10','panda','熊貓','s','a'],
-  ['d1','cookie','餅乾','n','d'],['d2','donut','甜甜圈','n','d'],['d3','strawberry','草莓','n','d'],['d4','lollipop','棒棒糖','n','d'],['d5','pudding','布丁','n','d'],
-  ['d6','dango','糰子','n','d'],['d7','cupcake','杯子蛋糕','r','d'],['d8','softserve','霜淇淋','r','d'],['d9','cake','草莓蛋糕','r','d'],['d10','bubbletea','珍珠奶茶','s','d'],
-  ['o1','fish','熱帶魚','n','o'],['o2','crab','螃蟹','n','o'],['o3','pufferfish','河豚','n','o'],['o4','shell','貝殼','n','o'],['o5','shrimp','小蝦','n','o'],
-  ['o6','turtle','海龜','n','o'],['o7','octopus','章魚','r','o'],['o8','dolphin','海豚','r','o'],['o9','seal','海豹','r','o'],['o10','whale','鯨魚','s','o'],
-  ['m1','starS','星星','n','m'],['m2','moon','月亮','n','m'],['m3','rainbowS','彩虹','n','m'],['m4','mushroom','蘑菇','n','m'],['m5','dino','恐龍','n','m'],
-  ['m6','monster','小怪獸','n','m'],['m7','rocket','火箭','r','m'],['m8','saturn','土星','r','m'],['m9','dragon','小龍','r','m'],['m10','unicorn','獨角獸','s','m']
+  /* 動物朋友：台灣原生種 */
+  ['a1','sika','梅花鹿','n','a'],['a2','bluemagpie','台灣藍鵲','n','a'],['a3','muntjac','山羌','n','a'],
+  ['a4','treefrog','諸羅樹蛙','n','a'],['a5','pangolin','穿山甲','n','a'],['a6','spoonbill','黑面琵鷺','n','a'],
+  ['a7','leopardcat','石虎','r','a'],['a8','blackbear','台灣黑熊','r','a'],['a9','salmon','櫻花鉤吻鮭','r','a'],
+  ['a10','bfly','拉拉山鑽灰蝶','s','a'],
+  /* 甜點派對：台灣的點心 */
+  ['d1','eggcake','雞蛋糕','n','d'],['d2','wheelcake','車輪餅','n','d'],['d3','icepop','枝仔冰','n','d'],
+  ['d4','pudding','布丁','n','d'],['d5','mochi','麻糬','n','d'],['d6','cottoncandy','棉花糖','n','d'],
+  ['d7','shavedice','芒果剉冰','r','d'],['d8','douhua','豆花','r','d'],['d9','pineapplecake','鳳梨酥','r','d'],
+  ['d10','bubbletea','珍珠奶茶','s','d'],
+  /* 海洋世界：台灣的海 */
+  ['o1','hermitcrab','寄居蟹','n','o'],['o2','starfish','海星','n','o'],['o3','flyingfish','飛魚','n','o'],
+  ['o4','sakurashrimp','櫻花蝦','n','o'],['o5','clownfish','小丑魚','n','o'],['o6','urchin','海膽','n','o'],
+  ['o7','greenturtle','綠蠵龜','r','o'],['o8','whaleshark','鯨鯊','r','o'],['o9','whitedolphin','中華白海豚','r','o'],
+  ['o10','spermwhale','抹香鯨','s','o'],
+  /* 交通工具 */
+  ['v1','policecar','警車','n','v'],['v2','bus','公車','n','v'],['v3','garbagetruck','垃圾車','n','v'],
+  ['v4','ambulance','救護車','n','v'],['v5','ferry','渡輪','n','v'],['v6','excavator','挖土機','n','v'],
+  ['v7','firetruck','消防車','r','v'],['v8','gondola','貓空纜車','r','v'],['v9','hsr','高鐵','r','v'],
+  ['v10','forestrain','阿里山小火車','s','v'],
+  /* 恐龍時代 */
+  ['n1','triceratops','三角龍','n','n'],['n2','stegosaurus','劍龍','n','n'],['n3','brachiosaurus','腕龍','n','n'],
+  ['n4','parasaur','副櫛龍','n','n'],['n5','dinoegg','恐龍蛋','n','n'],['n6','footprint','腳印化石','n','n'],
+  ['n7','trex','暴龍','r','n'],['n8','pterosaur','翼龍','r','n'],['n9','ankylosaur','甲龍','r','n'],
+  ['n10','amber','琥珀小恐龍','s','n'],
+  /* 台灣小旅行 */
+  ['t1','persimmon','曬柿餅','n','t'],['t2','lighthouse','鵝鑾鼻燈塔','n','t'],['t3','turtleisland','龜山島','n','t'],
+  ['t4','taoboat','蘭嶼拼板舟','n','t'],['t5','ancienttree','阿里山神木','n','t'],['t6','rainbowvillage','彩虹眷村','n','t'],
+  ['t7','queenhead','野柳女王頭','r','t'],['t8','taipei101','台北 101','r','t'],['t9','balloonfest','鹿野高台熱氣球','r','t'],
+  ['t10','jadeMt','玉山','s','t'],
+  /* 特別節慶 */
+  ['f1','xmastree','聖誕樹','n','f'],['f2','tangyuan','湯圓','n','f'],['f3','zongzi','粽子','n','f'],
+  ['f4','mooncake','月餅','n','f'],['f5','pomelo','柚子','n','f'],['f6','couplet','春聯','n','f'],
+  ['f7','dragondance','舞龍','r','f'],['f8','dragonboat','龍舟','r','f'],['f9','festivallantern','花燈','r','f'],
+  ['f10','skylantern','平溪天燈','s','f']
 ].map(([id,emo,name,rar,theme])=>({id,emo,name,rar,theme}));   /* emo 是 ART 的 key */
+/* 舊版「奇幻宇宙」整類換成「恐龍時代」，位置一一對應，收集數字才不會歸零 */
+const STICKER_OLD = {m1:'n1',m2:'n2',m3:'n3',m4:'n4',m5:'n5',m6:'n6',m7:'n7',m8:'n8',m9:'n9',m10:'n10'};
 const STAGES = [
   {table:2, q:10}, {table:3, q:10}, {table:4, q:10}, {table:5, q:10},
   {table:6, q:10}, {table:7, q:10}, {table:8, q:10}, {table:9, q:10},
@@ -1076,7 +1154,7 @@ const PRAISE = ['答對了！','就是這樣！','完全正確！','你算出來
 /* ZY-TABLE-START  這一段是 make-font.py 產生的，不要手改 */
 /* 字型自己會畫注音，這裡只放「預設讀音不對」的字：字後面那個看不見的
    異體字選擇子（U+E01E0~5）會挑出正確的讀音，E01E0 代表不標注音 */
-const ZY_CHAR_SRC = "什\uDB40\uDDE0,喔\uDB40\uDDE1,囉\uDB40\uDDE2";
+const ZY_CHAR_SRC = "什\uDB40\uDDE0,喔\uDB40\uDDE1,囉\uDB40\uDDE2,鑽\uDB40\uDDE1";
 const ZY_WORD_SRC = "一下=一\uDB40\uDDE1下,一個=一\uDB40\uDDE1個,一回=一\uDB40\uDDE2回,一定=一\uDB40\uDDE1定,一對=一\uDB40\uDDE1對,一張=一\uDB40\uDDE2張,一排=一\uDB40\uDDE2排,一格=一\uDB40\uDDE2格,一條=一\uDB40\uDDE2條,一樣=一\uDB40\uDDE1樣,一次=一\uDB40\uDDE1次,一步=一\uDB40\uDDE1步,一起=一\uDB40\uDDE2起,一遍=一\uDB40\uDDE1遍,一關=一\uDB40\uDDE2關,一顆=一\uDB40\uDDE2顆,一題=一\uDB40\uDDE2題,一點=一\uDB40\uDDE2點,不一樣=不一\uDB40\uDDE1樣,不到=不\uDB40\uDDE1到,不太=不\uDB40\uDDE1太,不是=不\uDB40\uDDE1是,不會=不\uDB40\uDDE1會,不用=不\uDB40\uDDE1用,不要=不\uDB40\uDDE1要,不見=不\uDB40\uDDE1見,不計=不\uDB40\uDDE1計,數數看=數\uDB40\uDDE1數\uDB40\uDDE1看,重玩=重\uDB40\uDDE1玩,長大=長\uDB40\uDDE1大";
 /* ZY-TABLE-END */
 const ZY_C = {}, ZY_W = {};
@@ -1171,8 +1249,16 @@ const AVA_ART = {
 };
 const AVA_OLD = {'🦊':'a0','🐱':'a1','🐶':'a2','🐼':'a3','🐯':'a4','🦄':'a5','🐵':'a0','🐸':'a3','🐙':'a1','🐧':'a4','🦖':'a2','🐳':'a4'};
 function avaSVG(id,cls){
+  if(typeof id==='string' && id.slice(0,2)==='s:'){     /* s: 開頭＝用貼紙當頭像 */
+    const st=STICKER_BY[id.slice(2)];
+    if(st) return `<span class="b sava ${cls||''}" style="--sbg:${THEMES[st.theme].bg}">${art(st.emo)}</span>`;
+  }
   const a=AVA_ART[id]||AVA_ART.a0;
   return `<span class="b ${cls||''}" style="--c1:${a.c[0]};--c2:${a.c[1]};--c3:${a.c[2]}">${balloon({shape:a.s,pat:a.p,mini:true})}</span>`;
+}
+function avaOk(v,owned){                                 /* 貼紙頭像一定要先收集到 */
+  if(AVA_SET.has(v)) return true;
+  return typeof v==='string' && v.slice(0,2)==='s:' && STICKER_IDS.has(v.slice(2)) && !!obj(owned)[v.slice(2)];
 }
 const MAX_PLAYERS = 6;
 function uid(){ return 'p'+Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
@@ -1201,10 +1287,31 @@ function fixFacts(src){
   return out;
 }
 const STICKER_IDS = new Set(STICKERS.map(s=>s.id));
+const STICKER_BY = {}; STICKERS.forEach(s=>{ STICKER_BY[s.id]=s; });
 function fixOwned(src){
   const o=obj(src), out={};
+  /* 舊版「奇幻宇宙」的編號先搬到「恐龍時代」，收集數字才不會歸零 */
+  Object.keys(STICKER_OLD).forEach(k=>{ if(o[k]!=null && o[STICKER_OLD[k]]==null) o[STICKER_OLD[k]]=o[k]; });
   STICKERS.forEach(s=>{ const v=o[s.id]; if(typeof v==='string' && DATE_RE.test(v)) out[s.id]=v; });
   return out;
+}
+/* ---- 貼紙分類的解鎖 ---- */
+function haveCount(m){ return Object.keys((m||me()).owned||{}).length; }
+function themeOpen(th,m){
+  if(haveCount(m) >= (THEME_LOCK[th]||0)) return true;
+  /* 舊存檔搬過來的貼紙可能落在還沒解鎖的分類，那就直接幫他打開，免得收到的東西看不見 */
+  const ow=(m||me()).owned||{};
+  return STICKERS.some(s=>s.theme===th && ow[s.id]);
+}
+function openStickers(m){ return STICKERS.filter(s=>themeOpen(s.theme,m)); }
+/* 下一個還沒打開的分類（已經全開就回 null）*/
+function nextLock(m){
+  const n=haveCount(m);
+  for(let i=0;i<THEME_ORDER.length;i++){
+    const th=THEME_ORDER[i], need=THEME_LOCK[th]||0;
+    if(n<need) return {th, need, left:need-n};
+  }
+  return null;
 }
 function fixStages(src){
   const s=obj(src), out={};
@@ -1231,7 +1338,7 @@ function fixP(src){
 function fixDaily(src){
   const d=obj(src);
   if(typeof d.date!=='string' || !DATE_RE.test(d.date)) return null;
-  const out={ date:d.date, tiers:{}, p:fixP(d.p) };
+  const out={ date:d.date, tiers:{}, p:fixP(d.p), allDone:!!d.allDone };
   const ts=obj(d.tiers);
   TIER_IDS.forEach(id=>{
     const t=obj(ts[id]), cl=Array.isArray(t.claimed)?t.claimed:[], nt=Array.isArray(t.notified)?t.notified:[];
@@ -1244,13 +1351,14 @@ function fixPlayer(src){
   const p=obj(src), out=blankPlayer();
   out.id = (typeof p.id==='string' && ID_RE.test(p.id)) ? p.id : uid();
   out.name = String(p.name==null?'':p.name).slice(0,10).trim() || '挑戰者';
-  out.avatar = AVA_SET.has(p.avatar) ? p.avatar : (AVA_OLD[p.avatar] || AVATARS[0]);
   out.createdAt = num(p.createdAt, 9e15) || Date.now();
   out.coins = num(p.coins, 999999);
   out.timedBest = num(p.timedBest, 999);
   out.snakeBest = num(p.snakeBest, 9999);
   out.owned = fixOwned(p.owned);
-  out.buddy = (STICKER_IDS.has(p.buddy) && out.owned[p.buddy]) ? p.buddy : '';
+  const bud = STICKER_OLD[p.buddy] || p.buddy;      /* 舊編號的夥伴也跟著搬家 */
+  out.buddy = (STICKER_IDS.has(bud) && out.owned[bud]) ? bud : '';
+  out.avatar = avaOk(p.avatar, out.owned) ? p.avatar : (AVA_OLD[p.avatar] || AVATARS[0]);
   out.facts = fixFacts(p.facts);
   out.stages = fixStages(p.stages);
   out.art = fixArt(p.art);
@@ -1383,6 +1491,8 @@ const TIER_QUESTS = {
   e:[{type:'review', target:1}, {type:'learn', target:1}, {type:'hunt', target:1}],
   h:[{type:'pair', target:1}, {type:'snake', target:1}, {type:'stage', target:1}]
 };
+/* 今天還能拿幾枚金幣：六個任務＋兩個全完成獎勵＋實戰家＋比快挑戰 */
+const COIN_MAX_DAY = TIERS.reduce((t,T)=>t+TIER_QUESTS[T.id].length+T.bonus,0) + STAGE_FIRST_CAP + STAGE_COIN_CAP + 1;
 function makeQuests(date, tier){
   return (TIER_QUESTS[tier]||TIER_QUESTS.e).map(q=>Object.assign({},q));
 }
@@ -1715,6 +1825,8 @@ const ICON={
   seed:`<path d="M12,20.4c-5,0 -8,-3.4 -8,-7.6 4.4,0 8,2.4 8,7.6Z" fill="currentColor"/><path d="M12,20.4C12,11.6 16.4,6 21,4.2c.6,6.6 -2.8,13.2 -9,16.2Z" fill="var(--ic2)"/>`,
   /* 有金幣可以領了：跳動的小紅驚嘆號 */
   bang:`<circle cx="12" cy="12" r="10.2" fill="#D9736A"/><circle cx="12" cy="12" r="10.2" fill="none" stroke="#FFF8EC" stroke-width="1.6"/><rect x="10.3" y="5.2" width="3.4" height="9.4" rx="1.7" fill="#FFF8EC"/><circle cx="12" cy="17.6" r="1.95" fill="#FFF8EC"/>`,
+  lock:`<path d="M7.4,10.4V7.8a4.6,4.6 0 0 1 9.2,0v2.6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><rect x="4.4" y="10" width="15.2" height="10.8" rx="3" fill="currentColor"/><circle cx="12" cy="14.6" r="1.7" fill="var(--ic2)"/><rect x="11.1" y="15" width="1.8" height="3.4" rx=".9" fill="var(--ic2)"/>`,
+  gear:`<path d="M10.2,2.6h3.6l.4,2.5 2,1.15 2.3,-1 1.8,3.1 -1.9,1.65v2.3l1.9,1.65 -1.8,3.1 -2.3,-1 -2,1.15 -.4,2.5h-3.6l-.4,-2.5 -2,-1.15 -2.3,1 -1.8,-3.1 1.9,-1.65v-2.3L3.7,8.35 5.5,5.25l2.3,1 2,-1.15Z" fill="currentColor"/><circle cx="12" cy="12" r="3.4" fill="var(--ic2)"/>`,
   /* 初學者記號：左黃右綠的雙葉盾牌，代表「簡單、先玩這個」*/
   rookie:`<path d="M12,1.6 1.8,20.8Q7,18.4 12,17.9Z" fill="#F4CE72"/><path d="M12,1.6 22.2,20.8Q17,18.4 12,17.9Z" fill="#7FBE6C"/><path d="M12,1.6 22.2,20.8Q12,17.8 1.8,20.8Z" fill="none" stroke="#5E6B54" stroke-opacity=".32" stroke-width="1.1" stroke-linejoin="round"/>`
 };
@@ -1827,7 +1939,81 @@ lantern:`<path d="M12,3.6c4.4,0 7.4,3.4 7.4,7.8s-3,7.8 -7.4,7.8 -7.4,-3.4 -7.4,-
 popcorn:`<path d="M7,9.6h10l-1.2,10.6a1.8,1.8 0 0 1 -1.8,1.6h-4a1.8,1.8 0 0 1 -1.8,-1.6Z" fill="#DE8070"/><path d="M9.2,9.6 10,21.8M14.8,9.6 14,21.8" stroke="#FBF3E6" stroke-width="1.6"/><g fill="#F7EEDC"><circle cx="8.6" cy="7.4" r="2.6"/><circle cx="12.4" cy="5.4" r="2.8"/><circle cx="16" cy="7.6" r="2.4"/><circle cx="11" cy="9" r="2.2"/><circle cx="14.6" cy="9.2" r="2"/></g>`,
 corn:`<path d="M12,2.6c3.4,0 5.6,3.8 5.6,8.8 0,5.6 -2.6,10 -5.6,10S6.4,17 6.4,11.4C6.4,6.4 8.6,2.6 12,2.6Z" fill="#F0CE72"/><path d="M9.4,5.6c0,4 0,10.6 0,13.4M12,3.4v17.6M14.6,5.6c0,4 0,10.6 0,13.4" stroke="#D9AE55" stroke-width=".9"/><path d="M6.8,9.6c-2.4,-1.4 -4.2,-.6 -4.8,0 1,3.6 3,7.4 4.6,8.6ZM17.2,9.6c2.4,-1.4 4.2,-.6 4.8,0 -1,3.6 -3,7.4 -4.6,8.6Z" fill="#8FA876"/>`,
 cup:`<path d="M6,6.4h12l-1.4,13.4a2,2 0 0 1 -2,1.8H9.4a2,2 0 0 1 -2,-1.8Z" fill="#B8CDDE"/><path d="M6.6,10h10.8l-1,9.8a2,2 0 0 1 -2,1.8H9.6a2,2 0 0 1 -2,-1.8Z" fill="#E79A51"/><rect x="5.2" y="5" width="13.6" height="2.4" rx="1.2" fill="#DCE9F2"/><rect x="13.4" y="1.6" width="1.9" height="6" rx=".9" fill="#DE8070" transform="rotate(14 14.3 4.6)"/>`,
-dumpling:`<path d="M3.4,15c0,-4 3.8,-7.2 8.6,-7.2S20.6,11 20.6,15c0,2.4 -1.4,3.8 -3.4,3.8H6.8c-2,0 -3.4,-1.4 -3.4,-3.8Z" fill="#F7EEDA" stroke="#D4C4A2" stroke-width=".9"/><path d="M5.6,18.8c0,-2 1.2,-3 2.2,-3s2.2,1 2.2,3M10,18.8c0,-2 1.2,-3 2.2,-3s2.2,1 2.2,3M14.4,18.8c0,-2 1.2,-3 2.2,-3s2.2,1 2.2,3" fill="none" stroke="#D4C4A2" stroke-width="1"/><path d="M8,10.8c2.4,-1.4 5.6,-1.4 8,0" stroke="#D4C4A2" stroke-width="1.1" fill="none" stroke-linecap="round"/>`
+dumpling:`<path d="M3.4,15c0,-4 3.8,-7.2 8.6,-7.2S20.6,11 20.6,15c0,2.4 -1.4,3.8 -3.4,3.8H6.8c-2,0 -3.4,-1.4 -3.4,-3.8Z" fill="#F7EEDA" stroke="#D4C4A2" stroke-width=".9"/><path d="M5.6,18.8c0,-2 1.2,-3 2.2,-3s2.2,1 2.2,3M10,18.8c0,-2 1.2,-3 2.2,-3s2.2,1 2.2,3M14.4,18.8c0,-2 1.2,-3 2.2,-3s2.2,1 2.2,3" fill="none" stroke="#D4C4A2" stroke-width="1"/><path d="M8,10.8c2.4,-1.4 5.6,-1.4 8,0" stroke="#D4C4A2" stroke-width="1.1" fill="none" stroke-linecap="round"/>`,
+/* 動物朋友（台灣原生種）*/
+sika:`<path d="M8.2,6 6.6,2.4 9.4,3.8M15.8,6 17.4,2.4 14.6,3.8" fill="none" stroke="#9A6F45" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="5.6" cy="9.2" rx="1.8" ry="2.5" fill="#B88A58" transform="rotate(-26 5.6 9.2)"/><ellipse cx="18.4" cy="9.2" rx="1.8" ry="2.5" fill="#B88A58" transform="rotate(26 18.4 9.2)"/><ellipse cx="12" cy="14" rx="6.9" ry="6.5" fill="#D9A471"/><ellipse cx="12" cy="16.6" rx="3.5" ry="2.7" fill="#F6E6CE"/><circle cx="9.6" cy="12.8" r="1.05" fill="#5A4435"/><circle cx="14.4" cy="12.8" r="1.05" fill="#5A4435"/><ellipse cx="12" cy="15.8" rx="1.35" ry="1" fill="#6B5040"/><g fill="#F6E6CE"><circle cx="7.4" cy="10.6" r=".8"/><circle cx="16.6" cy="10.6" r=".8"/><circle cx="6.6" cy="14" r=".65"/><circle cx="17.4" cy="14" r=".65"/></g>`,
+bluemagpie:`<path d="M13.2,14 20.8,21.2 18.4,21.6 12.2,16Z" fill="#5A7FB5"/><path d="M18.9,19.9 20.8,21.2 18.4,21.6Z" fill="#F7F2E4"/><ellipse cx="10.6" cy="12.2" rx="5.7" ry="5.5" fill="#4A72AC"/><path d="M10.6,15.2a5.7,5.5 0 0 0 4.6,-1.6" stroke="#36598C" stroke-width="1" fill="none" stroke-linecap="round"/><circle cx="9.2" cy="8.2" r="3.5" fill="#2F4F7E"/><path d="M6,8.2 2.8,9 6,10.3Z" fill="#D0705F"/><circle cx="8.8" cy="7.6" r="1" fill="#FBF6E8"/><circle cx="8.8" cy="7.6" r=".52" fill="#2A2420"/><path d="M7.4,15.6 6.6,18.4M10,16.2 9.8,19" stroke="#D0705F" stroke-width="1.2" stroke-linecap="round"/>`,
+muntjac:`<path d="M8.8,6.6 7.8,3.4M15.2,6.6 16.2,3.4" stroke="#8A6340" stroke-width="1.6" stroke-linecap="round"/><ellipse cx="5.4" cy="8.8" rx="1.9" ry="2.6" fill="#B07E52" transform="rotate(-24 5.4 8.8)"/><ellipse cx="18.6" cy="8.8" rx="1.9" ry="2.6" fill="#B07E52" transform="rotate(24 18.6 8.8)"/><ellipse cx="12" cy="14.2" rx="6.6" ry="6.4" fill="#C08A5B"/><path d="M9.8,9 11.2,16M14.2,9 12.8,16" stroke="#8A6340" stroke-width="1.1" fill="none" stroke-linecap="round"/><ellipse cx="12" cy="17.2" rx="3.2" ry="2.4" fill="#EBD5B9"/><circle cx="9.5" cy="12.8" r="1" fill="#4A3A2C"/><circle cx="14.5" cy="12.8" r="1" fill="#4A3A2C"/><ellipse cx="12" cy="16.4" rx="1.3" ry=".95" fill="#4A3A2C"/>`,
+treefrog:`<circle cx="7.4" cy="8.4" r="3.2" fill="#A8CE7E"/><circle cx="16.6" cy="8.4" r="3.2" fill="#A8CE7E"/><circle cx="7.4" cy="8.6" r="1.9" fill="#F7F0D8"/><circle cx="16.6" cy="8.6" r="1.9" fill="#F7F0D8"/><circle cx="7.4" cy="8.6" r=".95" fill="#38402C"/><circle cx="16.6" cy="8.6" r=".95" fill="#38402C"/><path d="M12,8.8c4.4,0 7.4,3.2 7.4,6.3 0,3 -3.2,5 -7.4,5s-7.4,-2 -7.4,-5C4.6,12 7.6,8.8 12,8.8Z" fill="#8FC06A"/><ellipse cx="12" cy="17.2" rx="4.4" ry="2.7" fill="#F2EBD2"/><path d="M9.2,15.2a3,3 0 0 0 5.6,0" stroke="#5F7A45" stroke-width="1.1" fill="none" stroke-linecap="round"/><path d="M4.6,18.4 2.6,20.9M19.4,18.4 21.4,20.9" stroke="#8FC06A" stroke-width="1.8" stroke-linecap="round"/>`,
+pangolin:`<circle cx="12" cy="12.6" r="8.6" fill="#D4B089"/><g fill="#C2A078" stroke="#A4855F" stroke-width=".55"><path d="M3.8,9.4 6.4,7.4 9,9.4 6.4,11.4ZM9.4,8.2 12,6.2 14.6,8.2 12,10.2ZM15,9.4 17.6,7.4 20.2,9.4 17.6,11.4ZM4.4,14.2 7,12.2 9.6,14.2 7,16.2ZM10,13 12.6,11 15.2,13 12.6,15ZM15.6,14.2 18.2,12.2 20.8,14.2 18.2,16.2ZM7.4,18.6 10,16.6 12.6,18.6 10,20.6ZM13,17.8 15.6,15.8 18.2,17.8 15.6,19.8Z"/></g><path d="M4.2,15.8c-2,.6 -3.4,2.6 -3.2,4.8 2,-.4 3.6,-2 4,-4Z" fill="#E0C39C"/><circle cx="3.4" cy="18.6" r=".85" fill="#4A3A2C"/>`,
+spoonbill:`<ellipse cx="14.6" cy="14.6" rx="6" ry="5.4" fill="#FAF4E6"/><path d="M13.6,19.8 12.8,22.2M16.6,19.6 16.2,22.2" stroke="#6E6A62" stroke-width="1.4" stroke-linecap="round"/><path d="M12.6,10.6 11,7.2" stroke="#FAF4E6" stroke-width="3.6" stroke-linecap="round"/><circle cx="10.4" cy="6.4" r="3.1" fill="#FAF4E6"/><path d="M10.4,3.3a3.1,3.1 0 0 0 -2.9,4.1c.5,-1.9 1.7,-3.3 2.9,-4.1Z" fill="#3A3732"/><path d="M8.3,5.6 3.4,4.8c-1.7,-.3 -2.9,1.3 -2.4,2.9 .5,1.5 2.3,2.1 3.6,1.2l3.8,-2.5Z" fill="#3A3732"/><circle cx="11" cy="5.8" r=".95" fill="#FBF6E8"/><circle cx="11" cy="5.8" r=".5" fill="#2A2420"/><path d="M17.2,13a4.6,4.6 0 0 1 2.4,4.2" stroke="#E0D6C0" stroke-width="1.1" fill="none"/>`,
+leopardcat:`<path d="M5.6,8.4 4.8,3.6 9.2,6.4ZM18.4,8.4 19.2,3.6 14.8,6.4Z" fill="#C79A6B"/><ellipse cx="12" cy="13.8" rx="7.5" ry="6.8" fill="#DCB183"/><path d="M9.6,7.8 9,10.9M12,7.4 12,10.5M14.4,7.8 15,10.9" stroke="#FBF4E4" stroke-width="1.5" stroke-linecap="round"/><g fill="#7A5A3C"><circle cx="6.5" cy="13.6" r=".95"/><circle cx="17.5" cy="13.6" r=".95"/><circle cx="7.7" cy="16.8" r=".8"/><circle cx="16.3" cy="16.8" r=".8"/><circle cx="12" cy="19.4" r=".75"/></g><circle cx="9.5" cy="13" r="1.15" fill="#4A3A2C"/><circle cx="14.5" cy="13" r="1.15" fill="#4A3A2C"/><path d="M12,15.4a1.3,1.3 0 0 0 0,2.1" fill="#B07A62"/>`,
+blackbear:`<circle cx="6" cy="7" r="2.9" fill="#4A4540"/><circle cx="18" cy="7" r="2.9" fill="#4A4540"/><ellipse cx="12" cy="13.8" rx="7.4" ry="6.9" fill="#55504A"/><path d="M8.4,17.2 12,21.2 15.6,17.2" fill="none" stroke="#F7EFDC" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="12" cy="15.2" rx="3.3" ry="2.5" fill="#8A8278"/><circle cx="9.5" cy="12" r="1.05" fill="#F7EFDC"/><circle cx="14.5" cy="12" r="1.05" fill="#F7EFDC"/><ellipse cx="12" cy="14.4" rx="1.5" ry="1.1" fill="#2E2A26"/>`,
+salmon:`<path d="M21,12 16,8.8v6.4Z" fill="#7E93A4"/><path d="M3.4,12c0,-3.5 3.6,-5.7 7.2,-5.7S17.8,8.5 17.8,12s-3.3,5.7 -7.2,5.7S3.4,15.5 3.4,12Z" fill="#BCC9D1"/><path d="M4,10.2c3.8,-1.1 9.6,-1 13.2,.7 -.2,1 -.5,1.9 -.9,2.6 -3.6,-1.5 -9.2,-1.5 -12.6,-.4Z" fill="#DFA0A6"/><path d="M9.2,6.4 10.8,3.6 13.2,6.5Z" fill="#8FA2B0"/><path d="M9.4,17.5 10.8,20.4 13.2,17.5Z" fill="#8FA2B0"/><g fill="#5C6B76"><circle cx="8.2" cy="8.8" r=".58"/><circle cx="11.8" cy="8.4" r=".52"/><circle cx="14.8" cy="9.4" r=".48"/></g><circle cx="6.2" cy="11.5" r="1.05" fill="#FBF6E8"/><circle cx="6.1" cy="11.5" r=".55" fill="#2E2A26"/>`,
+bfly:`<path d="M11.3,12C8.9,6.8 5.2,4.5 3.2,6.1 1.2,7.7 2.9,11 11.3,12.6Z" fill="#6FA8D6"/><path d="M11.3,12.4C9.3,16.6 6.5,19.5 4.5,18.5 2.5,17.5 3.7,14.2 11.3,12.4Z" fill="#8FC2E4"/><path d="M12.7,12c2.4,-5.2 6.1,-7.5 8.1,-5.9 2,1.6 .3,4.9 -8.1,6.5Z" fill="#6FA8D6"/><path d="M12.7,12.4c2,4.2 4.8,7.1 6.8,6.1 2,-1 .8,-4.3 -6.8,-6.1Z" fill="#8FC2E4"/><path d="M6.4,8.2c1.9,.5 3.5,1.7 4.5,3.3M17.6,8.2c-1.9,.5 -3.5,1.7 -4.5,3.3" stroke="#DCEFFA" stroke-width="1" fill="none" stroke-linecap="round"/><rect x="11.2" y="7.2" width="1.6" height="10.6" rx=".8" fill="#4A5260"/><path d="M11.4,7.2 9.3,3.7M12.6,7.2 14.7,3.7" stroke="#4A5260" stroke-width="1" fill="none" stroke-linecap="round"/><circle cx="9.3" cy="3.7" r=".82" fill="#4A5260"/><circle cx="14.7" cy="3.7" r=".82" fill="#4A5260"/>`,
+/* 甜點派對（台灣點心）*/
+eggcake:`<path d="M6,10.8h12l-1,9.8a1.6,1.6 0 0 1 -1.6,1.4H8.6A1.6,1.6 0 0 1 7,20.6Z" fill="#E8D5B0"/><path d="M6,10.8h12l-.3,2.8H6.3Z" fill="#D6BF95"/><circle cx="8.5" cy="8.6" r="3.2" fill="#E8B96A" stroke="#CC9A4E" stroke-width=".7"/><circle cx="15.5" cy="8.6" r="3.2" fill="#E8B96A" stroke="#CC9A4E" stroke-width=".7"/><circle cx="12" cy="5.8" r="3.3" fill="#F2CC84" stroke="#D9AE63" stroke-width=".7"/><circle cx="10.8" cy="5.2" r=".55" fill="#9A6B34"/><circle cx="13.2" cy="5.2" r=".55" fill="#9A6B34"/><path d="M11.3,6.9a1.1,1.1 0 0 0 1.4,0" stroke="#9A6B34" stroke-width=".7" fill="none" stroke-linecap="round"/>`,
+wheelcake:`<ellipse cx="12" cy="13.6" rx="8.4" ry="7" fill="#DFB06A"/><ellipse cx="12" cy="11.8" rx="8.4" ry="7" fill="#F0CC8C"/><ellipse cx="12" cy="11.8" rx="5.7" ry="4.7" fill="#E8BE78"/><path d="M8.6,9.9a5,5 0 0 1 6.8,0" stroke="#D4A75E" stroke-width=".9" fill="none" stroke-linecap="round"/><path d="M6.4,15.4c2.8,1.5 8.4,1.5 11.2,0 -.3,1 -1,1.8 -1.8,2.3 -2.4,1 -5.2,1 -7.6,0a6,6 0 0 1 -1.8,-2.3Z" fill="#8A5C52"/>`,
+icepop:`<rect x="10.8" y="16.2" width="2.4" height="5.8" rx="1.2" fill="#DCC49A"/><path d="M6.4,6.4a5.6,5.6 0 0 1 11.2,0v8.2a2.6,2.6 0 0 1 -2.6,2.6H9a2.6,2.6 0 0 1 -2.6,-2.6Z" fill="#F2B6B0"/><path d="M6.4,11.4h11.2v3.2a2.6,2.6 0 0 1 -2.6,2.6H9a2.6,2.6 0 0 1 -2.6,-2.6Z" fill="#F6E2B8"/><path d="M8.8,4.8a3.6,3.6 0 0 1 2.4,-1.2" stroke="#FBE2E0" stroke-width="1.4" fill="none" stroke-linecap="round"/>`,
+mochi:`<ellipse cx="12" cy="19.6" rx="8" ry="2.1" fill="#E4D9C2"/><path d="M12,6.6c4.4,0 7.6,3 7.6,6.3 0,3.6 -3.4,6 -7.6,6s-7.6,-2.4 -7.6,-6C4.4,9.6 7.6,6.6 12,6.6Z" fill="#FAF3E4"/><path d="M12,6.6c4.4,0 7.6,3 7.6,6.3 0,.8 -.2,1.5 -.5,2.1 -3.8,1.6 -10.4,1.6 -14.2,0 -.3,-.6 -.5,-1.3 -.5,-2.1C4.4,9.6 7.6,6.6 12,6.6Z" fill="#FDF9EE"/><g fill="#D9B87E"><circle cx="8.2" cy="10.4" r=".55"/><circle cx="15.4" cy="9.9" r=".5"/><circle cx="12.4" cy="8.5" r=".45"/><circle cx="6.9" cy="14" r=".5"/><circle cx="17" cy="13.6" r=".55"/></g><path d="M9.8,13.4a2.4,2.4 0 0 0 4.4,0" stroke="#C9A98C" stroke-width="1" fill="none" stroke-linecap="round"/>`,
+cottoncandy:`<rect x="11.2" y="14.6" width="1.6" height="7.4" rx=".8" fill="#DCC49A"/><circle cx="8.2" cy="10.6" r="4" fill="#F4C3CE"/><circle cx="15.8" cy="10.6" r="4" fill="#F4C3CE"/><circle cx="12" cy="7.4" r="4.4" fill="#F9D6DE"/><circle cx="12" cy="12.4" r="4.2" fill="#F7CBD6"/><circle cx="10" cy="6.6" r="1.3" fill="#FCEAEE"/>`,
+shavedice:`<path d="M5.6,8.6c2.2,-2.8 10.6,-2.8 12.8,0 1,1.3 -.4,2 -1.4,2.4H7c-1,-.4 -2.4,-1.1 -1.4,-2.4Z" fill="#F6F1E4"/><path d="M8.3,6.9c1.2,-1.6 5.3,-2.3 7.2,-.6 .6,.6 .2,1.2 -.6,1.4 -2.1,.6 -4.9,.4 -6,-.2 -.6,-.3 -.8,-.4 -.6,-.6Z" fill="#FBF8F0"/><g fill="#F2B45C"><rect x="8.4" y="4.6" width="2.4" height="2.4" rx=".7" transform="rotate(-14 9.6 5.8)"/><rect x="13" y="3.8" width="2.4" height="2.4" rx=".7" transform="rotate(16 14.2 5)"/><rect x="10.9" y="6.3" width="2.2" height="2.2" rx=".6"/></g><path d="M5,11h14l-1.5,7.6A2.4,2.4 0 0 1 15.1,20.6H8.9A2.4,2.4 0 0 1 6.5,18.6Z" fill="#CBDDE4"/><path d="M5,11h14l-.3,1.6H5.3Z" fill="#AEC8D2"/>`,
+douhua:`<path d="M4.4,10.8h15.2l-1.5,7.9A2.6,2.6 0 0 1 15.5,20.8H8.5A2.6,2.6 0 0 1 5.9,18.7Z" fill="#EFE7D4"/><path d="M4.4,10.8h15.2l-.3,1.7H4.7Z" fill="#DCD0B6"/><path d="M6.3,8.8c1.2,-2 10.2,-2 11.4,0 .6,1 -.4,2 -1.6,2H7.9c-1.2,0 -2.2,-1 -1.6,-2Z" fill="#FAF4E2"/><path d="M8.1,8.4c1,-1.2 6.8,-1.2 7.8,0" stroke="#E8DCC2" stroke-width=".9" fill="none" stroke-linecap="round"/><g fill="#C8A878"><circle cx="9.6" cy="7" r=".95"/><circle cx="12.2" cy="6.2" r="1"/><circle cx="14.6" cy="7.1" r=".9"/></g>`,
+pineapplecake:`<rect x="4.6" y="7.8" width="14.8" height="10" rx="2.2" fill="#E8C782"/><rect x="4.6" y="7.8" width="14.8" height="3" rx="2.2" fill="#F2D799"/><rect x="7.4" y="10.8" width="9.2" height="4.4" rx="1" fill="#D9A451"/><path d="M19.4,11.6a2.5,2.5 0 0 1 0,4Z" fill="#FDFAF0"/><g fill="#CFAE6B"><circle cx="7.2" cy="9.2" r=".45"/><circle cx="12" cy="9" r=".4"/><circle cx="16.4" cy="9.3" r=".45"/><circle cx="8" cy="16.4" r=".45"/><circle cx="14" cy="16.6" r=".4"/></g>`,
+/* 海洋世界（台灣的海）*/
+hermitcrab:`<path d="M14,5.2c3.9,0 6.6,3 6.6,6.6s-2.8,6.3 -6.4,6.3c-3.1,0 -5.3,-2.2 -5.3,-4.8 0,-2.4 1.8,-4.2 4,-4.2 1.8,0 3.2,1.4 3.2,3 0,1.4 -1,2.4 -2.2,2.4" fill="#E3BC9A" stroke="#B78F6C" stroke-width="1.1" stroke-linecap="round"/><path d="M8.6,16.8 5.4,19.6M10.2,18 8.8,21.2M12.2,18.6 12.2,21.6" stroke="#D08A72" stroke-width="1.4" fill="none" stroke-linecap="round"/><path d="M7,13.2 3.6,11.4a2,2 0 0 1 .5,-2.5" stroke="#D08A72" stroke-width="1.4" fill="none" stroke-linecap="round"/><path d="M4.2,9 2.2,7.8 2.7,10.4Z" fill="#D08A72"/><circle cx="7.2" cy="10.8" r=".78" fill="#4A3A2C"/>`,
+starfish:`<path d="M12,2.8 15,9.3 22.1,10 16.8,14.8 18.4,21.8 12,18.2 5.6,21.8 7.2,14.8 1.9,10 9,9.3Z" fill="#F0A98E"/><g fill="#E08C6E"><circle cx="12" cy="8.6" r=".55"/><circle cx="9.2" cy="12.6" r=".5"/><circle cx="14.8" cy="12.6" r=".5"/><circle cx="7.2" cy="16.4" r=".48"/><circle cx="16.8" cy="16.4" r=".48"/></g><circle cx="10.2" cy="11.4" r=".95" fill="#4A3A2C"/><circle cx="13.8" cy="11.4" r=".95" fill="#4A3A2C"/><path d="M11,14a1.4,1.4 0 0 0 2,0" stroke="#4A3A2C" stroke-width=".9" fill="none" stroke-linecap="round"/>`,
+flyingfish:`<path d="M10.4,11.4C7.8,5.2 4.4,2.4 2.6,3.9c-1.8,1.5 .2,5.5 7.8,8.3Z" fill="#C2DCEC"/><path d="M10.4,12.8C7.8,18.6 4.6,21.4 2.8,19.9c-1.8,-1.5 .2,-4.9 7.6,-7.5Z" fill="#AECCE2"/><path d="M4.4,5.2c2,1.6 3.8,3.6 5,5.8M4.6,19c1.9,-1.6 3.6,-3.6 4.8,-5.6" stroke="#E2F0F8" stroke-width=".9" fill="none" stroke-linecap="round"/><path d="M21.2,12.2 16.8,9v6.4Z" fill="#6E8CA6"/><ellipse cx="11.8" cy="12.1" rx="6.6" ry="4.4" fill="#7FA2BC"/><path d="M5.8,11.1c3.6,-1 8.6,-.8 12,.6" stroke="#C8DCE8" stroke-width="1" fill="none"/><circle cx="7.6" cy="11.5" r="1.1" fill="#FBF6E8"/><circle cx="7.5" cy="11.5" r=".58" fill="#2E2A26"/>`,
+sakurashrimp:`<path d="M17,6.4c2.7,2.7 3.1,7.3 .6,10.4 -2.6,3.2 -7.5,3.6 -10.5,1 2,.4 4.2,-.4 5.7,-2.2 2,-2.6 1.8,-6.3 -.4,-8.5Z" fill="#F0A8AE"/><path d="M12.4,7.1 14.6,4.4 17,6.4Z" fill="#F7C3C8"/><g stroke="#DD8B92" stroke-width=".9" fill="none" stroke-linecap="round"><path d="M15,8.4 13.6,10.8M16.8,10 15,12.2M17.4,12.6 15.2,14.2"/></g><path d="M7.1,17.8 3.4,20.2M7.1,17.8 3,17.3M7.1,17.8 4.5,21.6" stroke="#E89CA2" stroke-width="1.1" fill="none" stroke-linecap="round"/><circle cx="15.8" cy="7.6" r=".8" fill="#4A3A2C"/>`,
+clownfish:`<path d="M21,12 16.8,9.2v5.6Z" fill="#E08A4C"/><ellipse cx="11" cy="12" rx="7.6" ry="5.4" fill="#EC9A55"/><path d="M6.4,7.6c1.3,2.9 1.3,6 0,8.9a8,6 0 0 1 -1.9,-1.7c.8,-2.2 .8,-3.3 0,-5.5a8,6 0 0 1 1.9,-1.7Z" fill="#FBF3E4"/><path d="M12.6,7c1.4,3 1.4,7 0,10a8,6 0 0 1 -2.4,-.4c1.2,-2.8 1.2,-6.4 0,-9.2a8,6 0 0 1 2.4,-.4Z" fill="#FBF3E4"/><path d="M16.9,8.7a8,6 0 0 1 1.5,2.1h-1.9Z" fill="#FBF3E4"/><path d="M9.2,6.4 11.3,3.7 12.4,6.8Z" fill="#E08A4C"/><circle cx="6.4" cy="11.2" r="1.15" fill="#FBF6E8"/><circle cx="6.3" cy="11.2" r=".6" fill="#2E2A26"/>`,
+urchin:`<g stroke="#7A6B92" stroke-width="1.5" stroke-linecap="round"><path d="M12,8.6V2.8M12,15.4v5.8M8.6,12H2.8M15.4,12h5.8M9.6,9.6 5.5,5.5M14.4,14.4 18.5,18.5M14.4,9.6 18.5,5.5M9.6,14.4 5.5,18.5"/></g><circle cx="12" cy="12" r="5" fill="#8E7FA8" stroke="#6E6188" stroke-width=".8"/><circle cx="10.2" cy="11.3" r="1" fill="#FBF6E8"/><circle cx="13.8" cy="11.3" r="1" fill="#FBF6E8"/><circle cx="10.2" cy="11.3" r=".5" fill="#2E2A26"/><circle cx="13.8" cy="11.3" r=".5" fill="#2E2A26"/><path d="M11,14.4a1.4,1.4 0 0 0 2,0" stroke="#4A3A2C" stroke-width=".85" fill="none" stroke-linecap="round"/>`,
+greenturtle:`<ellipse cx="5" cy="15.4" rx="2.5" ry="1.7" fill="#8FAE7E" transform="rotate(-26 5 15.4)"/><ellipse cx="19" cy="15.4" rx="2.5" ry="1.7" fill="#8FAE7E" transform="rotate(26 19 15.4)"/><ellipse cx="7.6" cy="19.4" rx="2" ry="1.4" fill="#8FAE7E" transform="rotate(26 7.6 19.4)"/><ellipse cx="16.4" cy="19.4" rx="2" ry="1.4" fill="#8FAE7E" transform="rotate(-26 16.4 19.4)"/><circle cx="12" cy="6.2" r="2.9" fill="#9FBE8C"/><circle cx="10.7" cy="5.8" r=".85" fill="#3A4432"/><circle cx="13.3" cy="5.8" r=".85" fill="#3A4432"/><ellipse cx="12" cy="14" rx="7.3" ry="6.5" fill="#7E9C6C"/><path d="M12,8.2 15.3,10.6 14.1,14.4H9.9L8.7,10.6Z" fill="#95B383" stroke="#6B8A5A" stroke-width=".7"/><g fill="none" stroke="#6B8A5A" stroke-width=".8"><path d="M8.7,10.6 5.2,9.6M15.3,10.6 18.8,9.6M9.9,14.4 8.2,19.2M14.1,14.4 15.8,19.2"/></g>`,
+whaleshark:`<path d="M2.4,12.6c0,-3.4 4.6,-6 10,-6 4.4,0 7.8,1.8 8.8,4 .4,.9 -.4,1.2 -1.4,1.4 1,.2 1.8,.5 1.4,1.4 -1,2.2 -4.4,4 -8.8,4 -5.4,0 -10,-2.6 -10,-4.8Z" fill="#7E93A4"/><path d="M2.5,13.4c2.2,1.8 7.1,2.9 11.1,2.7 -1.3,.8 -3.6,1.3 -6,1.3 -2.6,0 -4.6,-1.2 -5.1,-2.6Z" fill="#B4C2CC"/><path d="M9.6,6.9 11.6,3.4 14,7.1Z" fill="#6B8090"/><path d="M6,16.4 5.2,20 8.6,17.7Z" fill="#6B8090"/><g fill="#E2EAEE"><circle cx="7.8" cy="10.4" r=".62"/><circle cx="11.2" cy="9.5" r=".58"/><circle cx="14.5" cy="10.1" r=".58"/><circle cx="17.4" cy="11.1" r=".52"/><circle cx="9.6" cy="13" r=".58"/><circle cx="13.1" cy="12.7" r=".52"/><circle cx="16.4" cy="13.4" r=".48"/></g><circle cx="5" cy="11.8" r="1" fill="#FBF6E8"/><circle cx="4.9" cy="11.8" r=".52" fill="#2E2A26"/>`,
+whitedolphin:`<path d="M3,14c0,-4 4.2,-7.4 9,-7.4 3.6,0 6.4,1.4 8,3.4 .8,1 .2,1.8 -1,1.6 -2.4,-.4 -3.4,.6 -3,2.2 .4,1.8 -1.4,3.4 -4.4,3.4C7.2,17.2 3,16.6 3,14Z" fill="#F2DDDC"/><path d="M3.1,14.4c1.7,1.7 5.2,2.6 8.5,2.4 -1.2,.6 -2.6,.9 -4,.9C5,17.7 3.5,16.1 3.1,14.4Z" fill="#FBF0EF"/><path d="M10.4,6.8 12,3.6 14.4,7.4Z" fill="#E6C8C7"/><path d="M4.6,16.2 3,19.6 6.6,17.8Z" fill="#E6C8C7"/><path d="M19.4,10.6c1.4,-.4 2.6,.4 3,1.6 -1.2,.4 -2.4,.2 -3.2,-.6Z" fill="#E6C8C7"/><circle cx="6.4" cy="11.4" r="1" fill="#2E2A26"/><path d="M4.6,13.4a2.4,2.4 0 0 0 2.6,.8" stroke="#C9A9A8" stroke-width=".9" fill="none" stroke-linecap="round"/>`,
+spermwhale:`<path d="M2.2,11.6c0,-3.5 3.6,-5.8 8.2,-5.8 4.4,0 8.1,1.5 10.4,3.1 1,.7 .8,1.4 -.4,1.6 -2.6,.4 -4,1.6 -3.4,3.4 .5,1.6 -.9,3 -3.6,3 -1.8,0 -3.2,-.6 -4,-1.6 -1.2,1.2 -3,1.8 -4.7,1.4 .9,-1.5 -2.5,-2.6 -2.5,-5.1Z" fill="#6B7A8A"/><path d="M3,14.4c2.5,1.4 6.4,2.2 10,2 -.8,.8 -2.2,1.2 -3.8,1.2 -1.8,0 -3.2,-.6 -4,-1.6 -1.2,1.2 -3,1.8 -4.7,1.4 1,-.9 1.9,-1.9 2.5,-3Z" fill="#9BA9B6"/><path d="M19.6,12.6c1.6,-1 3.4,-.8 4.2,.4 -1.4,1 -3.2,1.2 -4.4,.4Z" fill="#5C6A78"/><path d="M4.6,6 3.6,2.6 6.6,5.4Z" fill="#BFD4E2"/><path d="M3.9,5.3c1.3,-1.5 3.1,-2.1 4.7,-1.7 -1,1.5 -2.7,2.3 -4.3,2.3Z" fill="#CFE2EE"/><circle cx="5.8" cy="10.4" r="1.05" fill="#FBF6E8"/><circle cx="5.7" cy="10.4" r=".55" fill="#2E2A26"/>`,
+/* 恐龍時代 */
+triceratops:`<ellipse cx="14" cy="14.4" rx="6.6" ry="4.6" fill="#8FA87E"/><path d="M11.2,18.4 10.4,21.4M15,18.8 14.6,21.6M18.4,17.8 19.2,20.6" stroke="#8FA87E" stroke-width="2.3" stroke-linecap="round"/><path d="M19.8,12.6c1.9,-.7 3.6,-.1 3.9,1.4 -1.5,.9 -3.2,.6 -4.1,-.4Z" fill="#7E9870"/><path d="M7.6,6.2c3.5,0 6,2.7 6,6s-2.5,5.8 -6,5.8 -6.2,-2.5 -6.2,-5.8S4.1,6.2 7.6,6.2Z" fill="#A8BE96"/><path d="M7.6,6.2c3.5,0 6,2.7 6,6s-2.5,5.8 -6,5.8c-.9,0 -1.8,-.2 -2.6,-.5 2,-1.1 3.3,-3.1 3.3,-5.3S7,7.8 5,6.7c.8,-.3 1.7,-.5 2.6,-.5Z" fill="#8FA87E"/><g fill="#F7F2E0"><path d="M5.8,6.6 4.8,3.2 7.6,5.4ZM10.8,7.4 11.6,4.2 13,7.4ZM3,11.8 .6,10.8 3,9.6Z"/></g><circle cx="4.4" cy="11.8" r=".92" fill="#3A4432"/>`,
+stegosaurus:`<path d="M3.2,16.4c0,-3.4 3.4,-6 7.8,-6 3.8,0 6.8,1.4 8.4,3.4 .8,1 1.6,1.6 2.4,1.8 -.6,1.2 -2,1.6 -3.2,1.2 .2,.8 .2,1.6 0,2.4h-3.2c0,-.8 -.2,-1.4 -.6,-2 -2.4,.8 -5.2,.8 -7.4,-.2 -.2,.8 -.2,1.6 0,2.2H4.2c-.8,-.8 -1,-1.8 -1,-2.8Z" fill="#9BAE86"/><path d="M4.6,12.4 2,13.8c-.2,-1.4 .6,-2.8 2,-3.2Z" fill="#9BAE86"/><g fill="#D9B87E"><path d="M7.4,10.4 8.8,6.6 10.2,10ZM11,9.8 12.8,6 14.2,10.2ZM15,10.8 17,7.6 17.8,11.4Z"/></g><circle cx="4.4" cy="12.4" r=".82" fill="#3A4432"/>`,
+brachiosaurus:`<ellipse cx="11.6" cy="15.6" rx="7.2" ry="4.6" fill="#8CA4B4"/><path d="M6.6,19.4 6,21.9M10.4,20.2 10.2,22.3M14.4,19.8 14.8,22" stroke="#8CA4B4" stroke-width="2.3" stroke-linecap="round"/><path d="M18.4,13.6c1.9,-.4 3.7,.7 4.5,2.3 -1.9,.6 -3.9,.1 -4.9,-1.3Z" fill="#7E95A6"/><path d="M8.2,12.8c-.7,-3.7 .7,-7.2 3.6,-8.9" fill="none" stroke="#9EB6C6" stroke-width="3.8" stroke-linecap="round"/><ellipse cx="12.8" cy="3.6" rx="3" ry="2.3" fill="#9EB6C6"/><circle cx="13.8" cy="3.1" r=".88" fill="#2E3A44"/><path d="M15.2,4.8a2.6,2.6 0 0 1 -1.8,.6" stroke="#7E95A6" stroke-width=".9" fill="none" stroke-linecap="round"/>`,
+parasaur:`<ellipse cx="10.8" cy="15.8" rx="6.8" ry="4.4" fill="#C99E7E"/><path d="M6.6,19.4 6,21.9M10.2,20.1 10,22.2M13.8,19.6 14.4,21.9" stroke="#C99E7E" stroke-width="2.3" stroke-linecap="round"/><path d="M4,14c-1.8,.2 -3.3,1.7 -3.5,3.5 1.8,.2 3.5,-.9 4.1,-2.5Z" fill="#B48C6E"/><path d="M14,13.4c-.5,-2.8 .6,-5.4 2.8,-6.7" fill="none" stroke="#D9AE8E" stroke-width="3.6" stroke-linecap="round"/><ellipse cx="18" cy="5.8" rx="3.2" ry="2.3" fill="#D9AE8E" transform="rotate(-20 18 5.8)"/><path d="M17.2,4.1 12.4,1.4c-1.1,-.6 -2.2,.7 -1.5,1.8l3.4,4.8Z" fill="#E8C4A8"/><circle cx="19.2" cy="5.3" r=".88" fill="#4A3A2C"/><path d="M20.7,6.6a2.5,2.5 0 0 1 -1.9,.7" stroke="#B48C6E" stroke-width=".9" fill="none" stroke-linecap="round"/>`,
+dinoegg:`<path d="M12,2.8c3.8,0 6.8,4.6 6.8,9.2 0,5 -3,8 -6.8,8s-6.8,-3 -6.8,-8C5.2,7.4 8.2,2.8 12,2.8Z" fill="#E8DEC2"/><path d="M12,2.8c3.8,0 6.8,4.6 6.8,9.2 0,1.4 -.2,2.6 -.7,3.7 -3.4,1.6 -8.8,1.6 -12.2,0C5.4,14.6 5.2,13.4 5.2,12 5.2,7.4 8.2,2.8 12,2.8Z" fill="#F2EAD4"/><g fill="#B8C9A4"><circle cx="9" cy="8.4" r="1.4"/><circle cx="14.6" cy="7" r="1.1"/><circle cx="15.4" cy="11.4" r="1.5"/><circle cx="8.4" cy="13.4" r="1.2"/><circle cx="12" cy="16.4" r="1.3"/></g>`,
+footprint:`<rect x="2.6" y="3.6" width="18.8" height="16.8" rx="3.4" fill="#D9CDB4"/><rect x="2.6" y="3.6" width="18.8" height="16.8" rx="3.4" fill="none" stroke="#BCAE92" stroke-width="1.1"/><ellipse cx="12" cy="15.6" rx="3.7" ry="3.4" fill="#8A7E66"/><path d="M12,12.8 10.8,6.6a1.6,1.6 0 0 1 2.4,0Z" fill="#8A7E66"/><path d="M9,13.8 5.2,9.6a1.6,1.6 0 0 1 1.7,-1.7Z" fill="#8A7E66"/><path d="M15,13.8 18.8,9.6a1.6,1.6 0 0 0 -1.7,-1.7Z" fill="#8A7E66"/><g fill="#C4B69A"><circle cx="5.4" cy="6" r=".5"/><circle cx="18.6" cy="18" r=".5"/></g>`,
+trex:`<path d="M2.4,15.4c-1.5,-.6 -2.2,-2.3 -1.5,-3.8l4.9,1.2 -.6,3.3Z" fill="#8E6E58"/><path d="M4.2,13.2c0,-3.6 3.3,-6.6 7.5,-6.6 2.2,0 4.2,.8 5.6,2.2l-.3,5c0,2.3 -1.5,4.3 -3.8,5.1l.4,2.8h-2.8l-.5,-2.4H8.3l-.5,2.4H5l.4,-2.8c-1.4,-1.2 -1.2,-3.4 -1.2,-5.7Z" fill="#A8846E"/><path d="M15.4,3.8h5.9a1.6,1.6 0 0 1 1.3,2.5l-1.3,1.9 -5.6,-.6Z" fill="#A8846E"/><path d="M15.6,8.7 22.5,7.5l-1.2,2.1 -5.4,.8Z" fill="#A8846E"/><path d="M15.5,7.4 22.7,6.4l-.2,1.2 -7.1,1Z" fill="#F7F2E0"/><circle cx="17.4" cy="5" r=".95" fill="#3A2E26"/><path d="M12,11.9c1.2,.3 1.9,1.5 1.6,2.7" stroke="#8E6E58" stroke-width="1.5" fill="none" stroke-linecap="round"/>`,
+pterosaur:`<path d="M11.2,10.6 2.6,4c-1.1,-.8 -2.4,.5 -1.7,1.7l5.1,9c.6,1.1 1.9,1.5 3,.9l3.4,-1.8Z" fill="#B49CC0"/><path d="M12.8,10.6 21.4,4c1.1,-.8 2.4,.5 1.7,1.7l-5.1,9c-.6,1.1 -1.9,1.5 -3,.9l-3.4,-1.8Z" fill="#C7B2D2"/><path d="M11.2,10.8 5.6,14.4M12.8,10.8 18.4,14.4" stroke="#9A82A8" stroke-width=".85" fill="none"/><path d="M10.6,8.8h2.8l.7,8.4c0,1.7 -.8,3.2 -2.2,4 -.6,-1.5 -1.3,-2.7 -2.1,-3.6Z" fill="#9A82A8"/><ellipse cx="12.2" cy="6.8" rx="2.4" ry="2" fill="#C7B2D2"/><path d="M13.6,5.4 18.6,2.2c1,-.6 2,.6 1.3,1.5l-3.9,4.5Z" fill="#9A82A8"/><path d="M10.4,7 5.4,8.8l5,1.4Z" fill="#8E7A9C"/><circle cx="12" cy="6.4" r=".82" fill="#3A3240"/>`,
+ankylosaur:`<path d="M6.4,15.4c0,-3.1 3.3,-5.6 7.4,-5.6 3,0 5.7,1.3 7.1,3.2 .3,.5 .1,1.1 -.4,1.4 .5,.9 .8,2 .8,3.1h-2.8c0,-.7 -.1,-1.3 -.4,-1.9 -1.3,.5 -2.8,.8 -4.3,.8 -1.3,0 -2.6,-.2 -3.8,-.6 -.2,.8 -.2,1.7 0,2.5H6.8c-.3,-1 -.4,-1.9 -.4,-2.9Z" fill="#9A9E7E"/><g fill="#C6C8A0"><circle cx="9.8" cy="11.2" r="1.1"/><circle cx="13.4" cy="10.4" r="1.1"/><circle cx="16.8" cy="11.2" r="1"/><circle cx="11.4" cy="13.6" r=".9"/><circle cx="15" cy="13.2" r=".9"/></g><path d="M6.6,12.8 4.2,11.6c-.5,1.3 .1,2.6 1.4,3Z" fill="#9A9E7E"/><circle cx="6.2" cy="12.6" r=".8" fill="#3A3E2E"/><path d="M6,12.2 2.8,12.8" stroke="#9A9E7E" stroke-width="2.2" stroke-linecap="round"/><circle cx="2.6" cy="12.8" r="2.4" fill="#8A8E6E"/><path d="M1.2,10.8 .2,9.4M4,10.8 5,9.4M1.2,14.8 .2,16.2M4,14.8 5,16.2" stroke="#8A8E6E" stroke-width="1.5" stroke-linecap="round"/>`,
+amber:`<path d="M12,2.6c4.6,0 8,4 8,9.2 0,5.4 -3.4,9.6 -8,9.6s-8,-4.2 -8,-9.6C4,6.6 7.4,2.6 12,2.6Z" fill="#E8B457"/><path d="M12,2.6c4.6,0 8,4 8,9.2 0,2 -.5,3.9 -1.3,5.4 -3.8,2 -9.6,2 -13.4,0C4.5,15.7 4,13.8 4,11.8 4,6.6 7.4,2.6 12,2.6Z" fill="#F2C878"/><path d="M8.6,7.6c.4,-1.2 2,-1.8 3.2,-1 .8,.5 1.2,1.4 1,2.3 .8,.4 1.4,1.2 1.4,2.2 0,1 -.5,1.8 -1.2,2.3 .6,1 .4,2.2 -.4,3 -.3,.3 -.7,.5 -1.1,.6 .2,-1 -.1,-2 -.8,-2.7 -1.2,.3 -2.5,-.2 -3.1,-1.3 -.6,-1.1 -.3,-2.5 .7,-3.2 -.4,-.7 -.3,-1.6 .3,-2.2Z" fill="#8A6434"/><circle cx="10.6" cy="8.4" r=".62" fill="#F2C878"/><path d="M7.6,6.2a5,5 0 0 1 2.8,-2" stroke="#F8DFA8" stroke-width="1.4" fill="none" stroke-linecap="round"/>`,
+/* 交通工具 */
+policecar:`<path d="M4.4,12.4 6.6,8.2a2,2 0 0 1 1.8,-1.1h7.2a2,2 0 0 1 1.8,1.1l2.2,4.2Z" fill="#8FA8BE"/><rect x="2.6" y="12" width="18.8" height="5.6" rx="1.8" fill="#F4F0E2"/><path d="M12,12V7.1h3.6a2,2 0 0 1 1.8,1.1l2.2,4.2Z" fill="#43566A"/><rect x="2.6" y="12" width="9.4" height="5.6" fill="#43566A"/><rect x="7.4" y="4.4" width="3" height="2.4" rx=".9" fill="#D9736A"/><rect x="10.4" y="4.4" width="3" height="2.4" rx=".9" fill="#6E9AC4"/><circle cx="7.2" cy="17.8" r="2.3" fill="#3E4650"/><circle cx="16.8" cy="17.8" r="2.3" fill="#3E4650"/><circle cx="7.2" cy="17.8" r=".95" fill="#C8CCD2"/><circle cx="16.8" cy="17.8" r=".95" fill="#C8CCD2"/>`,
+bus:`<rect x="2.8" y="4.6" width="18.4" height="13.4" rx="2.6" fill="#E6B45C"/><rect x="4.6" y="7" width="6" height="4.4" rx="1" fill="#BFD9E8"/><rect x="11.6" y="7" width="3.6" height="4.4" rx="1" fill="#BFD9E8"/><rect x="16.2" y="7" width="3.4" height="4.4" rx="1" fill="#BFD9E8"/><rect x="2.8" y="13" width="18.4" height="1.6" fill="#C9954A"/><circle cx="7" cy="18.4" r="2.3" fill="#3E4650"/><circle cx="17" cy="18.4" r="2.3" fill="#3E4650"/><circle cx="7" cy="18.4" r=".95" fill="#C8CCD2"/><circle cx="17" cy="18.4" r=".95" fill="#C8CCD2"/><rect x="4.4" y="15.4" width="2.2" height="1.4" rx=".6" fill="#F4E8CC"/>`,
+garbagetruck:`<path d="M13.4,10.6 15.6,7.4a1.8,1.8 0 0 1 1.5,-.8h2.3a1.6,1.6 0 0 1 1.5,1.1l1,3.2v3.5h-8.5Z" fill="#8FB08C"/><rect x="2.6" y="6.4" width="11" height="8.6" rx="1.6" fill="#A8C4A2"/><rect x="2.6" y="4.4" width="11" height="2.6" rx="1.2" fill="#7E9A7A"/><rect x="2" y="15" width="19.6" height="2.4" rx="1" fill="#6E8A6C"/><rect x="16.6" y="8.4" width="3.2" height="2.6" rx=".8" fill="#BFD9E8"/><circle cx="6.6" cy="18.4" r="2.3" fill="#3E4650"/><circle cx="17.2" cy="18.4" r="2.3" fill="#3E4650"/><circle cx="6.6" cy="18.4" r=".95" fill="#C8CCD2"/><circle cx="17.2" cy="18.4" r=".95" fill="#C8CCD2"/><path d="M5,8.6h6.4M5,10.8h6.4" stroke="#7E9A7A" stroke-width="1" stroke-linecap="round"/>`,
+ambulance:`<path d="M14.2,11 16.2,7.8a1.8,1.8 0 0 1 1.5,-.8h1.6a1.6,1.6 0 0 1 1.5,1.1l.8,2.9Z" fill="#DCE4EA"/><rect x="2.6" y="6" width="11.8" height="9.4" rx="2" fill="#FAF6EC"/><rect x="14.2" y="11" width="7.4" height="4.4" rx="1.2" fill="#FAF6EC"/><rect x="16.6" y="8.4" width="3.4" height="2.6" rx=".8" fill="#BFD9E8"/><path d="M7,8.6h2.6V7h2.2v1.6h2.6v2.2h-2.6v1.6H9.6v-1.6H7Z" fill="#D9736A"/><rect x="2.4" y="15.2" width="19.4" height="2.2" rx=".9" fill="#D9736A"/><circle cx="6.8" cy="18.4" r="2.3" fill="#3E4650"/><circle cx="17.2" cy="18.4" r="2.3" fill="#3E4650"/><circle cx="6.8" cy="18.4" r=".95" fill="#C8CCD2"/><circle cx="17.2" cy="18.4" r=".95" fill="#C8CCD2"/><rect x="7.6" y="3.6" width="3.4" height="2.4" rx=".9" fill="#D9736A"/>`,
+ferry:`<path d="M2.4,15.4h19.2l-2,4A2.4,2.4 0 0 1 17.4,20.8H6.6a2.4,2.4 0 0 1 -2.2,-1.4Z" fill="#E8E2D2"/><rect x="5" y="10.6" width="14" height="4.8" rx="1.2" fill="#FAF6EC"/><rect x="7.4" y="6.6" width="9.2" height="4" rx="1.1" fill="#F4EEDC"/><g fill="#8FB4CE"><rect x="6.4" y="12" width="2.4" height="2" rx=".7"/><rect x="10" y="12" width="2.4" height="2" rx=".7"/><rect x="13.6" y="12" width="2.4" height="2" rx=".7"/><rect x="8.8" y="7.8" width="2.2" height="1.8" rx=".6"/><rect x="12.2" y="7.8" width="2.2" height="1.8" rx=".6"/></g><rect x="14.6" y="3" width="2.2" height="3.8" rx=".8" fill="#D9736A"/><path d="M1.6,18.4c1.6,-1 3,-1 4.6,0M17.8,18.4c1.6,-1 3,-1 4.6,0" stroke="#A8C4D6" stroke-width="1.2" fill="none" stroke-linecap="round"/>`,
+excavator:`<rect x="2.6" y="12.6" width="11.4" height="5" rx="1.6" fill="#E6B45C"/><rect x="4.6" y="7.6" width="6.4" height="5.2" rx="1.4" fill="#F0CC8C"/><rect x="5.8" y="8.8" width="4" height="2.8" rx=".8" fill="#BFD9E8"/><path d="M11,9 17.6,5.4a1.2,1.2 0 0 1 1.7,.5l1.2,2.2 -6.4,3.6Z" fill="#C9954A"/><path d="M19.2,8.6 21.6,12.8a1.6,1.6 0 0 1 -.4,2.1l-2.6,1.8 -2.2,-3.2c-1,-1.4 -.6,-3.3 .8,-4.2Z" fill="#E6B45C"/><path d="M16.4,16.4h5.2l-.8,3.2a1.4,1.4 0 0 1 -1.4,1.1h-1.2a1.4,1.4 0 0 1 -1.3,-1Z" fill="#8A7E66"/><rect x="2" y="17.4" width="12.6" height="3.4" rx="1.7" fill="#3E4650"/><circle cx="5" cy="19.1" r="1.1" fill="#C8CCD2"/><circle cx="11.6" cy="19.1" r="1.1" fill="#C8CCD2"/>`,
+firetruck:`<path d="M14.6,11 16.6,7.8a1.8,1.8 0 0 1 1.5,-.8h1.4a1.6,1.6 0 0 1 1.5,1.1l.6,2.9Z" fill="#C85A52"/><rect x="2.6" y="6" width="12.2" height="9.4" rx="2" fill="#D9736A"/><rect x="14.6" y="11" width="7" height="4.4" rx="1.2" fill="#D9736A"/><rect x="17" y="8.4" width="3" height="2.6" rx=".8" fill="#BFD9E8"/><rect x="4.4" y="8.4" width="8.4" height="4.4" rx="1" fill="#F2E4CC"/><path d="M5,7.4 16.6,4.4" stroke="#E8CFA4" stroke-width="1.6" stroke-linecap="round"/><circle cx="6.8" cy="18.4" r="2.3" fill="#3E4650"/><circle cx="17.2" cy="18.4" r="2.3" fill="#3E4650"/><circle cx="6.8" cy="18.4" r=".95" fill="#C8CCD2"/><circle cx="17.2" cy="18.4" r=".95" fill="#C8CCD2"/><rect x="2.4" y="15.2" width="19.4" height="2.2" rx=".9" fill="#A84A44"/>`,
+gondola:`<path d="M1,4.6 23,8.2" stroke="#9AA6AE" stroke-width="1.3" stroke-linecap="round"/><path d="M11,7.2 11.4,10.4M14,7.6 13.6,10.4" stroke="#7E8A92" stroke-width="1.2" stroke-linecap="round"/><path d="M10.4,6 12.4,8.4 14.6,6.6" fill="none" stroke="#7E8A92" stroke-width="1.3" stroke-linejoin="round"/><rect x="7.6" y="10" width="9.6" height="9.4" rx="2.4" fill="#D9B87E"/><rect x="9.2" y="11.6" width="6.4" height="4.6" rx="1.2" fill="#BFD9E8"/><rect x="7.6" y="17" width="9.6" height="1.4" fill="#BE9960"/><path d="M9.2,11.6h6.4v2.2H9.2Z" fill="#D5E8F2"/><circle cx="12.4" cy="8.4" r="1.2" fill="#8A949C"/>`,
+hsr:`<path d="M3,17.4c0,-5.6 3.6,-10.4 8.2,-10.4h7.4a2.4,2.4 0 0 1 2.4,2.4v8Z" fill="#F4F0E6"/><path d="M11.2,7h9.8v3.4H7.4C8.6,8.4 9.8,7 11.2,7Z" fill="#E8E2D2"/><path d="M4.6,13.4h16.4v2.2H4.2Z" fill="#E08A6E"/><path d="M5.4,9.6c1.4,-1.6 3.4,-2.6 5.2,-2.6h1.2l-2.6,4.4H4.2Z" fill="#9EC4DC"/><rect x="12" y="8.6" width="3" height="3" rx=".8" fill="#9EC4DC"/><rect x="16" y="8.6" width="3" height="3" rx=".8" fill="#9EC4DC"/><path d="M3,17.4h18v1.4a1.4,1.4 0 0 1 -1.4,1.4H4.4A1.4,1.4 0 0 1 3,18.8Z" fill="#B8BEC4"/><circle cx="7.4" cy="20" r="1.5" fill="#3E4650"/><circle cx="16.6" cy="20" r="1.5" fill="#3E4650"/>`,
+forestrain:`<path d="M2.6,16.6h18.8v1.6a1.6,1.6 0 0 1 -1.6,1.6H4.2a1.6,1.6 0 0 1 -1.6,-1.6Z" fill="#6E5A4A"/><rect x="11.6" y="8.4" width="9.8" height="8.2" rx="1.8" fill="#D9736A"/><path d="M4.4,9.6h6.2v7H2.8v-5.2A1.8,1.8 0 0 1 4.4,9.6Z" fill="#C85A52"/><path d="M5,5.6h2.4l.6,4H4.4Z" fill="#4A4A4A"/><path d="M4.4,3.6c1.2,-1 3,-.4 3.2,1.2 -1.2,.4 -2.4,.2 -3.2,-1.2Z" fill="#DCE4EA"/><g fill="#F2E4CC"><rect x="13" y="10" width="2.6" height="3" rx=".7"/><rect x="16.4" y="10" width="2.6" height="3" rx=".7"/><rect x="5.6" y="11.4" width="3.4" height="2.6" rx=".7"/></g><circle cx="6.4" cy="19.4" r="1.8" fill="#3E4650"/><circle cx="13" cy="19.4" r="1.8" fill="#3E4650"/><circle cx="18.6" cy="19.4" r="1.8" fill="#3E4650"/><circle cx="6.4" cy="19.4" r=".7" fill="#C8CCD2"/><circle cx="13" cy="19.4" r=".7" fill="#C8CCD2"/><circle cx="18.6" cy="19.4" r=".7" fill="#C8CCD2"/>`,
+/* 台灣小旅行 */
+persimmon:`<path d="M2.4,6.6h19.2" stroke="#A4855F" stroke-width="1.4" stroke-linecap="round"/><path d="M3.4,13.6h17.2" stroke="#A4855F" stroke-width="1.4" stroke-linecap="round"/><g fill="#E8964E"><circle cx="6.4" cy="9.6" r="2.7"/><circle cx="12" cy="9.6" r="2.7"/><circle cx="17.6" cy="9.6" r="2.7"/><circle cx="6.4" cy="16.6" r="2.7"/><circle cx="12" cy="16.6" r="2.7"/><circle cx="17.6" cy="16.6" r="2.7"/></g><g fill="#F2AE6C"><circle cx="6.4" cy="9" r="1.5"/><circle cx="12" cy="9" r="1.5"/><circle cx="17.6" cy="9" r="1.5"/><circle cx="6.4" cy="16" r="1.5"/><circle cx="12" cy="16" r="1.5"/><circle cx="17.6" cy="16" r="1.5"/></g><g fill="#8FA87E"><path d="M6.4,6.6v1.2M12,6.6v1.2M17.6,6.6v1.2M6.4,13.6v1.2M12,13.6v1.2M17.6,13.6v1.2" stroke="#8FA87E" stroke-width="1.1"/></g>`,
+lighthouse:`<path d="M2,20.4c3.6,-2.6 16.4,-2.6 20,0Z" fill="#9AAE8E"/><path d="M8.6,8.4h6.8l1.4,11.4H7.2Z" fill="#FAF4E6"/><path d="M9.2,12.6h5.6l.2,2H9Zm-.4,4.2h6.4l.2,2H8.6Z" fill="#D9736A"/><rect x="7.8" y="6.4" width="8.4" height="2.2" rx=".8" fill="#8A949C"/><rect x="9.4" y="2.4" width="5.2" height="4.2" rx="1.2" fill="#F2D799"/><rect x="9.4" y="2.4" width="5.2" height="4.2" rx="1.2" fill="none" stroke="#8A949C" stroke-width="1"/><path d="M16.6,4.4 21,3M16.6,5.6 20.6,6.8" stroke="#F2D799" stroke-width="1.3" stroke-linecap="round"/><path d="M7.4,4.4 3,3M7.4,5.6 3.4,6.8" stroke="#F2D799" stroke-width="1.3" stroke-linecap="round"/>`,
+turtleisland:`<path d="M1.4,17.4h21.2v2.2a1.6,1.6 0 0 1 -1.6,1.6H3a1.6,1.6 0 0 1 -1.6,-1.6Z" fill="#8FB4CE"/><path d="M3,17.4c1.4,-4.6 5.6,-8 10.2,-8 3,0 5.4,1.2 6.6,3.2 .5,.9 .2,2 -.7,2.5l-2.3,1.3c-1,.6 -2.2,1 -3.4,1Z" fill="#7E9C6C"/><path d="M4.8,17.4c1.8,-3.4 5.2,-5.6 8.6,-5.6 1.9,0 3.5,.6 4.6,1.6 -1,2.2 -3.2,3.7 -6,4Z" fill="#95B383"/><path d="M19.8,13.4c1.2,-1 2.8,-1 3.6,.2 -1.2,1.2 -2.8,1.4 -3.9,.5Z" fill="#6B8A5A"/><circle cx="21" cy="13.4" r=".78" fill="#3A4432"/><path d="M6.2,16.4c-1.2,-.8 -2.4,-.6 -3.2,.4M17,16.6c1,-1 2.2,-1.2 3.2,-.6" stroke="#6B8A5A" stroke-width="1.3" fill="none" stroke-linecap="round"/><path d="M1.4,19.2c1.8,-1.1 3.4,-1.1 5.2,0 1.8,1.1 3.4,1.1 5.2,0 1.8,-1.1 3.4,-1.1 5.2,0" stroke="#A8CBE0" stroke-width="1.1" fill="none" stroke-linecap="round"/>`,
+taoboat:`<path d="M1.6,13.2c1.4,-1.8 3.6,-2.6 5.4,-2.6h9.8c1.8,0 4,.8 5.6,2.6 -1.6,3.6 -5.4,5.8 -10.4,5.8S3.2,16.8 1.6,13.2Z" fill="#FAF4E6"/><path d="M1.6,13.2c1.4,-1.8 3.6,-2.6 5.4,-2.6h9.8c1.8,0 4,.8 5.6,2.6 -.3,.7 -.7,1.4 -1.2,2H2.8c-.5,-.6 -.9,-1.3 -1.2,-2Z" fill="#D9736A"/><path d="M2.6,16.4h18.6c-.5,.7 -1.2,1.3 -1.9,1.8H4.6c-.8,-.5 -1.4,-1.1 -2,-1.8Z" fill="#3E3A36"/><path d="M4.2,10.6 2.4,5.2 6.4,9.4Z" fill="#D9736A"/><path d="M19.8,10.6 21.6,5.2 17.6,9.4Z" fill="#D9736A"/><g fill="#3E3A36"><circle cx="7" cy="12.6" r="1.1"/><circle cx="12" cy="12.6" r="1.1"/><circle cx="17" cy="12.6" r="1.1"/></g><g fill="#F2D799"><circle cx="7" cy="12.6" r=".45"/><circle cx="12" cy="12.6" r=".45"/><circle cx="17" cy="12.6" r=".45"/></g>`,
+ancienttree:`<path d="M2,20.8c3.8,-1.8 16.2,-1.8 20,0Z" fill="#9AAE8E"/><path d="M8.8,20.6c-.5,-5.2 -.7,-10.4 0,-15.6h6.4c.7,5.2 .5,10.4 0,15.6Z" fill="#8A6E58"/><path d="M9.2,11.4c-1.9,.5 -3.4,2 -4,3.9 -.5,-2.4 .5,-4.9 2.4,-6.3ZM14.8,9.6c2.1,.2 4,1.7 4.7,3.8 -2.1,-.2 -4,-1.7 -4.7,-3.8Z" fill="#7A6050"/><ellipse cx="6.6" cy="6.4" rx="4.2" ry="3.2" fill="#7E9C6C"/><ellipse cx="17.4" cy="6.8" rx="4" ry="3" fill="#7E9C6C"/><ellipse cx="12" cy="4.2" rx="4.8" ry="3.4" fill="#95B383"/><ellipse cx="12" cy="7.6" rx="6.4" ry="2.9" fill="#8AA978"/><path d="M8.3,12.6h7.4M8.5,16.4h7" stroke="#7A6050" stroke-width="1" stroke-linecap="round"/>`,
+rainbowvillage:`<path d="M3,9.2 12,3.4 21,9.2v10.4a1.4,1.4 0 0 1 -1.4,1.4H4.4A1.4,1.4 0 0 1 3,19.6Z" fill="#F4EEDC"/><path d="M2.2,9.6 12,3.2 21.8,9.6" fill="none" stroke="#D9736A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><g><rect x="4.4" y="10.4" width="15.2" height="2" fill="#E8964E"/><rect x="4.4" y="12.4" width="15.2" height="2" fill="#F2D799"/><rect x="4.4" y="14.4" width="15.2" height="2" fill="#8FC06A"/><rect x="4.4" y="16.4" width="15.2" height="2" fill="#8FB4CE"/><rect x="4.4" y="18.4" width="15.2" height="2" fill="#B49CC0"/></g><circle cx="8.4" cy="13.6" r="1.5" fill="#FAF4E6"/><circle cx="8.4" cy="13.6" r=".55" fill="#4A3A2C"/><circle cx="15.6" cy="13.6" r="1.5" fill="#FAF4E6"/><circle cx="15.6" cy="13.6" r=".55" fill="#4A3A2C"/><path d="M10.4,17.4a2.6,2.6 0 0 0 3.2,0" stroke="#4A3A2C" stroke-width="1" fill="none" stroke-linecap="round"/>`,
+queenhead:`<path d="M1.6,20.6c4,-2.2 16.8,-2.2 20.8,0Z" fill="#D9CDB4"/><path d="M8.4,20.4c-1,-3 -1.2,-5.4 -.6,-7.4h5.2c.6,2 .4,4.4 -.4,7.4Z" fill="#C2B294"/><path d="M7.4,12.6c0,-3.4 1.8,-6 4.6,-6.8 2,-.6 3.8,.2 4.4,1.8 .4,1 0,2 -1,2.6l-2.4,1.4c.6,1.4 .2,2.6 -1.2,3.2 -1.8,.8 -3.8,-.2 -4.4,-2.2Z" fill="#D9CDB4"/><path d="M11.6,5.6c1.2,-1.6 3.4,-2.2 5.2,-1.4 1.8,.8 2.6,2.8 1.8,4.4 -.6,-1.6 -2.2,-2.6 -4,-2.4 .4,-.4 .4,-1 0,-1.4Z" fill="#E4DAC4"/><path d="M14.2,9.4 17,8.2" stroke="#BCAE92" stroke-width="1" stroke-linecap="round"/><circle cx="10.2" cy="10.6" r=".65" fill="#8A7E66"/>`,
+taipei101:`<path d="M1.6,20.6c4,-1.4 16.8,-1.4 20.8,0Z" fill="#9AAE8E"/><path d="M9.4,20.4V17h5.2v3.4Z" fill="#9EB4C2"/><g fill="#B8CEDA"><path d="M9,16.8 9.6,14h4.8l.6,2.8ZM9.2,13.4 9.8,10.6h4.4l.6,2.8ZM9.4,10 10,7.2h4l.6,2.8Z"/></g><g fill="#D2E2EA"><path d="M9.6,14h4.8l-.2,-.8H9.8ZM9.8,10.6h4.4l-.2,-.8H10Z"/></g><path d="M10.2,6.8 10.8,4h2.4l.6,2.8Z" fill="#B8CEDA"/><path d="M11.8,4V1.6" stroke="#8A949C" stroke-width="1.4" stroke-linecap="round"/><rect x="4" y="15.4" width="4.2" height="5" rx=".8" fill="#C8D8E2"/><rect x="15.8" y="16.6" width="4.2" height="3.8" rx=".8" fill="#C8D8E2"/>`,
+balloonfest:`<path d="M1.4,20.6c4.4,-1.6 16.8,-1.6 21.2,0Z" fill="#9AAE8E"/><path d="M16.8,14.6c0,-2.4 1.8,-4.4 4,-4.4s4,2 4,4.4c0,2 -1.6,3.6 -2.8,4.4h-2.4c-1.2,-.8 -2.8,-2.4 -2.8,-4.4Z" fill="#A8C4D6"/><path d="M5.2,10.6c0,-3.6 2.8,-6.6 6.2,-6.6s6.2,3 6.2,6.6c0,3 -2.4,5.4 -4.2,6.6H9.4C7.6,16 5.2,13.6 5.2,10.6Z" fill="#E8964E"/><path d="M11.4,4c-1.6,2.8 -2,6.6 -1,9.6 .3,1 .8,2.4 1.2,3.6H9.4C7.6,16 5.2,13.6 5.2,10.6 5.2,7 8,4 11.4,4Z" fill="#F2B45C"/><path d="M14.6,5.2c1.2,1.6 2,3.6 2,5.4 0,2 -.8,3.8 -1.8,5.2 1.4,-1.4 2.8,-3.4 2.8,-5.2 0,-2 -1.2,-4.2 -3,-5.4Z" fill="#D9736A"/><path d="M9.6,17.2h4.2l-.6,2.4a1.1,1.1 0 0 1 -1.1,.9h-.8a1.1,1.1 0 0 1 -1.1,-.9Z" fill="#8A7E66"/><path d="M19.4,19h3.2l-.4,1.4h-2.4Z" fill="#8A7E66"/>`,
+jadeMt:`<path d="M1.2,20.6 9.2,5.6l4.2,7.6 2.4,-3.8 7,11.2Z" fill="#7E8A96"/><path d="M9.2,5.6 5.2,13.2c1.4,.6 2.6,.4 3.6,-.4 1.2,-1 2.4,-1 3.6,0l-3.2,-7.2Z" fill="#FAF6EC"/><path d="M15.8,9.4 13.4,13.2c1,.5 1.9,.4 2.7,-.3 .8,-.7 1.7,-.6 2.5,.2l-2.8,-3.7Z" fill="#FAF6EC"/><path d="M1.2,20.6 9.2,5.6l1.6,2.8 -5.6,12.2Z" fill="#9AA6B2"/><path d="M15.8,9.4 22.8,20.6h-4.2l-4,-8.4Z" fill="#6E7A86"/><circle cx="18.4" cy="4.4" r="2.4" fill="#F2D799"/>`,
+/* 特別節慶 */
+tangyuan:`<path d="M3.6,9.4h16.8l-1.6,9A2.6,2.6 0 0 1 16.2,20.6H7.8a2.6,2.6 0 0 1 -2.6,-2.2Z" fill="#EFE7D4"/><path d="M3.6,9.4h16.8l-.3,1.8H3.9Z" fill="#DCD0B6"/><path d="M5.2,11.6c.4,2.4 2.2,3.6 6.8,3.6s6.4,-1.2 6.8,-3.6Z" fill="#E8E2CE"/><circle cx="8.4" cy="8" r="2.5" fill="#FAF4E6"/><circle cx="15.6" cy="8" r="2.5" fill="#F4C3CE"/><circle cx="12" cy="6" r="2.5" fill="#8FC06A"/><circle cx="7.6" cy="7.2" r=".8" fill="#FDFAF0"/><circle cx="11.2" cy="5.2" r=".8" fill="#B4D69A"/>`,
+zongzi:`<path d="M12,3.4 21.4,19.4a1.6,1.6 0 0 1 -1.4,2.4H4a1.6,1.6 0 0 1 -1.4,-2.4Z" fill="#7E9C6C"/><path d="M12,3.4 21.4,19.4a1.6,1.6 0 0 1 -1.4,2.4h-6.6L12,3.4Z" fill="#6B8A5A"/><path d="M12,3.4 7.6,21.8H4a1.6,1.6 0 0 1 -1.4,-2.4Z" fill="#95B383"/><path d="M12,3.8 3.6,19.6h16.8Z" fill="none" stroke="#5F7A4E" stroke-width=".9"/><path d="M12,5.4 5.8,17.4M12,5.4 18.2,17.4" stroke="#D9B87E" stroke-width="1.5" stroke-linecap="round"/><path d="M4.6,17.4h14.8" stroke="#D9B87E" stroke-width="1.5" stroke-linecap="round"/><path d="M12,3.4 11.2,1" stroke="#D9B87E" stroke-width="1.3" stroke-linecap="round"/>`,
+mooncake:`<rect x="3.2" y="4.6" width="17.6" height="14.8" rx="4" fill="#D9A451"/><rect x="3.2" y="4.6" width="17.6" height="14.8" rx="4" fill="none" stroke="#BE8C3B" stroke-width="1"/><rect x="5.8" y="7" width="12.4" height="10" rx="2.6" fill="#E8BE78"/><g fill="#C89A4A"><circle cx="12" cy="12" r="2.3"/><path d="M12,6.6 13.4,8.6h-2.8ZM12,17.4 10.6,15.4h2.8ZM6.4,12 8.4,10.6v2.8ZM17.6,12 15.6,13.4v-2.8Z"/></g><circle cx="12" cy="12" r="1" fill="#E8BE78"/>`,
+pomelo:`<path d="M12,7c4.6,0 8,3.2 8,7 0,3.8 -3.2,6.6 -8,6.6S4,17.8 4,14c0,-3.8 3.4,-7 8,-7Z" fill="#D5CE7E"/><path d="M12,7c4.6,0 8,3.2 8,7 0,.8 -.1,1.6 -.4,2.3 -4.2,2 -11,2 -15.2,0C4.1,15.6 4,14.8 4,14 4,10.2 7.4,7 12,7Z" fill="#DFD990"/><path d="M12,7c-1.4,-1.4 -1.6,-3.2 -.6,-4.6 1.4,.6 2.2,2 2,3.6Z" fill="#8FA87E"/><path d="M12.2,6c1.4,-1 3.2,-1 4.4,.2 -1.2,1.2 -3,1.4 -4.4,.4Z" fill="#9FBE8C"/><g fill="#C2BA62"><circle cx="8" cy="11.4" r=".45"/><circle cx="12" cy="10.4" r=".4"/><circle cx="16" cy="11.4" r=".45"/><circle cx="6.6" cy="15" r=".45"/><circle cx="17.4" cy="15" r=".45"/><circle cx="12" cy="17.4" r=".4"/></g>`,
+couplet:`<rect x="3" y="2.6" width="6.4" height="18.8" rx="1.4" fill="#D9736A"/><rect x="14.6" y="2.6" width="6.4" height="18.8" rx="1.4" fill="#D9736A"/><rect x="3" y="2.6" width="6.4" height="18.8" rx="1.4" fill="none" stroke="#B85A52" stroke-width=".9"/><rect x="14.6" y="2.6" width="6.4" height="18.8" rx="1.4" fill="none" stroke="#B85A52" stroke-width=".9"/><g fill="#F2D799"><rect x="4.8" y="5" width="2.8" height="2.4" rx=".5"/><rect x="4.8" y="9" width="2.8" height="2.4" rx=".5"/><rect x="4.8" y="13" width="2.8" height="2.4" rx=".5"/><rect x="4.8" y="17" width="2.8" height="2.4" rx=".5"/><rect x="16.4" y="5" width="2.8" height="2.4" rx=".5"/><rect x="16.4" y="9" width="2.8" height="2.4" rx=".5"/><rect x="16.4" y="13" width="2.8" height="2.4" rx=".5"/><rect x="16.4" y="17" width="2.8" height="2.4" rx=".5"/></g><path d="M12,6.4 15.6,10 12,13.6 8.4,10Z" fill="#D9736A"/><path d="M12,8.4 13.6,10 12,11.6 10.4,10Z" fill="#F2D799"/>`,
+dragondance:`<path d="M1.6,19c1.2,-1.6 2.5,-1.6 3.7,0 1.2,1.6 2.5,1.6 3.7,0" fill="none" stroke="#D9736A" stroke-width="2.6" stroke-linecap="round"/><path d="M2,14.8c1.1,-1.5 2.3,-1.5 3.4,0 1.1,1.5 2.3,1.5 3.4,0" fill="none" stroke="#E8964E" stroke-width="2.4" stroke-linecap="round"/><path d="M9.6,13.4c-.8,-1.6 -.6,-3.5 .5,-4.8 1,1.4 1.2,3.3 .4,4.8Z" fill="#E8964E"/><circle cx="16" cy="9.4" r="5.6" fill="#D9736A"/><path d="M16,3.8a5.6,5.6 0 0 1 5.4,7.2c-.8,-2.7 -2.9,-4.7 -5.6,-5.3Z" fill="#E8948C"/><path d="M10.4,10.6 16.2,9.3l-.4,3.5 -4.8,-1Z" fill="#C05A52"/><path d="M10.6,10.9 16.1,9.9l-.1,1 -5.2,.8Z" fill="#F7F2E0"/><path d="M14,4.4 13.4,1.2 16.4,3.4ZM19.2,4.6 22.2,3.6 20.6,6.4Z" fill="#F2D799"/><circle cx="16.4" cy="7.4" r="1.1" fill="#FBF6E8"/><circle cx="16.4" cy="7.4" r=".58" fill="#2A2420"/><path d="M12.6,12.8 9.4,14M13,8.4 9.8,7.2" stroke="#F2D799" stroke-width="1.1" stroke-linecap="round"/>`,
+dragonboat:`<path d="M2.4,14.6c1.8,-1.4 5,-2 9.6,-2s7.8,.6 9.6,2l-2,4a2.6,2.6 0 0 1 -2.3,1.4H6.7a2.6,2.6 0 0 1 -2.3,-1.4Z" fill="#D9736A"/><path d="M2.4,14.6c1.8,-1.4 5,-2 9.6,-2s7.8,.6 9.6,2l-.6,1.2c-2,-1 -5.2,-1.5 -9,-1.5s-7,.5 -9,1.5Z" fill="#F2D799"/><path d="M21.6,14.6c1.2,-1.6 1.4,-3.6 .6,-5.2 -1.6,.8 -2.6,2.2 -2.8,4Z" fill="#C85A52"/><path d="M2.6,14.4c-1.2,-1.4 -1.6,-3.2 -1,-4.8 1.6,.6 2.8,2 3.2,3.8Z" fill="#C85A52"/><circle cx="3.6" cy="11.6" r=".75" fill="#F2D799"/><g fill="#8A949C"><path d="M6.4,12.4 4.4,17.4M10.4,12.4 8.4,17.4M14.4,12.4 12.4,17.4M18,12.4 16,17.4" stroke="#8A6E58" stroke-width="1.2" stroke-linecap="round"/></g><g fill="#F4EEDC"><circle cx="7.4" cy="11.4" r="1.4"/><circle cx="11.4" cy="11.4" r="1.4"/><circle cx="15.4" cy="11.4" r="1.4"/></g>`,
+festivallantern:`<path d="M12,1.8v2.6" stroke="#8A6E58" stroke-width="1.3" stroke-linecap="round"/><rect x="6.4" y="4.2" width="11.2" height="1.8" rx=".8" fill="#C89A4A"/><path d="M12,6c4.4,0 7.4,2.4 7.4,5.8S16.4,17.6 12,17.6s-7.4,-2.4 -7.4,-5.8S7.6,6 12,6Z" fill="#D9736A"/><path d="M12,6c1.6,0 2.6,2.6 2.6,5.8s-1,5.8 -2.6,5.8 -2.6,-2.6 -2.6,-5.8S10.4,6 12,6Z" fill="#E88A80"/><path d="M8,7c.9,1.4 1.4,3 1.4,4.8S8.9,15.2 8,16.6a7.4,5.8 0 0 1 -2.4,-2.2c.5,-.9 .8,-1.8 .8,-2.6s-.3,-1.7 -.8,-2.6A7.4,5.8 0 0 1 8,7Zm8,0a7.4,5.8 0 0 1 2.4,2.2c-.5,.9 -.8,1.8 -.8,2.6s.3,1.7 .8,2.6A7.4,5.8 0 0 1 16,16.6c-.9,-1.4 -1.4,-3 -1.4,-4.8S15.1,8.4 16,7Z" fill="#C85A52"/><rect x="6.4" y="17.4" width="11.2" height="1.8" rx=".8" fill="#C89A4A"/><path d="M9.4,19.2 8.6,22.2M12,19.2 12,22.4M14.6,19.2 15.4,22.2" stroke="#F2D799" stroke-width="1.2" stroke-linecap="round"/>`,
+skylantern:`<path d="M7,5.6h10l2.6,10.6a1.6,1.6 0 0 1 -1.6,2H6a1.6,1.6 0 0 1 -1.6,-2Z" fill="#F2D799"/><path d="M7,5.6h10l.8,3.4H6.2Z" fill="#F6E2B0"/><path d="M12,5.6 13.4,18.2h-2.8Z" fill="#E8C168"/><path d="M4.8,16.4h14.4l.4,1.4H4.4Z" fill="#C89A4A"/><path d="M6.6,18.2 7.6,20.4h8.8l1,-2.2" fill="none" stroke="#C89A4A" stroke-width="1" stroke-linecap="round"/><path d="M12,19.6c.8,0 1.4,.9 1.4,2s-.6,2 -1.4,2 -1.4,-.9 -1.4,-2 .6,-2 1.4,-2Z" fill="#E8964E"/><path d="M8.4,3.4a3.6,3.6 0 0 1 7.2,0" fill="none" stroke="#C89A4A" stroke-width="1.2" stroke-linecap="round"/><g fill="#D9736A"><rect x="8.8" y="10.4" width="2.2" height="2.2" rx=".5"/><rect x="13" y="10.4" width="2.2" height="2.2" rx=".5"/></g>`,
 };
 const art = k => `<svg class="ar" viewBox="0 0 24 24" aria-hidden="true">${ART[k]||''}</svg>`;
 const ic = (n,cls)=>`<i class="ic ${cls||''}">${ICON[n]?`<svg viewBox="0 0 24 24" aria-hidden="true">${ICON[n]}</svg>`:''}</i>`;
@@ -2050,8 +2236,8 @@ const HELP = {
   home:{t:'怎麼玩？', li:[
     '剛開始學乘法，先玩 🔰',
     '闖關遊戲，或完成攤子任務，賺取金幣',
-    '金幣可以玩轉蛋，有 40 種等你蒐集喔！'],
-   note:'給大人：紀錄只存在這台裝置的瀏覽器裡，手機太久沒玩可能會被清掉。<b>請到右上角的「挑戰者」頁面把紀錄存成檔案</b>。iPhone 請用 Safari「加入主畫面」，從圖示進來玩。'},
+    `金幣可以玩轉蛋，有 ${STICKERS.length} 種等你蒐集喔！`],
+   note:'給大人：紀錄只存在這台裝置的瀏覽器裡，手機太久沒玩可能會被清掉。<b>請到右上角的齒輪「給大人」把紀錄存成檔案</b>。iPhone 請用 Safari「加入主畫面」，從圖示進來玩。'},
   stages:{t:'怎麼玩？', li:[
     '每關 10 題，答對 8 題就過關',
     '答錯的題目等一下會再出現',
@@ -2119,17 +2305,22 @@ const mk = t => String(t).replace(/\u{1F530}/gu, ic('rookie'));
 /* 右上角的金幣，點一下說明那是什麼 */
 const INFO = {
   coin:{t:'金幣怎麼拿？', ic:'coin', li:[
-    '完成首頁攤子的任務，就能拿金幣',
-    '乘法實戰家第一次過關也有',
-    `${DRAW_COST} 枚金幣可以轉一次轉蛋`]}
+    '首頁兩個攤子的任務，每完成一個拿 1 枚',
+    '一個攤子三個都完成，初級再送 1 枚、超級再送 2 枚',
+    '乘法實戰家：第一次過關的關卡每天最多 2 枚、重玩每天 1 枚',
+    `比快挑戰答對 ${TIMED_GOAL} 題，每天 1 枚`,
+    `所以<b>一天最多 ${COIN_MAX_DAY} 枚</b>，拿完了明天再長出來`,
+    `${DRAW_COST} 枚金幣轉一次轉蛋，不會轉到重複的`],
+    note:'金幣每天有上限，是故意的：讓孩子每天玩一點，而不是一天玩很久就把貼紙收完。'}
 };
 function showInfo(kind){
   const f=INFO[kind]; if(!f) return;
   const m=me(), n = m?m.coins:0;
   showModal(`<h3>${ic(f.ic)} ${f.t}</h3>
     <ul class="helplist" style="margin-top:10px">${f.li.map(x=>`<li>${mk(x)}</li>`).join('')}</ul>
-    <p class="infonow">你現在有 <b>${n}</b> 枚金幣</p>
+    <p class="infonow">你現在有 <b>${n}</b> 枚金幣${GUEST?'':`，今天還能拿 <b>${coinsLeftToday()}</b> 枚`}</p>
     ${GUEST?'<p class="note" style="margin-top:4px">訪客模式不會留下金幣喔</p>':''}
+    ${f.note?`<p class="note helpnote">${mk(f.note)}</p>`:''}
     <div class="row"><button class="btn sun big" data-act="closeModal">知道了！</button></div>`);
   sfx.tap();
 }
@@ -2250,7 +2441,14 @@ function updateTop(){
 }
 let formAvatar = AVATARS[0];
 function avaGrid(sel){
-  return `<div class="avas">${AVATARS.map(a=>`<button type="button" class="ava-opt ${a===sel?'on':''}" data-act="ava" data-arg="${a}" aria-label="熱氣球 ${a.slice(1)*1+1}">${avaSVG(a)}</button>`).join('')}</div>`;
+  const owned=obj((me()||{}).owned);
+  const mine=STICKERS.filter(s=>owned[s.id]);
+  const balls=AVATARS.map(a=>`<button type="button" class="ava-opt ${a===sel?'on':''}" data-act="ava" data-arg="${a}" aria-label="熱氣球 ${a.slice(1)*1+1}">${avaSVG(a)}</button>`).join('');
+  const stk=mine.map(s=>{ const id='s:'+s.id;
+    return `<button type="button" class="ava-opt ${id===sel?'on':''}" data-act="ava" data-arg="${id}" aria-label="${s.name}">${avaSVG(id)}</button>`; }).join('');
+  return `<div class="avas">${balls}</div>`+
+    (stk?`<span class="flab sub2">或是用你收集到的貼紙</span><div class="avas stk">${stk}</div>`
+        :`<p class="note" style="margin-top:6px">去轉蛋機收集貼紙，就能拿貼紙當頭像喔。</p>`);
 }
 function nameForm(o){
   formAvatar = o.avatar || AVATARS[0];
@@ -2295,7 +2493,7 @@ const VIEWS = {
       <section class="card" style="max-width:460px;margin:0 auto">
         <h2 style="font-size:21px;text-align:center">你的名字是？</h2>
         <p class="tdesc" style="margin:6px 0 14px;text-align:center">打名字，金幣和貼紙才留得住<br>
-          <small>（紀錄存在這台裝置，之後可以到「挑戰者」頁面備份）</small></p>
+          <small>（紀錄存在這台裝置，之後可以到右上角「給大人」備份）</small></p>
         ${nameForm({name:'', avatar:AVATARS[0], act:'createPlayer', btn:'開始玩'})}
         <div class="guestbox">
           <button class="btn sage" data-act="guestStart">${ic('user')} 用訪客模式玩</button>
@@ -2326,8 +2524,8 @@ const VIEWS = {
     const firstTime = !m.coins && !ownedCount && !Object.keys(m.stages||{}).length && !(m.art||[]).length;
     const tip = firstTime ? '第一次玩嗎？先按綠色的 🔰 氣球，從「乘法翻翻樂」開始。'
       : m.coins>=DRAW_COST ? `你有 ${m.coins} 枚金幣，可以去右上角的轉蛋機玩了！`
-      : ownedCount>=STICKERS.length ? '40 種貼紙全部收集完成，你好厲害！'
-      : '完成下面攤子的任務就能拿金幣，集滿 40 種貼紙吧！';
+      : ownedCount>=STICKERS.length ? `${STICKERS.length} 種貼紙全部收集完成，你好厲害！`
+      : `完成下面攤子的任務就能拿金幣，集滿 ${STICKERS.length} 種貼紙吧！`;
     view.innerHTML=`
       ${TITLE()}
         ${ GUEST ? '' : `<button class="who" data-act="players">${avaSVG(m.avatar,'ava')}<b>${esc(m.name)}</b><span class="sw">換人 ▾</span></button>` }
@@ -2365,17 +2563,58 @@ const VIEWS = {
         ? `<div style="margin-top:16px;text-align:center"><button class="btn sun big" data-act="addForm">＋ 新增挑戰者</button></div>`
         : `<p class="note">最多 ${MAX_PLAYERS} 位挑戰者</p>`}
       <p class="note">每位挑戰者的金幣、貼紙和每日任務都是分開記錄的。</p>
-      <section class="card bak">
-        <h3>備份紀錄</h3>
-        <p class="note"><b>給大人：</b>下面這一段小朋友不用看。紀錄是存在這台裝置的瀏覽器裡的。<b>手機太久沒玩、清除瀏覽資料、或換一台裝置，紀錄就會不見</b>。
-          存成檔案就帶得走，換手機也還原得回來。</p>
-        <div class="rbtns" style="margin-top:10px">
+      <p class="note">要備份紀錄請到右上角的${ic('gear')}<b>給大人</b>。</p>`;
+  },
+
+  parent(){
+    const m=me(), total=m?Object.keys(m.owned||{}).length:0;
+    view.innerHTML=`
+      <div class="backrow"><button class="iconbtn" data-act="home" aria-label="返回">${ic('back')}</button><h2>${ic('gear')} 給大人</h2></div>
+      <p class="note pintro">這一頁是寫給家長的，小朋友不用看。</p>
+
+      <section class="card gcard">
+        <h3>${ic('book')} 備份紀錄</h3>
+        <p class="note">紀錄存在這台裝置的瀏覽器裡。<b>太久沒玩、清除瀏覽資料、或換一台裝置，紀錄就會不見。</b>
+          存成檔案就帶得走，換手機也還原得回來。建議偶爾存一次。</p>
+        <div class="rbtns">
           <button class="btn sun" data-act="backup">${ic('book')} 存成檔案</button>
           <button class="btn" data-act="restore">${ic('back')} 從檔案還原</button>
         </div>
-        <p class="note" style="margin-top:8px">iPhone、iPad 請用 Safari 的「分享 → 加入主畫面」，
+        <p class="note" style="margin-top:10px">iPhone、iPad 請用 Safari 的「分享 → 加入主畫面」，
           從主畫面的圖示進來玩，紀錄才不會被系統清掉。</p>
-      </section>`;
+      </section>
+
+      <section class="card gcard">
+        <h3>${ic('coin')} 金幣規則</h3>
+        <p class="note">一天最多 <b>${COIN_MAX_DAY}</b> 枚${GUEST?'':`，今天還能拿 <b>${coinsLeftToday()}</b> 枚`}。
+          <b>每天有上限是故意的</b>：讓孩子每天玩一點，而不是一天玩很久就把貼紙收完。拿完了遊戲還是能繼續玩，明天金幣會再長出來。</p>
+        <div class="rbtns"><button class="btn" data-act="info" data-arg="coin">看詳細規則</button></div>
+      </section>
+
+      <section class="card gcard">
+        <h3>${ic('check')} 小綠點是什麼？</h3>
+        <p class="note">每一題旁邊的九個小點，代表那張乘法表的九道題目。
+          <b>同一題連續答對三次</b>，點就會變成實心綠色；答對一兩次是半亮。
+          答錯會從頭算起。翻翻樂只是看，不會影響小綠點。</p>
+      </section>
+
+      <section class="card gcard">
+        <h3>${ic('book')} 貼紙與課綱</h3>
+        <p class="note">七類貼紙共 ${STICKERS.length} 張，多數取材自十二年國教課綱：
+          台灣原生保育類動物（環境教育）、台灣的海洋生物（海洋教育）、地層與化石、
+          社區裡的交通工具（生活課程）、家鄉物產與景點（社會、國語〈曬柿餅〉）、節慶與習俗（多元文化教育）。
+          收集到 12、28、48 張時會各打開一批新的分類。</p>
+        <p class="note">現在收集到 <b>${total}</b>/${STICKERS.length} 張。</p>
+      </section>
+
+      <section class="card gcard">
+        <h3>${ic('user')} 挑戰者</h3>
+        <p class="note">最多 ${MAX_PLAYERS} 位，金幣、貼紙、每日任務都分開記錄。</p>
+        <div class="rbtns"><button class="btn" data-act="players">管理挑戰者</button></div>
+      </section>
+
+      <p class="note" style="text-align:center;margin-top:20px">有建議嗎？歡迎私訊
+        <a href="https://www.instagram.com/slowlywithlili/" target="_blank" rel="noopener noreferrer">利利寫生活</a>。</p>`;
   },
 
   addPlayer(){
@@ -2604,8 +2843,8 @@ const VIEWS = {
       </button>
       <h3 style="font-size:17px;margin:18px 2px 10px">一關一關練</h3>
       <div class="slist">${cards}</div>
-      <p class="note">每一關都可以直接玩。<b>這裡的金幣每天有上限</b>：第一次過關的關卡一次 1~2 枚（今天還可以拿 ${leftNew} 枚）、重玩已經過關的一次 1 枚（今天還可以拿 ${left} 枚）。
-        拿完了明天會再有，<b>首頁攤子的任務不受影響</b>。</p>`;
+      <p class="note">想玩哪一關都可以。這裡今天還能拿 <b>${left+leftNew}</b> 枚金幣
+        <button class="inqa" data-act="info" data-arg="coin" aria-label="金幣怎麼拿？">?</button></p>`;
   },
 
   play(){
@@ -2676,19 +2915,26 @@ const VIEWS = {
   },
 
   book(){
-    const owned=me().owned;
-    const groups=Object.keys(THEMES).map(th=>{
+    const owned=me().owned, total=Object.keys(owned).length;
+    const RARW={n:'？？？', r:'稀有款', s:'閃亮款'};
+    const groups=THEME_ORDER.map(th=>{
       const list=STICKERS.filter(s=>s.theme===th);
+      if(!themeOpen(th)){
+        const need=(THEME_LOCK[th]||0)-total;
+        return `<section class="theme lockedth"><h3>${THEMES[th].name} <small>還沒打開</small></h3>
+          <p class="lockmsg">${ic('lock')}<span>再收集到 <b>${need}</b> 張貼紙，這一類就會打開</span></p></section>`;
+      }
       const have=list.filter(s=>owned[s.id]).length;
       const cells=list.map(s=> owned[s.id]
         ? `<div class="scell${me().buddy===s.id?' buddyon':''}">${stickerHTML(s)}<span class="sname">${s.name}</span></div>`
-        : `<div class="scell"><div class="sticker locked"><span>?</span></div><span class="sname dim">？？？</span></div>`).join('');
+        : `<div class="scell"><div class="sticker locked r-${s.rar}"><span>?</span></div><span class="sname dim ${s.rar}">${RARW[s.rar]}</span></div>`).join('');
       return `<section class="theme"><h3>${THEMES[th].name} <small>${have}/${list.length}</small></h3><div class="sgrid">${cells}</div></section>`;
     }).join('');
-    const total=Object.keys(owned).length;
+    const nl=nextLock();
     view.innerHTML=`
       <div class="backrow"><button class="iconbtn" data-act="home" aria-label="返回">${ic('back')}</button><h2>我的轉蛋機 ${total}/${STICKERS.length}</h2></div>
-      ${helper(me().coins>=DRAW_COST?`${DRAW_COST} 枚金幣轉一次，點貼紙可以叫它出來陪你玩`:`轉一次要 ${DRAW_COST} 枚金幣，去首頁攤子做任務`)}
+      ${helper(me().coins>=DRAW_COST?`${DRAW_COST} 枚金幣轉一次，點貼紙可以叫它出來陪你玩，或換成你的頭像`:`轉一次要 ${DRAW_COST} 枚金幣，去首頁攤子做任務`)}
+      ${nl?`<p class="nextlock">${ic('lock')}<span>再收集到 <b>${nl.left}</b> 張，就會打開「${THEMES[nl.th].name}」</span></p>`:''}
       <section class="card gacha">
         <div class="machine" id="machine" aria-hidden="true">${gachaSVG()}</div>
         <div class="gachainfo">
@@ -2919,7 +3165,7 @@ function finishTimed(){
   game.result={timed:true, hard:true, score, grade, coins, maxCombo:game.maxCombo, newBest};
   game.locked=true;
   save(); checkQuests();
-  go('result');
+  go('result'); if(coins) coinDoneCheck();
 }
 function inGame(){ return (currentView==='play'||currentView==='hunt'||currentView==='snake'||currentView==='learn'||currentView==='pair') && !!game && !game.result; }
 function askQuit(){
@@ -2956,6 +3202,36 @@ function openTier(tier){
     <div class="bonus">${bonus}</div>
     <div class="row" style="margin-top:14px"><button class="btn sun big" data-act="closeModal">知道了！</button></div>`);
 }
+function coinsLeftToday(){
+  const d=ensureDaily();
+  if(!d) return 0;
+  let left=0;
+  TIERS.forEach(T=>{
+    const t=d.tiers[T.id];
+    if(!t){ left += TIER_QUESTS[T.id].length + T.bonus; return; }
+    t.claimed.forEach(c=>{ if(!c) left++; });
+    if(!t.bonus) left += T.bonus;
+  });
+  left += Math.max(0, STAGE_FIRST_CAP - d.p.firstCoins);
+  left += Math.max(0, STAGE_COIN_CAP  - d.p.stageCoins);
+  if(!d.p.timedCoins) left += 1;
+  return left;
+}
+/* 剛好把今天的金幣領完時說一聲，小孩才知道不是壞掉了 */
+function coinDoneCheck(){
+  if(GUEST) return;
+  const d=ensureDaily();
+  if(!d || d.allDone || coinsLeftToday()>0) return;
+  d.allDone=true; save();
+  setTimeout(()=>{
+    showModal(`<div class="owl" aria-hidden="true" style="width:74px">${bearSVG()}</div>
+      <h3>今天的金幣拿完囉！</h3>
+      <p>你今天把 <b>${COIN_MAX_DAY}</b> 枚金幣全部拿到手了，很認真喔。</p>
+      <p>遊戲還是可以繼續玩，明天金幣就會再長出來。</p>
+      <div class="row"><button class="btn sun big" data-act="closeModal">知道了！</button></div>`);
+    sfx.fanfare();
+  }, 900);
+}
 function claimQuest(arg){
   const parts=String(arg).split(':'), tier=parts[0], i=+parts[1];
   const d=ensureDaily(), t=d&&d.tiers[tier];
@@ -2964,7 +3240,7 @@ function claimQuest(arg){
   save(); sfx.coin();
   burstAt(document.querySelector(`[data-act="claim"][data-arg="${arg}"]`),20);
   toast('拿到 1 枚金幣！');
-  setTimeout(()=>{ go('home'); openTier(tier); },250);
+  setTimeout(()=>{ go('home'); openTier(tier); coinDoneCheck(); },250);
 }
 function claimBonus(tier){
   const d=ensureDaily(), t=d&&d.tiers[tier], T=TIER_BY[tier];
@@ -2973,7 +3249,7 @@ function claimBonus(tier){
   save(); sfx.fanfare();
   burstAt(document.querySelector('[data-act="bonus"]'),40);
   toast(`${T.name}三個都完成！再拿 ${T.bonus} 枚金幣`);
-  setTimeout(()=>{ go('home'); openTier(tier); },250);
+  setTimeout(()=>{ go('home'); openTier(tier); coinDoneCheck(); },250);
 }
 /* ---------- 備份／還原紀錄 ---------- */
 /* 手機瀏覽器可能會把網站資料清掉（iPhone 超過一陣子沒玩就會清），
@@ -3047,7 +3323,7 @@ function askDelete(id){
 let drawing=false;
 function draw(){
   if(drawing || me().coins<DRAW_COST) return;
-  const pool=STICKERS.filter(s=>!me().owned[s.id]);
+  const pool=openStickers().filter(s=>!me().owned[s.id]);   /* 只會抽到已經解鎖的分類 */
   if(!pool.length){   /* 全部收集完了就不要再收金幣 */
     showModal(`<h3>全部收集完成！</h3><p>你已經有全部 ${STICKERS.length} 張貼紙了，金幣留著就好。</p><div class="row"><button class="btn sun" data-act="closeBook">好耶！</button></div>`);
     sfx.reveal(); return;
@@ -3056,12 +3332,30 @@ function draw(){
   me().coins-=DRAW_COST;
   let sum=pool.reduce((t,p)=>t+RAR_WEIGHT[p.rar],0), r=Math.random()*sum;
   const s=pool.find(p=>(r-=RAR_WEIGHT[p.rar])<=0)||pool[0];
+  const before=nextLock();
   me().owned[s.id]=todayStr();
   save(); updateTop();
+  const after=nextLock();
+  justOpened = (before && (!after || after.th!==before.th)) ? before.th : '';
   const btn=$('#drawbtn'); if(btn) btn.disabled=true;
   const m=$('#machine'); if(m){ m.classList.remove('spin'); void m.offsetWidth; m.classList.add('spin'); }
   sfx.spin();
   setTimeout(()=>{ drawing=false; showReveal(s,true); }, reduceMotion?100:1000);
+}
+/* 這一抽剛好打開新分類的話，收下貼紙之後跳出來報喜 */
+let justOpened = '';
+function showUnlocked(){
+  const th=justOpened; justOpened='';
+  if(!th || !THEMES[th]) return false;
+  const list=STICKERS.filter(x=>x.theme===th).slice(0,4);
+  const peek=list.map(x=>`<span class="upk" style="--sbg:${THEMES[x.theme].bg}">${art(x.emo)}</span>`).join('');
+  showModal(`<div class="uprow">${peek}</div>
+    <h3>打開新的一類了！</h3>
+    <p style="font-size:20px;font-weight:700;color:var(--ink)">${THEMES[th].name}</p>
+    <p>從現在開始，轉蛋就有機會轉到這一類的貼紙囉。</p>
+    <div class="row"><button class="btn sun big" data-act="closeBook">太好了！</button></div>`);
+  sfx.fanfare(); setTimeout(()=>burst(innerWidth/2, innerHeight*0.38, 40), 120);
+  return true;
 }
 function showReveal(s,isNew){
   const got=me().owned[s.id];
@@ -3073,6 +3367,7 @@ function showReveal(s,isNew){
     <p>${THEMES[s.theme].name}${DATE_RE.test(got||'')?`，${got.replace(/^(\d+)-(\d+)-(\d+)$/,(m,y,mo,d)=>`${+mo} 月 ${+d} 日`)}收集到`:''}</p>
     <div class="row">
       ${got?`<button class="btn ${me().buddy===s.id?'':'sage'}" data-act="buddy" data-arg="${s.id}">${me().buddy===s.id?'回去休息':'陪我玩'}</button>`:''}
+      ${(got && !GUEST)?`<button class="btn ${me().avatar==='s:'+s.id?'':'blue'}" data-act="setava" data-arg="${s.id}" ${me().avatar==='s:'+s.id?'disabled':''}>${me().avatar==='s:'+s.id?'現在的頭像':'當我的頭像'}</button>`:''}
       <button class="btn sun" data-act="closeBook">${isNew?'放進收藏':'好'}</button></div>`);
   if(isNew){ sfx.reveal(); setTimeout(()=>burstAt(document.querySelector('.reveal'), s.rar==='s'?60:30),200); }
 }
@@ -3940,14 +4235,23 @@ document.addEventListener('click', e=>{
     case 'bonus': claimBonus(arg); break;
     case 'tier': sfx.tap(); openTier(arg); break;
     case 'players': closeModal(); if(inGame()){ askQuit(); break; } endGame(); go('players'); break;
+    case 'parent': closeModal(); if(inGame()){ askQuit(); break; } endGame(); go('parent'); break;
     case 'addForm': go('addPlayer'); break;
+    case 'setava': {
+      const m=me(), st=STICKER_BY[arg];
+      if(!m || GUEST || !st || !m.owned[st.id]) break;
+      m.avatar='s:'+st.id; save(); sfx.tap(); closeModal(); updateTop();
+      toast(`頭像換成${st.name}了！`);
+      if(currentView==='book'||currentView==='players') go(currentView);
+      break;
+    }
     case 'ava': formAvatar=arg; document.querySelectorAll('.ava-opt').forEach(b=>b.classList.toggle('on', b.dataset.arg===arg)); sfx.tap(); break;
     case 'guestStart': startGuest(); updateTop(); go('home'); toast('訪客模式：沒有金幣可以蒐集喔'); break;
     case 'toName': go('welcome'); break;
     case 'createPlayer': {
       const n=readName();
       if(!n){ toast('先打名字喔'); focusName(); break; }
-      if(GUEST){ const g=me(); GUEST=false; g.name=n; g.avatar=AVA_SET.has(formAvatar)?formAvatar:AVATARS[0]; save(); }
+      if(GUEST){ const g=me(); GUEST=false; g.name=n; g.avatar=avaOk(formAvatar,g.owned)?formAvatar:AVATARS[0]; save(); }
       else addPlayer(n, formAvatar);
       updateTop(); go('home');
       toast(`${n}，開始玩吧！`); sfx.fanfare();
@@ -3963,7 +4267,7 @@ document.addEventListener('click', e=>{
       const p=state.players.find(x=>x.id===arg), n=readName();
       if(!p) { closeModal(); break; }
       if(!n){ toast('名字不能空白喔'); focusName(); break; }
-      p.name=n; p.avatar=AVA_SET.has(formAvatar)?formAvatar:p.avatar; save(); closeModal(); updateTop(); go('players');
+      p.name=n; p.avatar=avaOk(formAvatar,p.owned)?formAvatar:p.avatar; save(); closeModal(); updateTop(); go('players');
       break;
     }
     case 'delp': askDelete(arg); break;
@@ -3976,7 +4280,7 @@ document.addEventListener('click', e=>{
     case 'quitYes': closeModal(); endGame(); go('home'); break;
     case 'quitStages': closeModal(); endGame(); go('stages'); break;
     case 'closeModal': closeModal(); break;
-    case 'closeBook': closeModal(); go('book'); break;
+    case 'closeBook': closeModal(); if(!showUnlocked()) go('book'); break;
     case 'again': if(lastSetup){
         lastSetup.mode==='timed' ? startTimed()
         : lastSetup.mode==='hunt' ? startHunt(lastSetup.table)
