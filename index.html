@@ -87,8 +87,8 @@
 :root[data-zy="on"] .stall .deskline{font-size:clamp(9px,4.8cqw,16px)}
 :root[data-zy="on"] .sdhead{font-size:13px}
 /* 三個並列的難度卡：注音字寬 1.5 倍，要再小一點才排得下 */
-:root[data-zy="on"] .snlvs.three .snlv b{font-size:17px}
-:root[data-zy="on"] .snlvs.three .snlv span{font-size:12.5px;line-height:1.3}
+:root[data-zy="on"] .snlvs.three .snlv b{font-size:24px}
+:root[data-zy="on"] .snlvs.three .snlv > span{font-size:12.5px;line-height:1.3}
 :root[data-zy="on"] .gbtn b{font-size:13px;padding:2px 7px}
 *,*::before,*::after{box-sizing:inherit}
 html{scroll-padding-top:env(safe-area-inset-top,0px);background:var(--bg)}
@@ -330,10 +330,10 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 .snlv{text-align:left;background:var(--surface);border:1.5px solid var(--hair);border-radius:18px;box-shadow:0 4px 12px var(--shadow);padding:10px 12px;cursor:pointer;display:flex;flex-direction:column;gap:2px;transition:transform .08s,box-shadow .08s}
 .snlv:active{transform:translateY(4px);box-shadow:0 1px 3px var(--shadow)}
 .snlv b{font-size:20.5px;white-space:nowrap}
-.snlv span{font-size:15px;color:var(--muted);line-height:1.35}
+.snlv > span{font-size:15px;color:var(--muted);line-height:1.35}
 .snlv .snmeta{font-family:var(--num);font-size:14px}
 .snlv.on{color:var(--on-color)}
-.snlv.on span{color:var(--on-color);opacity:.85}
+.snlv.on > span{color:var(--on-color);opacity:.85}
 .snlv.e.on{background:var(--mint)} .snlv.m.on{background:#9FB7CB}
 .snlv.h.on{background:var(--sun)}
 .snhearts{font-size:17px;letter-spacing:1px;white-space:nowrap}
@@ -361,6 +361,9 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 /* 配對消消樂 */
 .snlvs.three{grid-template-columns:repeat(3,1fr);gap:8px}
 .snlvs.three .snlv{padding:9px 8px}
+/* 三個並列的難度：名字跟頁面標題一樣大，符號擺在名字上面才排得下 */
+.snlvs.three .snlv b{display:flex;flex-direction:column;align-items:flex-start;gap:1px;font-size:24px}
+.snlvs.three .snlv b .ic{width:22px;height:22px}
 .snlv.s-same.on{background:#E0C3C9} .snlv.s-diff.on{background:#B0A7C6}
 .pgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
 .pgrid.two{grid-template-columns:repeat(2,1fr)}
@@ -509,10 +512,15 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 .buddy .bart .emo{font-size:clamp(62px,17vw,88px);line-height:0}
 .buddy .bsay{position:absolute;left:50%;bottom:100%;translate:-50% 0;margin-bottom:6px;
   background:var(--surface);color:var(--ink);font-size:15px;font-weight:700;line-height:1.3;
-  max-width:min(68vw,250px);text-align:center;padding:4px 10px;border-radius:13px 11px 14px 4px/11px 14px 9px 13px;
+  width:max-content;max-width:min(74vw,268px);text-align:center;padding:13px 20px;border-radius:50%;
   box-shadow:0 3px 9px var(--shadow);opacity:0;scale:.7;transform-origin:50% 120%;
   transition:opacity .22s,scale .22s}
 .buddy .bsay.on{opacity:1;scale:1}
+/* 圓形對話框下面的兩顆小泡泡，指向小夥伴 */
+.buddy .bsay::before,.buddy .bsay::after{content:"";position:absolute;left:50%;border-radius:50%;
+  background:var(--surface);box-shadow:0 2px 5px var(--shadow)}
+.buddy .bsay::before{top:100%;margin-top:-1px;width:10px;height:10px;translate:-50% 0}
+.buddy .bsay::after{top:100%;margin-top:10px;width:5px;height:5px;translate:-50% 0}
 @keyframes bbob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 .bspark{position:fixed;width:20px;height:20px;line-height:0;pointer-events:none;
   animation:bsparkle 1.4s ease-out forwards}
@@ -646,7 +654,7 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
   font-family:var(--num);font-weight:700;font-size:1.15em}
 .stall .deskline .ic{width:1em;height:1em;vertical-align:-.12em}
 .stall:active > svg{transform:translateY(3px)}
-.stall.ready > svg{animation:stallpop 1.8s ease-in-out infinite}
+.stall.ready{animation:stallpop 1.8s ease-in-out infinite}   /* 整個攤子一起浮，字才會跟著動 */
 @keyframes stallpop{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
 /* 有金幣可以領了，攤位右上角掛一個跳動的小紅驚嘆號 */
 .stall .bang{position:absolute;right:1%;top:-9%;width:24%;max-width:34px;line-height:0;
@@ -656,7 +664,7 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 @keyframes bangjump{0%,100%{transform:translateY(0) scale(1)}
   28%{transform:translateY(-22%) scale(1.14)}56%{transform:translateY(0) scale(1)}}
 @media (prefers-reduced-motion:reduce){
-  .stall.ready > svg,.stall .bang{animation:none}
+  .stall.ready,.stall .bang{animation:none}
 }
 
 /* 我的轉蛋機：固定漂浮在右上角 */
@@ -859,13 +867,14 @@ const STAGES = [
   {table:0, q:15, label:'最後大魔王', boss:true}
 ].map((s,i)=>Object.assign({n:i+1, label:s.table?`${s.table} 的乘法`:''}, s));
 const STAGE_COIN_CAP = 1;   /* 重玩通關每天最多拿幾枚 */
+const TIMED_GOAL = 20;      /* 比快挑戰答對幾題才有金幣（每天 1 枚）*/
 const DRAW_COST = 3;        /* 轉一次轉蛋要幾枚金幣 */
 /* 彩虹貪食蛇：三個難度，一次只加一個負擔（先只要算 → 會自己跑 → 題目隨機又變快）*/
 /* 蛇身永遠是彩虹：紅色固定當頭，往後照紅橙黃綠藍靛紫排下去 */
 const RAINBOW = ['#C98C84','#D4A47C','#D6C487','#9BB893','#8FACC4','#9A9BC0','#B195B8'];
 const SNAKE_WIN = RAINBOW.length * 2;   /* 吃到 14 個（兩條彩虹）就放煙火過關 */
 const SNAKE_LV = [
-  {id:'e', icon:'seed', name:'散步', d1:'自己慢慢走', d2:'照順序出題', rookie:true, seq:true, step:true,  ms:0,   min:0,   up:0,  decoys:2, hearts:5, size:9,  rocks:false},
+  {id:'e', icon:'seed', name:'散步', d1:'自己慢慢走', d2:'照順序出題', seq:true, step:true,  ms:0,   min:0,   up:0,  decoys:2, hearts:5, size:9,  rocks:false},
   {id:'m', icon:'flag', name:'快走', d1:'蛇蛇會動喔', d2:'照順序出題', seq:true,  step:false, ms:850, min:850, up:0,  decoys:3, hearts:4, size:11, rocks:false},
   {id:'h', icon:'fire', name:'賽跑', d1:'蛇蛇跑更快了', d2:'隨機出題', seq:false, step:false, ms:600, min:450, up:50, decoys:4, hearts:3, size:11, rocks:false}
 ];
@@ -873,7 +882,7 @@ const SNAKE_BY = {}; SNAKE_LV.forEach(l=>{ SNAKE_BY[l.id]=l; });
 
 /* 配對消消樂：同一個答案的算式配成一對（4x4 和 8x2），或找出兩邊不一樣的那一張 */
 const PAIR_LV = [
-  {id:'e', icon:'seed', name:'簡單', rookie:true, pairs:4, cards:3, rounds:5, hi:6},
+  {id:'e', icon:'seed', name:'簡單', pairs:4, cards:3, rounds:5, hi:6},
   {id:'m', icon:'flag', name:'普通', pairs:6, cards:4, rounds:7, hi:9},
   {id:'h', icon:'fire', name:'挑戰', pairs:8, cards:4, rounds:9, hi:9}
 ];
@@ -1054,10 +1063,11 @@ function zhNum(n){ if(n<10) return ZH[n]; const t=Math.floor(n/10), o=n%10; retu
 function chant(a,b){
   const p=a*b;
   if(p<10) return ZH[a]+ZH[b]+'得'+ZH[p];
-  if(p===10) return ZH[a]+ZH[b]+'一十';
+  if(p===10) return ZH[a]+ZH[b]+'得十';   /* 唸「二五得十」，不唸「二五一十」 */
   return ZH[a]+ZH[b]+zhNum(p);
 }
-const PRAISE = ['答對了！','好棒！','太厲害了！','完全正確！','你好聰明！','漂亮！','就是這樣！'];
+/* 稱讚也照成長型思維：講「你算出來了」「你想通了」，不講「你好聰明」 */
+const PRAISE = ['答對了！','就是這樣！','完全正確！','你算出來了！','你想通了！','很認真喔！','漂亮！'];
 
 /* ---------- 注音 ---------- */
 /* 注音是「源泉注音圓體」直接畫在每個字裡的，所以畫面上不用加任何標記，
@@ -1397,7 +1407,7 @@ function questText(q){
   }
 }
 function blankP(){ return {correct:0, rounds:0, maxCombo:0, timedBest:0, tables:{}, perfect:0,
-  mix:0, mastered:0, reviews:0, revk:{}, stagesCleared:0, stageCoins:0, firstCoins:0, hunts:0,
+  mix:0, mastered:0, reviews:0, revk:{}, stagesCleared:0, stageCoins:0, firstCoins:0, timedCoins:0, hunts:0,
   snakes:0, rainbows:0, learns:0, pairs:0}; }
 function blankTier(date,id){ return {quests:makeQuests(date,id), claimed:[false,false,false], bonus:false, notified:[false,false,false]}; }
 function ensureDaily(){
@@ -2137,11 +2147,12 @@ function showHelp(){
 /* 小夥伴講的話一律走「成長型思維」：誇努力和方法，不誇聰明和結果；
    錯了當成還在學，不說「你好棒」「好厲害」這種只看結果的話 */
 const BUDDY_SAY = [
-  '慢慢來，不用急', '多試幾次就會了', '錯了也是在學', '你剛剛很努力',
+  '慢慢來，不用急', '再試一次！', '下次就會答對了', '你剛剛很努力',
   '再想一下下', '不會也沒關係', '一題一題來', '你比剛才進步了',
   '想不出來很正常', '難的題目才好玩', '你願意再試一次', '算錯才會變厲害',
   '休息一下再回來', '我在這裡陪你', '慢慢想，沒關係', '你剛剛沒有放棄',
-  '你自己想出來的', '認真算就會進步', '我陪你一起算', '加油，我看著你'];
+  '你自己想出來的', '認真算就會進步', '我陪你一起算', '加油，我看著你',
+  '67？42 啦！', '願意練習就很棒', '我會陪著你', '記得休息喔'];
 let buddyT = null, buddyStep = 0;
 function buddyOf(){
   const m = me();
@@ -2356,7 +2367,7 @@ const VIEWS = {
       <p class="note">每位挑戰者的金幣、貼紙和每日任務都是分開記錄的。</p>
       <section class="card bak">
         <h3>備份紀錄</h3>
-        <p class="note">紀錄是存在這台裝置的瀏覽器裡的。<b>手機太久沒玩、清除瀏覽資料、或換一台裝置，紀錄就會不見</b>。
+        <p class="note"><b>給大人：</b>下面這一段小朋友不用看。紀錄是存在這台裝置的瀏覽器裡的。<b>手機太久沒玩、清除瀏覽資料、或換一台裝置，紀錄就會不見</b>。
           存成檔案就帶得走，換手機也還原得回來。</p>
         <div class="rbtns" style="margin-top:10px">
           <button class="btn sun" data-act="backup">${ic('book')} 存成檔案</button>
@@ -2446,7 +2457,7 @@ const VIEWS = {
   snakePick(){
     const lv=snakeLv(), best=me().snakeBest||0;
     const lvs=SNAKE_LV.map(l=>`<button class="snlv ${l.id} ${l.id===lv.id?'on':''}" data-act="snlv" data-arg="${l.id}" aria-pressed="${l.id===lv.id}">
-      <b>${l.rookie?ic('rookie'):ic(l.icon)} ${l.name}</b>
+      <b>${ic(l.icon)}<span>${l.name}</span></b>
       <span>${l.d1}</span><span>${l.d2}</span></button>`).join('');
     const btns=[2,3,4,5,6,7,8,9].map(t=>
       `<button class="pickbtn" data-act="snstart" data-arg="${t}"><span class="n">${t}</span><span class="lbl">${t} 的乘法</span>${masteryDots(t)}</button>`).join('');
@@ -2487,7 +2498,7 @@ const VIEWS = {
       `<div class="lrow ${i===0&&g.hint===1?'hot':''}"><span class="ln" style="--i:${(i*0.22).toFixed(2)}s">${i+1}</span>${
         Array.from({length:q.b},()=>`<span class="li">${art(q.emo)}</span>`).join('')}</div>`).join('');
     /* 提示字自己一行放在最上面，下面的圖案才不會被推歪 */
-    const call = g.hint===1 ? `<span class="hcall">${ic('down')} 這一排有 ${q.b} 個喔！</span>`
+    const call = g.hint===1 ? `<span class="hcall">${ic('down')} 一排有 ${q.b} 個喔！</span>`
       : g.hint===2 ? `<span class="hcall">${ic('down')} 總共有 ${q.a} 排喔！</span>` : '';
     const p1=g.pick[0], p2=g.pick[1], done=g.locked;
     view.innerHTML=`
@@ -2517,7 +2528,7 @@ const VIEWS = {
   pairPick(){
     const lv=pairLv();
     const lvs=PAIR_LV.map(l=>`<button class="snlv ${l.id}" data-act="plv" data-arg="${l.id}">
-      <b>${l.rookie?ic('rookie'):''}${l.name}</b>
+      <b>${ic(l.icon)}<span>${l.name}</span></b>
       <span class="snmeta">${l.pairs} 組・${l.pairs*2} 張<br>數字 1~${l.hi}</span></button>`).join('');
     view.innerHTML=`
       <div class="backrow"><button class="iconbtn" data-act="home" aria-label="返回">${ic('back')}</button><h2>配對消消樂</h2></div>
@@ -2589,11 +2600,12 @@ const VIEWS = {
         <span class="sno">想比快嗎？</span>
         <b>${ic('clock')} 比快挑戰</b>
         <span class="ss">60 秒內答對越多越好${m.timedBest?`・最好 ${m.timedBest} 題`:''}</span>
-        <span class="sno">答對 20 題以上，多拿 1 枚金幣</span>
+        <span class="sno">答對 ${TIMED_GOAL} 題以上，拿 1 枚金幣（每天一次）</span>
       </button>
       <h3 style="font-size:17px;margin:18px 2px 10px">一關一關練</h3>
       <div class="slist">${cards}</div>
-      <p class="note">每一關都可以直接玩。今天還能拿的金幣：新關卡 ${leftNew} 枚、重玩 ${left} 枚</p>`;
+      <p class="note">每一關都可以直接玩。<b>這裡的金幣每天有上限</b>：第一次過關的關卡一次 1~2 枚（今天還可以拿 ${leftNew} 枚）、重玩已經過關的一次 1 枚（今天還可以拿 ${left} 枚）。
+        拿完了明天會再有，<b>首頁攤子的任務不受影響</b>。</p>`;
   },
 
   play(){
@@ -2631,7 +2643,7 @@ const VIEWS = {
       ? `<div class="stat"><b>${r.score}</b><span>60 秒答對題數</span></div>`
       : `<div class="stat"><b>${r.score}/${r.total}</b><span>${r.slabel ? r.slabel : r.hunt?'一次就找到':`第一次就答對${r.stage?`（過關要 ${r.need}）`:''}`}</span></div>`;
     let badge='';
-    if(r.newBest) badge=`<div class="badge">${ic('trophy')} 新紀錄！</div>`;
+    if(r.newBest) badge=`<div class="badge">${ic('trophy')} 新紀錄！${r.coins?`　${ic('coin')} 拿到 ${r.coins} 枚金幣`:''}</div>`;
     else if(r.coins) badge=`<div class="badge">${ic('coin')} 拿到 ${r.coins} 枚金幣</div>`;
     else if(r.capped) badge='<div class="badge">今天的練習金幣拿滿了，明天再來</div>';
     const nextN = r.stage && r.cleared && r.stage<STAGES.length ? r.stage+1 : 0;
@@ -2897,19 +2909,25 @@ function finishTimed(){
   clearInterval(game.timer); clearTimeout(game.t);
   const d=ensureDaily(), score=game.score;
   const grade=score>=15?3:score>=8?2:1;
-  const newBest=score>me().timedBest && score>0;
-  if(newBest) me().timedBest=score;
+  const m=me();
+  const newBest=score>m.timedBest && score>0;
+  if(newBest) m.timedBest=score;
+  let coins=0;                       /* 答對 20 題以上給 1 枚，每天只給一次 */
+  if(score>=TIMED_GOAL && !d.p.timedCoins){ coins=1; d.p.timedCoins=1; m.coins+=1; }
   d.p.timedBest=Math.max(d.p.timedBest,score);
   markPlayed();
-  game.result={timed:true, hard:true, score, grade, maxCombo:game.maxCombo, newBest};
+  game.result={timed:true, hard:true, score, grade, coins, maxCombo:game.maxCombo, newBest};
   game.locked=true;
   save(); checkQuests();
   go('result');
 }
 function inGame(){ return (currentView==='play'||currentView==='hunt'||currentView==='snake'||currentView==='learn'||currentView==='pair') && !!game && !game.result; }
 function askQuit(){
+  const inStage = game && game.mode==='stage';
   showModal(`<h3>要離開嗎？</h3><p>這一回還沒完成，答對的題數會保留，但不會算完成一回喔。</p>
-    <div class="row"><button class="btn sun" data-act="closeModal">繼續玩</button><button class="btn" data-act="quitYes">離開</button></div>`);
+    <div class="row"><button class="btn sun" data-act="closeModal">繼續玩</button>
+      ${inStage?'<button class="btn" data-act="quitStages">回關卡</button>':''}
+      <button class="btn" data-act="quitYes">回首頁</button></div>`);
 }
 
 /* ---------- rewards ---------- */
@@ -3613,7 +3631,7 @@ function learnBad(slot,v){
   const box=document.getElementById('lbox');
   if(box){ box.classList.remove('bad'); void box.offsetWidth; box.classList.add('bad'); }
   lfb(`<div class="lwrong">${ic('close')} 慢慢來，再數一次</div>`);
-  lnote(slot===0 ? '這一排有幾個呢？一個一個數數看' : '總共有幾排呢？一排一排數數看');
+  lnote(slot===0 ? '一排有幾個呢？一個一個數數看' : '總共有幾排呢？一排一排數數看');
   sfx.wrong();
 }
 /* 提示跟著現在在填哪一格走：
@@ -3626,8 +3644,8 @@ function learnHint(){
   if(g.pick.length===0){
     g.hint = 1;
     go('learn');
-    lnote(`這一排有 ${q.b} 個喔！`);
-    say(`這一排有${zhNum(q.b)}個喔`);
+    lnote(`一排有 ${q.b} 個喔！`);
+    say(`一排有${zhNum(q.b)}個喔`);
   } else {
     g.hint = 2;
     go('learn');
@@ -3956,6 +3974,7 @@ document.addEventListener('click', e=>{
     case 'say': say(arg); break;
     case 'quit': askQuit(); break;
     case 'quitYes': closeModal(); endGame(); go('home'); break;
+    case 'quitStages': closeModal(); endGame(); go('stages'); break;
     case 'closeModal': closeModal(); break;
     case 'closeBook': closeModal(); go('book'); break;
     case 'again': if(lastSetup){
