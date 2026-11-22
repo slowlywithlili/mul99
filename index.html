@@ -257,6 +257,9 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 .theme h3{font-size:22px;margin-bottom:10px;display:flex;gap:8px;align-items:baseline}
 .theme h3 small{font-family:var(--num);color:var(--muted);font-weight:500;font-size:17px}
 .sgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+/* 台灣之最只有三張，置中擺成一排獎盃，不要孤零零黏在左邊 */
+.sgrid.trophy{grid-template-columns:repeat(3,1fr);max-width:min(100%,340px);margin:0 auto}
+.trophynote{text-align:center;color:var(--muted);font-size:15px;margin-top:8px}
 .scell{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0}
 .sticker{position:relative;width:100%;aspect-ratio:1;border-radius:50%;border:1.5px solid var(--hair);background:var(--sbg);box-shadow:0 0 0 4px #fff inset,0 3px 9px var(--shadow);display:grid;place-items:center;cursor:pointer;padding:0;overflow:hidden}
 .sticker .emo{font-size:clamp(36px,11vw,56px);line-height:1;position:relative;z-index:1}
@@ -882,12 +885,15 @@ const THEMES = {
   o:{name:'海洋世界',   bg:'#CEDCE4'},
   v:{name:'交通工具',   bg:'#D8D2E2'},
   n:{name:'恐龍時代',   bg:'#DDE0C4'},
-  t:{name:'台灣小旅行', bg:'#D4E4D0'},
+  t:{name:'台灣之最',   bg:'#D4E4D0'},
   f:{name:'特別節慶',   bg:'#F2DAC8'}
 };
 /* 一開始只開兩類，收集到一定張數才解鎖下一批，收集才有階段目標 */
-const THEME_ORDER = ['a','d','o','v','n','t','f'];
-const THEME_LOCK  = { a:0, d:0, o:12, v:12, n:28, t:28, f:48 };
+const THEME_ORDER = ['a','d','o','v','n','f','t'];
+const THEME_LOCK  = { a:0, d:0, o:12, v:12, n:28, f:28, t:48 };
+/* 台灣之最只有三張，標成閃亮（金框），但抽中的機率跟普通一樣，
+   不然等了 48 張才解鎖還要再等十抽才看得到，太折磨人 */
+const THEME_EVEN  = { t:true };
 const STICKERS = [
   /* 動物朋友：台灣原生種 */
   ['a1','sika','梅花鹿','n','a'],['a2','bluemagpie','台灣藍鵲','n','a'],['a3','muntjac','山羌','n','a'],
@@ -896,7 +902,7 @@ const STICKERS = [
   ['a10','bfly','拉拉山鑽灰蝶','s','a'],
   /* 甜點派對：台灣的點心 */
   ['d1','eggcake','雞蛋糕','n','d'],['d2','shavedice','芒果剉冰','n','d'],['d3','icepop','枝仔冰','n','d'],
-  ['d4','pudding','布丁','n','d'],['d5','cake','草莓蛋糕','n','d'],['d6','cottoncandy','棉花糖','n','d'],
+  ['d4','persimmon','柿餅','n','d'],['d5','cake','草莓蛋糕','n','d'],['d6','cottoncandy','棉花糖','n','d'],
   ['d7','wheelcake','車輪餅','r','d'],['d8','douhua','豆花','r','d'],['d9','pineapplecake','鳳梨酥','r','d'],
   ['d10','bubbletea','珍珠奶茶','s','d'],
   /* 海洋世界：台灣的海 */
@@ -906,7 +912,7 @@ const STICKERS = [
   ['o10','spermwhale','抹香鯨','s','o'],
   /* 交通工具 */
   ['v1','policecar','警車','n','v'],['v2','bus','公車','n','v'],['v3','garbagetruck','垃圾車','n','v'],
-  ['v4','ambulance','救護車','n','v'],['v5','ferry','渡輪','n','v'],['v6','excavator','挖土機','n','v'],
+  ['v4','ambulance','救護車','n','v'],['v5','balloonfest','鹿野高台熱氣球','n','v'],['v6','excavator','挖土機','n','v'],
   ['v7','firetruck','消防車','r','v'],['v8','gondola','貓空纜車','r','v'],['v9','hsr','高鐵','r','v'],
   ['v10','forestrain','阿里山小火車','s','v'],
   /* 恐龍時代 */
@@ -914,11 +920,8 @@ const STICKERS = [
   ['n4','parasaur','副櫛龍','n','n'],['n5','dinoegg','恐龍蛋','n','n'],['n6','footprint','腳印化石','n','n'],
   ['n7','trex','暴龍','r','n'],['n8','pterosaur','翼龍','r','n'],['n9','mosasaur','滄龍','r','n'],
   ['n10','amber','琥珀小恐龍','s','n'],
-  /* 台灣小旅行 */
-  ['t1','persimmon','曬柿餅','n','t'],['t2','lighthouse','鵝鑾鼻燈塔','n','t'],['t3','turtleisland','龜山島','n','t'],
-  ['t4','jiufen','九份老街','n','t'],['t5','ancienttree','阿里山神木','n','t'],['t6','temple','廟宇','n','t'],
-  ['t7','queenhead','野柳女王頭','r','t'],['t8','taipei101','台北 101','r','t'],['t9','balloonfest','鹿野高台熱氣球','r','t'],
-  ['t10','jadeMt','玉山','s','t'],
+  /* 台灣之最：全部收完前面六類才解鎖的三張獎盃（編號沿用舊的，存檔才不會掉）*/
+  ['t8','taipei101','台北 101','s','t'],['t10','jadeMt','玉山','s','t'],['t6','temple','廟宇','s','t'],
   /* 特別節慶 */
   ['f1','xmastree','聖誕樹','n','f'],['f2','tangyuan','湯圓','n','f'],['f3','zongzi','粽子','n','f'],
   ['f4','mooncake','月餅','n','f'],['f5','fireworks','國慶煙火','n','f'],['f6','couplet','春聯','n','f'],
@@ -926,7 +929,8 @@ const STICKERS = [
   ['f10','skylantern','平溪天燈','s','f']
 ].map(([id,emo,name,rar,theme])=>({id,emo,name,rar,theme}));   /* emo 是 ART 的 key */
 /* 舊版「奇幻宇宙」整類換成「恐龍時代」，位置一一對應，收集數字才不會歸零 */
-const STICKER_OLD = {m1:'n1',m2:'n2',m3:'n3',m4:'n4',m5:'n5',m6:'n6',m7:'n7',m8:'n8',m9:'n9',m10:'n10'};
+const STICKER_OLD = {m1:'n1',m2:'n2',m3:'n3',m4:'n4',m5:'n5',m6:'n6',m7:'n7',m8:'n8',m9:'n9',m10:'n10',
+  t1:'d4', t9:'v5'};   /* 曬柿餅搬去甜點派對、熱氣球搬去交通工具 */
 const STAGES = [
   {table:2, q:10}, {table:3, q:10}, {table:4, q:10}, {table:5, q:10},
   {table:6, q:10}, {table:7, q:10}, {table:8, q:10}, {table:9, q:10},
@@ -1125,6 +1129,8 @@ const MAX_ART = 60;     /* 畫廊最多收幾張 */
 
 const RAR_LABEL = {n:'普通', r:'稀有', s:'閃亮'};
 const RAR_WEIGHT = {n:6, r:3, s:1};
+/* THEME_EVEN 的分類雖然標閃亮，抽中機率還是照普通算 */
+function drawWeight(s){ return THEME_EVEN[s.theme] ? RAR_WEIGHT.n : RAR_WEIGHT[s.rar]; }
 
 const ZH = ['零','一','二','三','四','五','六','七','八','九'];
 function zhNum(n){ if(n<10) return ZH[n]; const t=Math.floor(n/10), o=n%10; return (t===1?'十':ZH[t]+'十')+(o?ZH[o]:''); }
@@ -1938,7 +1944,7 @@ muntjac:`<path d="M8.8,6.6 7.8,3.4M15.2,6.6 16.2,3.4" stroke="#8A6340" stroke-wi
 treefrog:`<circle cx="7.4" cy="8.4" r="3.2" fill="#A8CE7E"/><circle cx="16.6" cy="8.4" r="3.2" fill="#A8CE7E"/><circle cx="7.4" cy="8.6" r="1.9" fill="#F7F0D8"/><circle cx="16.6" cy="8.6" r="1.9" fill="#F7F0D8"/><circle cx="7.4" cy="8.6" r=".95" fill="#38402C"/><circle cx="16.6" cy="8.6" r=".95" fill="#38402C"/><path d="M12,8.8c4.4,0 7.4,3.2 7.4,6.3 0,3 -3.2,5 -7.4,5s-7.4,-2 -7.4,-5C4.6,12 7.6,8.8 12,8.8Z" fill="#8FC06A"/><ellipse cx="12" cy="17.2" rx="4.4" ry="2.7" fill="#F2EBD2"/><path d="M9.2,15.2a3,3 0 0 0 5.6,0" stroke="#5F7A45" stroke-width="1.1" fill="none" stroke-linecap="round"/><path d="M4.6,18.4 2.6,20.9M19.4,18.4 21.4,20.9" stroke="#8FC06A" stroke-width="1.8" stroke-linecap="round"/>`,
 pangolin:`<path d="M7.6,16.2 7,20.4H4.8l.8,-4.6ZM11.4,16.8 11,20.6H8.8l.5,-4.2ZM15.4,16.6 15.2,20.4H13l.4,-4Z" fill="#B08E66"/><path d="M19.6,16.4c2.2,-.4 3.8,-2.2 3.8,-4.4 -2.4,0 -4.4,1.4 -5.2,3.4Z" fill="#C9A87E"/><path d="M4,12.6c0,-2.6 3.4,-4.6 7.8,-4.6 4.2,0 7.6,1.8 8,4.2 .2,1.4 -.6,2.6 -2,3 -3,.9 -6.4,1.2 -9.4,.8 -2.6,-.3 -4.4,-1.6 -4.4,-3.4Z" fill="#C9A87E"/><g fill="#A8875E" stroke="#866C4A" stroke-width=".5" stroke-linejoin="round"><path d="M5.4,11.2 7.2,8.8 9,11.2 7.2,13ZM9.2,10.2 11,7.8 12.8,10.2 11,12ZM13,10.4 14.8,8 16.6,10.4 14.8,12.2ZM16.8,11.4 18.4,9.2 20,11.6 18.4,13.4ZM7.2,14.4 9,12.4 10.8,14.4 9,16.2ZM11,14.2 12.8,12.2 14.6,14.2 12.8,16ZM14.8,14.4 16.6,12.4 18.4,14.4 16.6,16.2Z"/></g><path d="M4.4,11.2 .6,12.8c-.5,-1.4 .2,-2.9 1.6,-3.5l2.6,-1Z" fill="#DEC09A"/><path d="M1.1,12.1 .5,12.4" stroke="#866C4A" stroke-width=".7" stroke-linecap="round"/><circle cx="4.4" cy="10.6" r=".82" fill="#4A3A2C"/>`,
 spoonbill:`<ellipse cx="14.6" cy="14.6" rx="6" ry="5.4" fill="#FAF4E6"/><path d="M13.6,19.8 12.8,22.2M16.6,19.6 16.2,22.2" stroke="#6E6A62" stroke-width="1.4" stroke-linecap="round"/><path d="M12.6,10.6 11,7.2" stroke="#FAF4E6" stroke-width="3.6" stroke-linecap="round"/><circle cx="10.4" cy="6.4" r="3.1" fill="#FAF4E6"/><path d="M10.4,3.3a3.1,3.1 0 0 0 -2.9,4.1c.5,-1.9 1.7,-3.3 2.9,-4.1Z" fill="#3A3732"/><path d="M8.3,5.6 3.4,4.8c-1.7,-.3 -2.9,1.3 -2.4,2.9 .5,1.5 2.3,2.1 3.6,1.2l3.8,-2.5Z" fill="#3A3732"/><circle cx="11" cy="5.8" r=".95" fill="#FBF6E8"/><circle cx="11" cy="5.8" r=".5" fill="#2A2420"/><path d="M17.2,13a4.6,4.6 0 0 1 2.4,4.2" stroke="#E0D6C0" stroke-width="1.1" fill="none"/>`,
-leopardcat:`<path d="M5.6,8.4 4.8,3.6 9.2,6.4ZM18.4,8.4 19.2,3.6 14.8,6.4Z" fill="#C79A6B"/><ellipse cx="12" cy="13.8" rx="7.5" ry="6.8" fill="#DCB183"/><path d="M9.6,7.8 9,10.9M12,7.4 12,10.5M14.4,7.8 15,10.9" stroke="#FBF4E4" stroke-width="1.5" stroke-linecap="round"/><g fill="#7A5A3C"><circle cx="6.5" cy="13.6" r=".95"/><circle cx="17.5" cy="13.6" r=".95"/><circle cx="7.7" cy="16.8" r=".8"/><circle cx="16.3" cy="16.8" r=".8"/><circle cx="12" cy="19.4" r=".75"/></g><circle cx="9.5" cy="13" r="1.15" fill="#4A3A2C"/><circle cx="14.5" cy="13" r="1.15" fill="#4A3A2C"/><path d="M12,15.4a1.3,1.3 0 0 0 0,2.1" fill="#B07A62"/>`,
+leopardcat:`<path d="M5.6,8.4 4.8,3.6 9.2,6.4ZM18.4,8.4 19.2,3.6 14.8,6.4Z" fill="#C79A6B"/><path d="M6.5,7.2 6.1,4.9 8.2,6.3ZM17.5,7.2 17.9,4.9 15.8,6.3Z" fill="#E8B9A6"/><ellipse cx="12" cy="13.8" rx="7.5" ry="6.8" fill="#DCB183"/><path d="M9.6,7.8 9,10.9M12,7.4 12,10.5M14.4,7.8 15,10.9" stroke="#FBF4E4" stroke-width="1.5" stroke-linecap="round"/><g fill="#7A5A3C"><circle cx="6.4" cy="12.8" r=".95"/><circle cx="17.6" cy="12.8" r=".95"/><circle cx="7.3" cy="16.2" r=".8"/><circle cx="16.7" cy="16.2" r=".8"/><circle cx="5.9" cy="15.4" r=".62"/><circle cx="18.1" cy="15.4" r=".62"/></g><ellipse cx="12" cy="16.4" rx="3.9" ry="2.9" fill="#F4E4CC"/><circle cx="9.5" cy="12.9" r="1.3" fill="#FBF6E8"/><circle cx="14.5" cy="12.9" r="1.3" fill="#FBF6E8"/><circle cx="9.5" cy="13" r=".82" fill="#3E3028"/><circle cx="14.5" cy="13" r=".82" fill="#3E3028"/><circle cx="9.22" cy="12.72" r=".3" fill="#FBF6E8"/><circle cx="14.22" cy="12.72" r=".3" fill="#FBF6E8"/><path d="M12,14.8 13.25,15.75 12,16.7 10.75,15.75Z" fill="#8A5F4A"/><path d="M12,16.7v.9" stroke="#8A5F4A" stroke-width=".85" stroke-linecap="round"/><path d="M12,17.6a1.75,1.75 0 0 1 -2,-1M12,17.6a1.75,1.75 0 0 0 2,-1" fill="none" stroke="#8A5F4A" stroke-width=".85" stroke-linecap="round"/><path d="M8.2,15.4 4.6,14.6M8.2,16.6 4.8,17M15.8,15.4 19.4,14.6M15.8,16.6 19.2,17" stroke="#C9A58E" stroke-width=".65" stroke-linecap="round"/>`,
 blackbear:`<circle cx="6" cy="7" r="2.9" fill="#4A4540"/><circle cx="18" cy="7" r="2.9" fill="#4A4540"/><ellipse cx="12" cy="13.8" rx="7.4" ry="6.9" fill="#55504A"/><path d="M8.4,17.2 12,21.2 15.6,17.2" fill="none" stroke="#F7EFDC" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="12" cy="15.2" rx="3.3" ry="2.5" fill="#8A8278"/><circle cx="9.5" cy="12" r="1.05" fill="#F7EFDC"/><circle cx="14.5" cy="12" r="1.05" fill="#F7EFDC"/><ellipse cx="12" cy="14.4" rx="1.5" ry="1.1" fill="#2E2A26"/>`,
 salmon:`<path d="M21,12 16,8.8v6.4Z" fill="#7E93A4"/><path d="M3.4,12c0,-3.5 3.6,-5.7 7.2,-5.7S17.8,8.5 17.8,12s-3.3,5.7 -7.2,5.7S3.4,15.5 3.4,12Z" fill="#BCC9D1"/><path d="M4,10.2c3.8,-1.1 9.6,-1 13.2,.7 -.2,1 -.5,1.9 -.9,2.6 -3.6,-1.5 -9.2,-1.5 -12.6,-.4Z" fill="#DFA0A6"/><path d="M9.2,6.4 10.8,3.6 13.2,6.5Z" fill="#8FA2B0"/><path d="M9.4,17.5 10.8,20.4 13.2,17.5Z" fill="#8FA2B0"/><g fill="#5C6B76"><circle cx="8.2" cy="8.8" r=".58"/><circle cx="11.8" cy="8.4" r=".52"/><circle cx="14.8" cy="9.4" r=".48"/></g><circle cx="6.2" cy="11.5" r="1.05" fill="#FBF6E8"/><circle cx="6.1" cy="11.5" r=".55" fill="#2E2A26"/>`,
 bfly:`<path d="M11.2,12.2C10.2,5.6 7,2.2 4.2,3.4 1.2,4.7 2.4,9.8 11.2,12.8Z" fill="#6FA8D6"/><path d="M11.2,12.6C10.4,17.8 8,21.2 5.4,20.6 2.6,20 2.6,15.6 11.2,12.8Z" fill="#8FC2E4"/><path d="M12.8,12.2C13.8,5.6 17,2.2 19.8,3.4 22.8,4.7 21.6,9.8 12.8,12.8Z" fill="#6FA8D6"/><path d="M12.8,12.6C13.6,17.8 16,21.2 18.6,20.6 21.4,20 21.4,15.6 12.8,12.8Z" fill="#8FC2E4"/><path d="M5.6,5c2.4,1.4 4.2,3.6 5,6.2M18.4,5c-2.4,1.4 -4.2,3.6 -5,6.2" stroke="#DCEFFA" stroke-width="1.4" fill="none" stroke-linecap="round"/><path d="M6.4,17.6c1.6,-1.4 3.1,-2.9 4,-4.2M17.6,17.6c-1.6,-1.4 -3.1,-2.9 -4,-4.2" stroke="#B8DCF2" stroke-width="1.2" fill="none" stroke-linecap="round"/><ellipse cx="7.2" cy="7.4" rx="1.4" ry="1" fill="#CFE8F8" transform="rotate(32 7.2 7.4)"/><ellipse cx="16.8" cy="7.4" rx="1.4" ry="1" fill="#CFE8F8" transform="rotate(-32 16.8 7.4)"/><rect x="11.1" y="6.8" width="1.8" height="11" rx=".9" fill="#4A5260"/><path d="M11.4,6.8 9.2,3.3M12.6,6.8 14.8,3.3" stroke="#4A5260" stroke-width="1.1" fill="none" stroke-linecap="round"/><circle cx="9.2" cy="3.3" r=".88" fill="#4A5260"/><circle cx="14.8" cy="3.3" r=".88" fill="#4A5260"/>`,
@@ -1963,13 +1969,13 @@ whaleshark:`<path d="M2.4,12.6c0,-3.4 4.6,-6 10,-6 4.4,0 7.8,1.8 8.8,4 .4,.9 -.4
 whitedolphin:`<path d="M3,14c0,-4 4.2,-7.4 9,-7.4 3.6,0 6.4,1.4 8,3.4 .8,1 .2,1.8 -1,1.6 -2.4,-.4 -3.4,.6 -3,2.2 .4,1.8 -1.4,3.4 -4.4,3.4C7.2,17.2 3,16.6 3,14Z" fill="#F2DDDC"/><path d="M3.1,14.4c1.7,1.7 5.2,2.6 8.5,2.4 -1.2,.6 -2.6,.9 -4,.9C5,17.7 3.5,16.1 3.1,14.4Z" fill="#FBF0EF"/><path d="M10.4,6.8 12,3.6 14.4,7.4Z" fill="#E6C8C7"/><path d="M4.6,16.2 3,19.6 6.6,17.8Z" fill="#E6C8C7"/><path d="M19.4,10.6c1.4,-.4 2.6,.4 3,1.6 -1.2,.4 -2.4,.2 -3.2,-.6Z" fill="#E6C8C7"/><circle cx="6.4" cy="11.4" r="1" fill="#2E2A26"/><path d="M4.6,13.4a2.4,2.4 0 0 0 2.6,.8" stroke="#C9A9A8" stroke-width=".9" fill="none" stroke-linecap="round"/>`,
 spermwhale:`<path d="M2.2,11.6c0,-3.5 3.6,-5.8 8.2,-5.8 4.4,0 8.1,1.5 10.4,3.1 1,.7 .8,1.4 -.4,1.6 -2.6,.4 -4,1.6 -3.4,3.4 .5,1.6 -.9,3 -3.6,3 -1.8,0 -3.2,-.6 -4,-1.6 -1.2,1.2 -3,1.8 -4.7,1.4 .9,-1.5 -2.5,-2.6 -2.5,-5.1Z" fill="#6B7A8A"/><path d="M3,14.4c2.5,1.4 6.4,2.2 10,2 -.8,.8 -2.2,1.2 -3.8,1.2 -1.8,0 -3.2,-.6 -4,-1.6 -1.2,1.2 -3,1.8 -4.7,1.4 1,-.9 1.9,-1.9 2.5,-3Z" fill="#9BA9B6"/><path d="M19.6,12.6c1.6,-1 3.4,-.8 4.2,.4 -1.4,1 -3.2,1.2 -4.4,.4Z" fill="#5C6A78"/><path d="M4.6,6 3.6,2.6 6.6,5.4Z" fill="#BFD4E2"/><path d="M3.9,5.3c1.3,-1.5 3.1,-2.1 4.7,-1.7 -1,1.5 -2.7,2.3 -4.3,2.3Z" fill="#CFE2EE"/><circle cx="5.8" cy="10.4" r="1.05" fill="#FBF6E8"/><circle cx="5.7" cy="10.4" r=".55" fill="#2E2A26"/>`,
 /* 恐龍時代 */
-triceratops:`<path d="M12,20.6c-5.6,0 -9.8,-3.6 -9.8,-8.4 0,-4.6 4,-8 9.8,-8s9.8,3.4 9.8,8c0,4.8 -4.2,8.4 -9.8,8.4Z" fill="#A8BE96"/><g fill="#8FA87E"><path d="M2.4,10.4 .2,8.8l2.6,-1.4ZM3.8,6.2 2.6,3.6l3,.6ZM8,3.4 7.6,.8l2.8,1.6ZM16,3.4 16.4,.8 13.6,2.4ZM20.2,6.2 21.4,3.6l-3,.6ZM21.6,10.4 23.8,8.8 21.2,7.4Z"/></g><path d="M12,8.6c3.6,0 6.2,2.6 6.2,6 0,3.6 -2.6,6.2 -6.2,6.2S5.8,18.2 5.8,14.6c0,-3.4 2.6,-6 6.2,-6Z" fill="#C2D4B2"/><path d="M8.2,9.6 6.4,2.6 10.2,8.4Z" fill="#F7F2E0" stroke="#D8D0B8" stroke-width=".4" stroke-linejoin="round"/><path d="M15.8,9.6 17.6,2.6 13.8,8.4Z" fill="#F7F2E0" stroke="#D8D0B8" stroke-width=".4" stroke-linejoin="round"/><path d="M12,13.2 13.6,10.6h-3.2Z" fill="#F7F2E0" stroke="#D8D0B8" stroke-width=".4" stroke-linejoin="round"/><circle cx="9" cy="13.4" r="1.5" fill="#FBF6E8"/><circle cx="15" cy="13.4" r="1.5" fill="#FBF6E8"/><circle cx="9.2" cy="13.6" r=".82" fill="#3A4432"/><circle cx="15.2" cy="13.6" r=".82" fill="#3A4432"/><path d="M8.6,17.4c1.2,-1.2 5.6,-1.2 6.8,0 -1,1.4 -5.8,1.4 -6.8,0Z" fill="#8FA87E"/><path d="M8.9,17.6c1.2,-.5 4.9,-.5 6.2,0" fill="none" stroke="#C2D4B2" stroke-width=".7"/>`,
+triceratops:`<path d="M12.2,4.2 15.8,2.8 16.7,5.3 19.9,4.8 19.7,7.6 22.6,8.8 21.2,11.3 23,13.4 20.2,14.7 20.4,17.3 17.4,16.7 16.1,19.2 13.2,17.8Z" fill="#8FA87E"/><path d="M12.6,5.6 15.4,4.5 16.1,6.6 18.8,6.2 18.6,8.5 21,9.5 19.9,11.4 21.3,13 19,14.1 19.2,16.2 16.7,15.7 15.6,17.8 13.3,16.6Z" fill="#A8BE96"/><path d="M12.8,4.8c-3.2,-.5 -6.2,1.1 -7.9,3.9L2.8,12.3c-.7,1.1 -.4,2.5 .7,3.2l2.2,1.3c2.1,1.3 4.6,1.9 7.1,1.9h1.3c1.1,-4.6 1,-9.4 -1.3,-13.9Z" fill="#C2D4B2"/><path d="M12.8,4.8c-3.2,-.5 -6.2,1.1 -7.9,3.9L2.8,12.3c-.7,1.1 -.4,2.5 .7,3.2l.9,.5c-.5,-3.9 1.1,-7.7 4.3,-10 1.3,-.9 2.7,-1.5 4.1,-1.2Z" fill="#D4E2C6"/><path d="M3,12.4 .8,13.2c-.6,.2 -.6,1 0,1.3l3,1.4 .5,-2.4Z" fill="#9A8456"/><path d="M1.4,13.6 3.1,13" stroke="#8A7446" stroke-width=".5"/><path d="M4.9,10.6 3,6.6 7.2,9.5Z" fill="#F7F2E0" stroke="#D5CDB4" stroke-width=".42" stroke-linejoin="round"/><path d="M7.6,8.4 4.4,1.3 10.2,7.1Z" fill="#F7F2E0" stroke="#D5CDB4" stroke-width=".42" stroke-linejoin="round"/><path d="M10.4,7.2 9.6,.6 13.2,6.2Z" fill="#F7F2E0" stroke="#D5CDB4" stroke-width=".42" stroke-linejoin="round"/><circle cx="7.4" cy="11.4" r="1.6" fill="#FBF6E8"/><circle cx="7.1" cy="11.6" r=".85" fill="#2E3A28"/><circle cx="6.8" cy="11.3" r=".3" fill="#FBF6E8"/><path d="M4.4,15.4c2.1,.9 4.4,1.2 6.6,.9" fill="none" stroke="#9FB58E" stroke-width=".9" stroke-linecap="round"/>`,
 stegosaurus:`<path d="M4,16.6c0,-3.2 3.4,-5.6 8,-5.6 3.4,0 6.4,1.2 8,3 .8,.9 1.6,1.4 2.4,1.6 -.7,1.2 -2.1,1.6 -3.3,1.1 .2,.9 .2,1.8 0,2.7h-2.9c0,-.8 -.2,-1.5 -.6,-2.1 -2.4,.8 -5.2,.8 -7.4,-.2 -.2,.8 -.2,1.7 0,2.3H4.6c-.4,-.9 -.6,-1.8 -.6,-2.8Z" fill="#9BAE86"/><path d="M4.2,13.2 1.4,14.4c-.3,-1.5 .6,-3 2,-3.4Z" fill="#9BAE86"/><circle cx="3.9" cy="12.8" r=".85" fill="#3A4432"/><g fill="#E8C87E" stroke="#C9A85E" stroke-width=".55" stroke-linejoin="round"><path d="M6.2,10.8 8,6.4 9.8,10.4ZM10,10 12.2,5.2 14.2,10.4ZM14.6,10.8 17.2,6.8 18.4,11.6ZM19,12.4 21.8,9.8 21.8,14Z"/></g>`,
 brachiosaurus:`<ellipse cx="11.6" cy="15.6" rx="7.2" ry="4.6" fill="#8CA4B4"/><path d="M6.6,19.4 6,21.9M10.4,20.2 10.2,22.3M14.4,19.8 14.8,22" stroke="#8CA4B4" stroke-width="2.3" stroke-linecap="round"/><path d="M18.4,13.6c1.9,-.4 3.7,.7 4.5,2.3 -1.9,.6 -3.9,.1 -4.9,-1.3Z" fill="#7E95A6"/><path d="M8.2,12.8c-.7,-3.7 .7,-7.2 3.6,-8.9" fill="none" stroke="#9EB6C6" stroke-width="3.8" stroke-linecap="round"/><ellipse cx="12.8" cy="3.6" rx="3" ry="2.3" fill="#9EB6C6"/><circle cx="13.8" cy="3.1" r=".88" fill="#2E3A44"/><path d="M15.2,4.8a2.6,2.6 0 0 1 -1.8,.6" stroke="#7E95A6" stroke-width=".9" fill="none" stroke-linecap="round"/>`,
 parasaur:`<path d="M2.6,16.4c0,-3.1 3.2,-5.5 7.2,-5.5 3.3,0 6.1,1.4 7.3,3.4l-.4,2.3c0,2 -1.5,3.6 -3.7,4.2l.3,2.1h-2.4l-.4,-1.9H9.4l-.4,1.9H6.6l.3,-2.1c-2.6,-1 -4.3,-2.6 -4.3,-4.4Z" fill="#C99E7E"/><path d="M16.4,14.6c-1,-2.6 -.4,-5.4 1.6,-7.2" fill="none" stroke="#D9AE8E" stroke-width="3.6" stroke-linecap="round"/><ellipse cx="19.4" cy="6" rx="3.3" ry="2.3" fill="#D9AE8E" transform="rotate(-26 19.4 6)"/><path d="M21.6,3.6c-2.2,-2.6 -6,-3.4 -9.2,-2 -1.2,.5 -1.2,2.2 0,2.7 2.6,1.1 5,2.8 6.8,5Z" fill="#E8C4A8"/><path d="M20.4,3.8c-2,-2 -5,-2.7 -7.6,-1.8" fill="none" stroke="#C99E7E" stroke-width=".8"/><circle cx="20.8" cy="5.3" r=".95" fill="#4A3A2C"/><circle cx="20.6" cy="5.1" r=".34" fill="#FBF6E8"/><path d="M22.4,6.6a2.6,2.6 0 0 1 -2,.8" stroke="#B48C6E" stroke-width=".9" fill="none" stroke-linecap="round"/><path d="M2.8,15.2c-1.8,-.2 -3.3,-1.6 -3.6,-3.4 1.9,-.2 3.6,.9 4.2,2.6Z" fill="#B48C6E"/>`,
 dinoegg:`<path d="M12,2.8c3.8,0 6.8,4.6 6.8,9.2 0,5 -3,8 -6.8,8s-6.8,-3 -6.8,-8C5.2,7.4 8.2,2.8 12,2.8Z" fill="#E8DEC2"/><path d="M12,2.8c3.8,0 6.8,4.6 6.8,9.2 0,1.4 -.2,2.6 -.7,3.7 -3.4,1.6 -8.8,1.6 -12.2,0C5.4,14.6 5.2,13.4 5.2,12 5.2,7.4 8.2,2.8 12,2.8Z" fill="#F2EAD4"/><g fill="#B8C9A4"><circle cx="9" cy="8.4" r="1.4"/><circle cx="14.6" cy="7" r="1.1"/><circle cx="15.4" cy="11.4" r="1.5"/><circle cx="8.4" cy="13.4" r="1.2"/><circle cx="12" cy="16.4" r="1.3"/></g>`,
 footprint:`<rect x="2.6" y="3.6" width="18.8" height="16.8" rx="3.4" fill="#D9CDB4"/><rect x="2.6" y="3.6" width="18.8" height="16.8" rx="3.4" fill="none" stroke="#BCAE92" stroke-width="1.1"/><ellipse cx="12" cy="15.6" rx="3.7" ry="3.4" fill="#8A7E66"/><path d="M12,12.8 10.8,6.6a1.6,1.6 0 0 1 2.4,0Z" fill="#8A7E66"/><path d="M9,13.8 5.2,9.6a1.6,1.6 0 0 1 1.7,-1.7Z" fill="#8A7E66"/><path d="M15,13.8 18.8,9.6a1.6,1.6 0 0 0 -1.7,-1.7Z" fill="#8A7E66"/><g fill="#C4B69A"><circle cx="5.4" cy="6" r=".5"/><circle cx="18.6" cy="18" r=".5"/></g>`,
-trex:`<path d="M2.6,9c0,-3.6 3.2,-6.4 7.4,-6.4 3.4,0 6.2,1.8 7.2,4.4l4.6,.8c1.4,.2 1.8,2 .6,2.8l-3.4,2.2 -.8,2.4c-.5,1.5 -1.9,2.4 -3.4,2.4H9.4l-2.6,3.4H3.4l1.8,-4.6c-1.6,-1.4 -2.6,-3.4 -2.6,-5.8Z" fill="#B08C73"/><path d="M2.6,9c0,-3.6 3.2,-6.4 7.4,-6.4 1.2,0 2.3,.2 3.3,.6 -3.6,1 -6.2,4 -6.2,7.6 0,2.6 1.3,4.9 3.3,6.3l-1,1.5 -2.2,2.8H3.4l1.8,-4.6c-1.6,-1.4 -2.6,-3.4 -2.6,-5.8Z" fill="#C49C80"/><path d="M16.6,8.2 22.2,9.2c.5,.1 .7,.7 .3,1.1l-3,2.2Z" fill="#C49C80"/><path d="M16.4,9.4 21.6,10.2l-2,1.4Z" fill="#9A7560"/><path d="M8.4,16.2h8.2l-.5,1.5c-.4,1.2 -1.6,2 -2.9,2H9.4Z" fill="#9A7560"/><path d="M8.4,16.2h8.2l-.25,.8H8.6Z" fill="#FBF6E8"/><g fill="#FBF6E8"><path d="M9.4,13.6 10.2,15.6H8.6ZM12,13.4 12.8,15.6H11.2ZM14.6,13.6 15.4,15.6H13.8Z"/><path d="M9.8,19.4 9,17.4h1.6ZM12.4,19.4 11.6,17.4h1.6Z"/></g><circle cx="8.6" cy="8" r="1.7" fill="#FBF6E8"/><circle cx="8.9" cy="8.2" r=".9" fill="#3A2E26"/><circle cx="8.6" cy="7.9" r=".3" fill="#FBF6E8"/><path d="M6.4,5.6c1.2,-1 3,-1.2 4.4,-.4" fill="none" stroke="#9A7560" stroke-width=".9" stroke-linecap="round"/><circle cx="15.4" cy="7.4" r=".6" fill="#9A7560"/>`,
+trex:`<path d="M2.2,11.8C3.4,8.7 6.3,6.2 9.8,5.3c4,-1 7.8,.4 9.5,3.4 .9,1.6 1.1,3.4 .7,5.1l-.5,2.2 -2.8,-.5 .1,-2.9 -14,.5Z" fill="#B08C73"/><path d="M2.2,11.8C3.4,8.7 6.3,6.2 9.8,5.3c1,-.25 2,-.38 2.9,-.38 -3.4,1.5 -5.8,4.6 -6.2,8.3l-3.7,.13Z" fill="#C49C80"/><path d="M2.9,13.2 16.9,12.7l.3,1.5C11.6,15 6.6,16.2 3.6,17.4Z" fill="#6B4C3C"/><g fill="#FBF6E8"><path d="M4.1,13.2 5.1,15.6 3.1,13.9ZM6.6,13.1 7.5,15.5 5.6,15.9ZM9.3,13 10.2,15.3 8.3,15.8ZM12.1,12.9 13,15 11.1,15.4ZM14.8,12.8 15.6,14.6 13.9,15Z"/></g><path d="M17.2,14.4c.6,1.5 .1,3.2 -1.3,4.1 -2.6,1.7 -6.9,2.2 -10.3,1.2 -1.9,-.55 -2.6,-1.4 -2.2,-2.3 .4,-.9 2.2,-1.7 4.6,-2.3Z" fill="#9A7560"/><g fill="#FBF6E8"><path d="M6,17 6.9,15.1 7.6,16.6ZM9,16.2 9.8,14.4 10.5,15.9ZM12,15.5 12.8,13.8 13.5,15.2ZM14.8,14.9 15.5,13.3 16.2,14.6Z"/></g><path d="M18.8,8.8c1.7,.7 2.9,2.3 3.1,4.1 .2,2 -.7,3.9 -2.3,5l-1.6,-2.4c1,-.8 1.5,-2.1 1.3,-3.3Z" fill="#B08C73"/><circle cx="11.6" cy="8.6" r="1.75" fill="#FBF6E8"/><circle cx="11.9" cy="8.8" r=".92" fill="#2E2420"/><circle cx="11.55" cy="8.45" r=".32" fill="#FBF6E8"/><path d="M9.4,6.2c1.5,-1.1 3.6,-1.3 5.3,-.5" fill="none" stroke="#9A7560" stroke-width="1.1" stroke-linecap="round"/><ellipse cx="3.9" cy="10.4" rx=".75" ry=".52" fill="#7E5A46" transform="rotate(-20 3.9 10.4)"/>`,
 pterosaur:`<path d="M11.2,10.6 2.6,4c-1.1,-.8 -2.4,.5 -1.7,1.7l5.1,9c.6,1.1 1.9,1.5 3,.9l3.4,-1.8Z" fill="#B49CC0"/><path d="M12.8,10.6 21.4,4c1.1,-.8 2.4,.5 1.7,1.7l-5.1,9c-.6,1.1 -1.9,1.5 -3,.9l-3.4,-1.8Z" fill="#C7B2D2"/><path d="M11.2,10.8 5.6,14.4M12.8,10.8 18.4,14.4" stroke="#9A82A8" stroke-width=".85" fill="none"/><path d="M10.6,8.8h2.8l.7,8.4c0,1.7 -.8,3.2 -2.2,4 -.6,-1.5 -1.3,-2.7 -2.1,-3.6Z" fill="#9A82A8"/><ellipse cx="12.2" cy="6.8" rx="2.4" ry="2" fill="#C7B2D2"/><path d="M13.6,5.4 18.6,2.2c1,-.6 2,.6 1.3,1.5l-3.9,4.5Z" fill="#9A82A8"/><path d="M10.4,7 5.4,8.8l5,1.4Z" fill="#8E7A9C"/><circle cx="12" cy="6.4" r=".82" fill="#3A3240"/>`,
 ankylosaur:`<path d="M3.4,13.6c0,-2.6 1.8,-4.2 4.6,-4.2 1,0 1.9,.2 2.6,.6l-.6,2.2c-.5,.7 -.8,1.5 -.8,2.4 0,1.1 .3,2.1 .8,3H7.6c-.3,-.6 -.5,-1.3 -.5,-2 -.4,.1 -.8,.1 -1.2,.1 -.4,0 -.8,0 -1.2,-.1 0,.7 -.1,1.4 -.4,2H1.8c-.5,-1 -.8,-2.3 -.8,-3.6Z" fill="#9A9E7E"/><path d="M8.2,15.8c0,-3.1 3.3,-5.6 7.3,-5.6 1.6,0 3.1,.4 4.3,1l-.3,3.2c0,2 -1.4,3.6 -3.6,4.2l.3,2.1h-2.4l-.4,-1.9h-1.2l-.4,1.9H9.4l.3,-2.1c-.9,-.9 -1.5,-1.8 -1.5,-2.8Z" fill="#9A9E7E"/><g fill="#CFD1A8" stroke="#80845F" stroke-width=".5" stroke-linejoin="round"><path d="M9.6,12.2 11.2,9.6 12.8,12.2ZM13.2,11.2 15,8.8 16.6,11.4ZM17.2,12.2 18.8,10 20.2,12.6Z"/></g><path d="M19.4,13.4 21.6,12.4" stroke="#9A9E7E" stroke-width="2.8" stroke-linecap="round"/><circle cx="21.4" cy="12" r="2.6" fill="#8A8E6E"/><path d="M19.6,9.6 18.6,8M23.2,9.6 24.2,8M19.6,14.4 18.6,16M23.2,14.4 24.2,16" stroke="#8A8E6E" stroke-width="1.6" stroke-linecap="round"/><path d="M1.4,12.4 3.6,11.8" stroke="#8A8E6E" stroke-width="1.4" stroke-linecap="round"/><circle cx="3.4" cy="12" r=".85" fill="#3A3E2E"/><circle cx="3.2" cy="11.8" r=".3" fill="#E8EAD4"/>`,
 amber:`<path d="M12,2.6c4.6,0 8,4 8,9.2 0,5.4 -3.4,9.6 -8,9.6s-8,-4.2 -8,-9.6C4,6.6 7.4,2.6 12,2.6Z" fill="#E8B457"/><path d="M12,2.6c4.6,0 8,4 8,9.2 0,2 -.5,3.9 -1.3,5.4 -3.8,2 -9.6,2 -13.4,0C4.5,15.7 4,13.8 4,11.8 4,6.6 7.4,2.6 12,2.6Z" fill="#F2C878"/><path d="M8.6,7.6c.4,-1.2 2,-1.8 3.2,-1 .8,.5 1.2,1.4 1,2.3 .8,.4 1.4,1.2 1.4,2.2 0,1 -.5,1.8 -1.2,2.3 .6,1 .4,2.2 -.4,3 -.3,.3 -.7,.5 -1.1,.6 .2,-1 -.1,-2 -.8,-2.7 -1.2,.3 -2.5,-.2 -3.1,-1.3 -.6,-1.1 -.3,-2.5 .7,-3.2 -.4,-.7 -.3,-1.6 .3,-2.2Z" fill="#8A6434"/><circle cx="10.6" cy="8.4" r=".62" fill="#F2C878"/><path d="M7.6,6.2a5,5 0 0 1 2.8,-2" stroke="#F8DFA8" stroke-width="1.4" fill="none" stroke-linecap="round"/>`,
@@ -2895,7 +2901,9 @@ const VIEWS = {
       const cells=bookOrder(list).map(s=> owned[s.id]
         ? `<div class="scell${me().buddy===s.id?' buddyon':''}">${stickerHTML(s)}<span class="sname">${s.name}</span></div>`
         : `<div class="scell"><div class="sticker locked r-${s.rar}" style="--sbg:${sbg(s)}"><span>?</span></div><span class="sname dim ${s.rar}">${RARW[s.rar]}</span></div>`).join('');
-      return `<section class="theme"><h3>${THEMES[th].name} <small>${have}/${list.length}</small></h3><div class="sgrid">${cells}</div></section>`;
+      return `<section class="theme"><h3>${THEMES[th].name} <small>${have}/${list.length}</small></h3>`+
+        `<div class="sgrid${list.length<5?' trophy':''}">${cells}</div>`+
+        (list.length<5?`<p class="trophynote">前面六類收完才打得開的三張</p>`:'')+`</section>`;
     }).join('');
     const nl=nextLock();
     view.innerHTML=`
@@ -3304,8 +3312,8 @@ function draw(){
   }
   drawing=true;
   me().coins-=DRAW_COST;
-  let sum=pool.reduce((t,p)=>t+RAR_WEIGHT[p.rar],0), r=Math.random()*sum;
-  const s=pool.find(p=>(r-=RAR_WEIGHT[p.rar])<=0)||pool[0];
+  let sum=pool.reduce((t,p)=>t+drawWeight(p),0), r=Math.random()*sum;
+  const s=pool.find(p=>(r-=drawWeight(p))<=0)||pool[0];
   const before=nextLock();
   me().owned[s.id]=todayStr();
   save(); updateTop();
