@@ -509,7 +509,7 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 .buddy .bart .emo{font-size:clamp(62px,17vw,88px);line-height:0}
 .buddy .bsay{position:absolute;left:50%;bottom:100%;translate:-50% 0;margin-bottom:6px;
   background:var(--surface);color:var(--ink);font-size:15px;font-weight:700;line-height:1.3;
-  white-space:nowrap;padding:4px 10px;border-radius:13px 11px 14px 4px/11px 14px 9px 13px;
+  max-width:min(68vw,250px);text-align:center;padding:4px 10px;border-radius:13px 11px 14px 4px/11px 14px 9px 13px;
   box-shadow:0 3px 9px var(--shadow);opacity:0;scale:.7;transform-origin:50% 120%;
   transition:opacity .22s,scale .22s}
 .buddy .bsay.on{opacity:1;scale:1}
@@ -2134,9 +2134,14 @@ function showHelp(){
 }
 /* ---------- 陪我玩的小夥伴 ---------- */
 /* 轉蛋抽到的貼紙可以挑一個出來陪玩：在畫面上到處飄、偶爾說話、偶爾冒閃亮 */
-const BUDDY_SAY = ['加油！','你好棒！','慢慢算沒關係','我陪你！','好厲害！','再一題就好了',
-  '算錯也沒關係','你越來越快了','哇，答對了！','休息一下也可以','這題你一定會',
-  '乘法好好玩','我們一起算','不要急，慢慢來'];
+/* 小夥伴講的話一律走「成長型思維」：誇努力和方法，不誇聰明和結果；
+   錯了當成還在學，不說「你好棒」「好厲害」這種只看結果的話 */
+const BUDDY_SAY = [
+  '慢慢來，不用急', '多試幾次就會了', '錯了也是在學', '你剛剛很努力',
+  '再想一下下', '不會也沒關係', '一題一題來', '你比剛才進步了',
+  '想不出來很正常', '難的題目才好玩', '你願意再試一次', '算錯才會變厲害',
+  '休息一下再回來', '我在這裡陪你', '慢慢想，沒關係', '你剛剛沒有放棄',
+  '你自己想出來的', '認真算就會進步', '我陪你一起算', '加油，我看著你'];
 let buddyT = null, buddyStep = 0;
 function buddyOf(){
   const m = me();
