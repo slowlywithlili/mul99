@@ -90,6 +90,12 @@
 :root[data-zy="on"] .snlvs.three .snlv b{font-size:24px}
 :root[data-zy="on"] .snlvs.three .snlv > span{font-size:12.5px;line-height:1.3}
 :root[data-zy="on"] .gbtn b{font-size:13px;padding:2px 7px}
+/* 注音一個字佔 1.5 倍寬，選表畫面那兩顆長按鈕要縮一點才不會撐破 */
+:root[data-zy="on"] .pickbtn.allbtn .lbl{font-size:18px}
+:root[data-zy="on"] .pickbtn.allbtn small{font-size:13px}
+:root[data-zy="on"] .mixbtn{font-size:18px}
+:root[data-zy="on"] .mixbtn small{font-size:13px}
+:root[data-zy="on"] .pickbtn .lbl{font-size:12.5px}
 *,*::before,*::after{box-sizing:inherit}
 html{scroll-padding-top:env(safe-area-inset-top,0px);background:var(--bg);overscroll-behavior-y:none}
 body{
@@ -170,6 +176,14 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 .dots i{width:6px;height:6px;border-radius:50%;background:var(--track)}
 .dots i.on{background:var(--mint)}
 .dots i.half{background:var(--mint);opacity:.42}
+/* 窄手機：九顆小綠點的最小寬度會把四欄撐破，點和間距一起縮 */
+@media (max-width:430px){
+  .picks{gap:8px}
+  .pickbtn{padding:10px 4px 8px;min-width:0}
+  .pickbtn .n{font-size:30px}
+  .dots{gap:1px}
+  .dots i{width:4px;height:4px}
+}
 .mixbtn{grid-column:1/-1;flex-direction:row;justify-content:center;gap:10px;font-weight:700;font-size:22px;background:var(--grape);color:var(--on-color);padding:16px}
 .mixbtn small{font-weight:400;font-size:16px;opacity:.9}
 .note{color:var(--muted);font-size:18.5px;text-align:center;margin-top:14px}
@@ -227,6 +241,17 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 .stat span{font-size:16px;color:var(--muted)}
 .badge{display:inline-block;background:var(--sun);color:var(--on-color);border:1.5px solid var(--hair);border-radius:99px;padding:2px 12px;font-weight:700;margin-top:6px}
 .rbtns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:8px}
+/* 選乘法表畫面裡的「綜合挑戰」：用紫色跟 2~9 分開，一看就知道不一樣 */
+.pickbtn.allbtn{grid-column:1/-1;flex-direction:row;flex-wrap:wrap;justify-content:center;align-items:center;gap:4px 10px;
+  background:var(--grape);color:var(--on-color);padding:15px 8px}
+.pickbtn.allbtn .n{font-size:0;display:grid;place-items:center}
+.pickbtn.allbtn .n .ic{width:30px;height:30px;display:block;color:var(--on-color);--ic2:var(--grape)}
+.pickbtn.allbtn .lbl{font-size:22px;font-weight:700;color:var(--on-color)}
+.pickbtn.allbtn small{font-size:16px;color:var(--on-color);opacity:.85;font-weight:400}
+/* 挑戰者頁給家長看的三點說明 */
+.grown{margin:10px 0 0;padding-left:1.35em;text-align:left;color:var(--muted);font-size:17px;line-height:1.75}
+.grown li{margin-bottom:7px}
+.grown b{color:var(--ink)}
 .inqa{display:inline-grid;place-items:center;width:21px;height:21px;margin-left:5px;vertical-align:-3px;
   border:1.5px solid var(--hair);background:var(--surface2);color:var(--muted);
   border-radius:50%;font-family:var(--num);font-weight:700;font-size:14px;line-height:1;cursor:pointer;padding:0}
@@ -902,8 +927,8 @@ const STICKERS = [
   ['a10','bfly','拉拉山鑽灰蝶','s','a'],
   /* 甜點派對：台灣的點心 */
   ['d1','eggcake','雞蛋糕','n','d'],['d2','shavedice','芒果剉冰','n','d'],['d3','icepop','枝仔冰','n','d'],
-  ['d4','persimmon','柿餅','n','d'],['d5','cake','草莓蛋糕','n','d'],['d6','cottoncandy','棉花糖','n','d'],
-  ['d7','wheelcake','車輪餅','r','d'],['d8','douhua','豆花','r','d'],['d9','pineapplecake','鳳梨酥','r','d'],
+  ['d7','wheelcake','車輪餅','n','d'],['d5','cake','草莓蛋糕','n','d'],['d6','cottoncandy','棉花糖','n','d'],
+  ['d4','persimmon','柿餅','r','d'],['d8','douhua','豆花','r','d'],['d9','pineapplecake','鳳梨酥','r','d'],
   ['d10','bubbletea','珍珠奶茶','s','d'],
   /* 海洋世界：台灣的海 */
   ['o1','hermitcrab','寄居蟹','n','o'],['o2','starfish','海星','n','o'],['o3','flyingfish','飛魚','n','o'],
@@ -1321,7 +1346,7 @@ function fixArt(src){
   const out=[];
   src.slice(0,MAX_ART).forEach(x=>{
     const a=obj(x), t=Math.floor(Number(a.t)), k=num(a.k,9e15);
-    if(t>=2 && t<=9 && typeof a.d==='string' && DATE_RE.test(a.d))
+    if(t>=0 && t<=9 && t!==1 && typeof a.d==='string' && DATE_RE.test(a.d))
       out.push({ t, s:num(a.s,9999)%SCENES.length, k, d:a.d });
   });
   return out;
@@ -1956,8 +1981,8 @@ icepop:`<rect x="10.8" y="16.2" width="2.4" height="5.8" rx="1.2" fill="#DCC49A"
 mochi:`<ellipse cx="12" cy="19.6" rx="8" ry="2.1" fill="#E4D9C2"/><path d="M12,6.6c4.4,0 7.6,3 7.6,6.3 0,3.6 -3.4,6 -7.6,6s-7.6,-2.4 -7.6,-6C4.4,9.6 7.6,6.6 12,6.6Z" fill="#FAF3E4"/><path d="M12,6.6c4.4,0 7.6,3 7.6,6.3 0,.8 -.2,1.5 -.5,2.1 -3.8,1.6 -10.4,1.6 -14.2,0 -.3,-.6 -.5,-1.3 -.5,-2.1C4.4,9.6 7.6,6.6 12,6.6Z" fill="#FDF9EE"/><g fill="#D9B87E"><circle cx="8.2" cy="10.4" r=".55"/><circle cx="15.4" cy="9.9" r=".5"/><circle cx="12.4" cy="8.5" r=".45"/><circle cx="6.9" cy="14" r=".5"/><circle cx="17" cy="13.6" r=".55"/></g><path d="M9.8,13.4a2.4,2.4 0 0 0 4.4,0" stroke="#C9A98C" stroke-width="1" fill="none" stroke-linecap="round"/>`,
 cottoncandy:`<rect x="11.2" y="14.6" width="1.6" height="7.4" rx=".8" fill="#DCC49A"/><circle cx="8.2" cy="10.6" r="4" fill="#F4C3CE"/><circle cx="15.8" cy="10.6" r="4" fill="#F4C3CE"/><circle cx="12" cy="7.4" r="4.4" fill="#F9D6DE"/><circle cx="12" cy="12.4" r="4.2" fill="#F7CBD6"/><circle cx="10" cy="6.6" r="1.3" fill="#FCEAEE"/>`,
 shavedice:`<path d="M5.6,8.6c2.2,-2.8 10.6,-2.8 12.8,0 1,1.3 -.4,2 -1.4,2.4H7c-1,-.4 -2.4,-1.1 -1.4,-2.4Z" fill="#F6F1E4"/><path d="M8.3,6.9c1.2,-1.6 5.3,-2.3 7.2,-.6 .6,.6 .2,1.2 -.6,1.4 -2.1,.6 -4.9,.4 -6,-.2 -.6,-.3 -.8,-.4 -.6,-.6Z" fill="#FBF8F0"/><g fill="#F2B45C"><rect x="8.4" y="4.6" width="2.4" height="2.4" rx=".7" transform="rotate(-14 9.6 5.8)"/><rect x="13" y="3.8" width="2.4" height="2.4" rx=".7" transform="rotate(16 14.2 5)"/><rect x="10.9" y="6.3" width="2.2" height="2.2" rx=".6"/></g><path d="M5,11h14l-1.5,7.6A2.4,2.4 0 0 1 15.1,20.6H8.9A2.4,2.4 0 0 1 6.5,18.6Z" fill="#CBDDE4"/><path d="M5,11h14l-.3,1.6H5.3Z" fill="#AEC8D2"/>`,
-douhua:`<path d="M3,10.6h18l-1.7,8.3A2.8,2.8 0 0 1 16.5,20.9h-9A2.8,2.8 0 0 1 4.7,18.7Z" fill="#EFE7D4"/><path d="M3,10.6h18l-.32,1.7H3.32Z" fill="#DCD0B6"/><ellipse cx="12" cy="10.6" rx="9" ry="2.5" fill="#F3EBD6"/><path d="M5.2,10.3c0,-1.7 3,-2.8 6.8,-2.8s6.8,1.1 6.8,2.8 -3,2.8 -6.8,2.8 -6.8,-1.1 -6.8,-2.8Z" fill="#FBF6E8"/><path d="M6.4,9.2c1.3,-.9 3.4,-1.4 5.6,-1.4M6.8,11.5c1.6,.7 3.4,1 5.2,1M13.6,8.2c1.8,.3 3.3,.9 4.2,1.6" fill="none" stroke="#E6D9BE" stroke-width=".7" stroke-linecap="round"/><g fill="#D9AE78" stroke="#BC9058" stroke-width=".38"><ellipse cx="9" cy="8.1" rx="1.15" ry=".9"/><ellipse cx="11.9" cy="7.3" rx="1.2" ry=".95"/><ellipse cx="14.7" cy="8.2" rx="1.1" ry=".85"/><ellipse cx="10.6" cy="9.5" rx="1.05" ry=".8"/></g><ellipse cx="15.2" cy="9.4" rx="2.1" ry="1.45" fill="#DEE4E9" transform="rotate(-40 15.2 9.4)"/><path d="M16.5,8.1 21,3.4" stroke="#C6CDD3" stroke-width="1.5" stroke-linecap="round"/>`,
-pineapplecake:`<rect x="1.6" y="9" width="12.4" height="8.6" rx="2" fill="#E8C782"/><rect x="1.6" y="9" width="12.4" height="2.5" rx="2" fill="#F2D799"/><rect x="3.9" y="11.4" width="7.8" height="3.9" rx=".9" fill="#D9A451"/><path d="M14,11.9a2.3,2.3 0 0 1 0,3.7Z" fill="#FDFAF0"/><g fill="#CFAE6B"><circle cx="4" cy="10.2" r=".4"/><circle cx="8" cy="10" r=".36"/><circle cx="11.8" cy="10.3" r=".4"/><circle cx="4.6" cy="16.4" r=".4"/><circle cx="10.4" cy="16.6" r=".36"/></g><path d="M18.6,9.4c2.3,0 3.9,2.2 3.9,5.1s-1.7,5.5 -3.9,5.5 -3.9,-2.6 -3.9,-5.5 1.6,-5.1 3.9,-5.1Z" fill="#E8B457"/><g stroke="#C9953C" stroke-width=".5"><path d="M15.4,11.6 21.8,16.6M21.8,11.6 15.4,16.6M15,14.2 22.2,14.2"/></g><path d="M18.6,9.6 16.6,5.6M18.6,9.6 20.8,5.4M18.6,9.6 14.8,7.4M18.6,9.6 22.4,7.2" fill="none" stroke="#8FA87E" stroke-width="1.35" stroke-linecap="round"/>`,
+douhua:`<ellipse cx="12" cy="10.4" rx="9.5" ry="2.6" fill="#DCD0B6"/><path d="M2.5,10.4C3.1,15.5 7,19.1 12,19.1s8.9,-3.6 9.5,-8.7Z" fill="#EFE7D4"/><path d="M4.4,12.6C6,15.6 8.8,17.5 12,17.5s6,-1.9 7.6,-4.9c-.9,3.3 -4,5.6 -7.6,5.6S5.3,15.9 4.4,12.6Z" fill="#E2D7BD"/><path d="M9.6,19h4.8l-.28,1.7a1,1 0 0 1 -1,.85h-2.24a1,1 0 0 1 -1,-.85Z" fill="#DCD0B6"/><path d="M8.4,21.5h7.2a.7.7 0 0 1 0,1.4H8.4a.7.7 0 0 1 0,-1.4Z" fill="#CFC2A6"/><ellipse cx="12" cy="10.4" rx="8.4" ry="2.1" fill="#F6F0DF"/><path d="M5.4,10.1c0,-1.7 3,-2.8 6.6,-2.8s6.6,1.1 6.6,2.8 -3,2.8 -6.6,2.8 -6.6,-1.1 -6.6,-2.8Z" fill="#FBF6E8"/><path d="M6.6,9c1.3,-.9 3.3,-1.4 5.4,-1.4M7,11.3c1.5,.7 3.3,1 5.1,1M13.4,8c1.8,.3 3.2,.9 4.1,1.6" fill="none" stroke="#E6D9BE" stroke-width=".68" stroke-linecap="round"/><g fill="#D9AE78" stroke="#BC9058" stroke-width=".36"><ellipse cx="9" cy="7.9" rx="1.12" ry=".88"/><ellipse cx="11.9" cy="7.1" rx="1.18" ry=".93"/><ellipse cx="14.7" cy="8" rx="1.08" ry=".83"/><ellipse cx="10.6" cy="9.3" rx="1.02" ry=".78"/></g><ellipse cx="15.3" cy="9.2" rx="2.05" ry="1.42" fill="#DEE4E9" transform="rotate(-40 15.3 9.2)"/><path d="M16.6,7.9 21,3.3" stroke="#C6CDD3" stroke-width="1.5" stroke-linecap="round"/>`,
+pineapplecake:`<path d="M16.8,5.2c2.3,0 3.9,2.3 3.9,5.3s-1.7,5.8 -3.9,5.8 -3.9,-2.8 -3.9,-5.8 1.6,-5.3 3.9,-5.3Z" fill="#E8B457"/><g stroke="#C9953C" stroke-width=".48"><path d="M13.5,7.4 20.1,12.9M20.1,7.4 13.5,12.9M13.1,10.2h7.4"/></g><path d="M16.8,5.4 15,1.4M16.8,5.4 18.8,1.2M16.8,5.4 13.2,3.2M16.8,5.4 20.4,3" fill="none" stroke="#8FA87E" stroke-width="1.3" stroke-linecap="round"/><path d="M16.8,5.4 15.6,2.2M16.8,5.4 18.1,2.1M16.8,5.4 13.6,3.7M16.8,5.4 20,3.5" fill="none" stroke="#7E9470" stroke-width=".85" stroke-linecap="round"/><rect x="2.2" y="11.4" width="14.2" height="9.2" rx="2.1" fill="#E8C782"/><rect x="2.2" y="11.4" width="14.2" height="2.7" rx="2.1" fill="#F2D799"/><rect x="4.8" y="14" width="9" height="4.2" rx=".95" fill="#D9A451"/><path d="M16.4,14.4a2.4,2.4 0 0 1 0,3.9Z" fill="#FDFAF0"/><g fill="#CFAE6B"><circle cx="4.4" cy="12.7" r=".4"/><circle cx="9" cy="12.5" r=".36"/><circle cx="13.6" cy="12.8" r=".4"/><circle cx="5.2" cy="19.4" r=".4"/><circle cx="11.6" cy="19.6" r=".36"/></g>`,
 /* 海洋世界（台灣的海）*/
 hermitcrab:`<path d="M14,5.2c3.9,0 6.6,3 6.6,6.6s-2.8,6.3 -6.4,6.3c-3.1,0 -5.3,-2.2 -5.3,-4.8 0,-2.4 1.8,-4.2 4,-4.2 1.8,0 3.2,1.4 3.2,3 0,1.4 -1,2.4 -2.2,2.4" fill="#E3BC9A" stroke="#B78F6C" stroke-width="1.1" stroke-linecap="round"/><path d="M8.6,16.8 5.4,19.6M10.2,18 8.8,21.2M12.2,18.6 12.2,21.6" stroke="#D08A72" stroke-width="1.4" fill="none" stroke-linecap="round"/><path d="M7,13.2 3.6,11.4a2,2 0 0 1 .5,-2.5" stroke="#D08A72" stroke-width="1.4" fill="none" stroke-linecap="round"/><path d="M4.2,9 2.2,7.8 2.7,10.4Z" fill="#D08A72"/><circle cx="7.2" cy="10.8" r=".78" fill="#4A3A2C"/>`,
 starfish:`<path d="M12,2.8 15,9.3 22.1,10 16.8,14.8 18.4,21.8 12,18.2 5.6,21.8 7.2,14.8 1.9,10 9,9.3Z" fill="#F0A98E"/><g fill="#E08C6E"><circle cx="12" cy="8.6" r=".55"/><circle cx="9.2" cy="12.6" r=".5"/><circle cx="14.8" cy="12.6" r=".5"/><circle cx="7.2" cy="16.4" r=".48"/><circle cx="16.8" cy="16.4" r=".48"/></g><circle cx="10.2" cy="11.4" r=".95" fill="#4A3A2C"/><circle cx="13.8" cy="11.4" r=".95" fill="#4A3A2C"/><path d="M11,14a1.4,1.4 0 0 0 2,0" stroke="#4A3A2C" stroke-width=".9" fill="none" stroke-linecap="round"/>`,
@@ -2018,7 +2043,7 @@ jellyfish:`<path d="M4.6,11.6c0,-4.2 3.3,-7.4 7.4,-7.4s7.4,3.2 7.4,7.4c0,1.2 -.9
 jiufen:`<path d="M.8,20.8c4.4,-1.4 18,-1.4 22.4,0Z" fill="#8A7E66"/><path d="M1.2,16.4 7,12.4l5.6,3.8 5.6,-3.4 5.6,3.8v4.2H1.2Z" fill="#6E6354"/><g fill="#5A5144"><path d="M2.6,15.2h4.6v5.4H2.6ZM9,16.6h5.6v4H9ZM16.4,15.4h5v5.2h-5Z"/></g><g fill="#F2D799"><rect x="3.6" y="17" width="1.4" height="1.6" rx=".4"/><rect x="10.4" y="18" width="1.4" height="1.4" rx=".4"/><rect x="17.6" y="17.2" width="1.4" height="1.6" rx=".4"/></g><g><path d="M2.4,15.6h5.4l-.3,-1.2H2.7Z" fill="#8A7E66"/><path d="M8.8,17h6l-.3,-1.2H9.1Z" fill="#8A7E66"/><path d="M16.2,15.8h5.4l-.3,-1.2h-4.8Z" fill="#8A7E66"/></g><g fill="#D9736A"><ellipse cx="4.2" cy="11.2" rx="1.7" ry="2.1"/><ellipse cx="9.6" cy="9.4" rx="1.7" ry="2.1"/><ellipse cx="15" cy="10.6" rx="1.7" ry="2.1"/><ellipse cx="20.2" cy="8.8" rx="1.7" ry="2.1"/></g><g fill="#C85A52"><ellipse cx="4.2" cy="11.2" rx=".5" ry="2.1"/><ellipse cx="9.6" cy="9.4" rx=".5" ry="2.1"/><ellipse cx="15" cy="10.6" rx=".5" ry="2.1"/><ellipse cx="20.2" cy="8.8" rx=".5" ry="2.1"/></g><path d="M1.4,8.4 22.6,5.8" stroke="#8A7E66" stroke-width=".9" stroke-linecap="round"/><path d="M4.2,9.1 4,8.3M9.6,7.3 9.4,6.6M15,8.5 14.8,7.7M20.2,6.7 20,6" stroke="#8A7E66" stroke-width=".8"/>`,
 lionDance:`<path d="M1.4,19.8c1.1,-1.5 2.3,-1.5 3.4,0 1.1,1.5 2.3,1.5 3.4,0" fill="none" stroke="#D9736A" stroke-width="2.4" stroke-linecap="round"/><path d="M1.8,16c1,-1.4 2.1,-1.4 3.1,0 1,1.4 2.1,1.4 3.1,0" fill="none" stroke="#E8964E" stroke-width="2.2" stroke-linecap="round"/><g fill="#E8964E"><circle cx="8.4" cy="13.4" r="1.5"/><circle cx="6.4" cy="15.6" r="1.3"/><circle cx="9" cy="16.6" r="1.2"/></g><circle cx="15.2" cy="10.4" r="7.2" fill="#D9736A"/><path d="M15.2,3.2a7.2,7.2 0 0 1 6.6,10c-1.2,-3.9 -4.3,-7 -8.2,-8.2 .5,-.7 1,-1.3 1.6,-1.8Z" fill="#E8948C"/><g fill="#E8964E"><circle cx="9.6" cy="7" r="1.5"/><circle cx="8.6" cy="10.6" r="1.5"/><circle cx="9.8" cy="14" r="1.5"/><circle cx="12.6" cy="4.4" r="1.5"/><circle cx="16.4" cy="3.4" r="1.5"/><circle cx="20" cy="4.8" r="1.5"/></g><path d="M16,2.6 15.2,.2 18,1.8Z" fill="#F2D799"/><circle cx="16.6" cy="1.2" r="1.1" fill="#F2D799"/><circle cx="12.6" cy="8.6" r="2.3" fill="#FBF6E8"/><circle cx="18.2" cy="8.6" r="2.3" fill="#FBF6E8"/><circle cx="12.9" cy="8.9" r="1.15" fill="#2A2420"/><circle cx="18.5" cy="8.9" r="1.15" fill="#2A2420"/><circle cx="12.6" cy="8.5" r=".4" fill="#FBF6E8"/><circle cx="18.2" cy="8.5" r=".4" fill="#FBF6E8"/><path d="M10.6,13.4h9.6c-.6,2.4 -2.6,4 -4.8,4s-4.2,-1.6 -4.8,-4Z" fill="#8A3A36"/><path d="M10.6,13.4h9.6l-.3,1.2h-9Z" fill="#FBF6E8"/><path d="M14.4,11.4h1.8l-.9,1.5Z" fill="#F2D799"/>`,
 shark:`<path d="M21.4,13 17,10.2v5.6Z" fill="#5E7384"/><path d="M2.2,13.6c0,-3.2 4,-5.8 9,-5.8 4.2,0 7.6,1.8 8.6,4.2 .3,.8 -.3,1.6 -1.2,1.7 -1.6,.2 -2.4,1 -2.2,2.2 .2,1.2 -1,2.2 -2.8,2.2 -1.6,0 -2.8,-.6 -3.4,-1.6 -1.6,.8 -3.6,.8 -5,-.2 -1.6,-1.1 -3,-1.6 -3,-2.7Z" fill="#8299AB"/><path d="M2.3,14.6c2,1.5 5.4,2.4 9,2.3 -.2,.5 -.6,1 -1.1,1.4 -1.6,.8 -3.6,.8 -5,-.2 -1.4,-1 -2.7,-1.5 -2.9,-2.5Z" fill="#C2D0D9"/><path d="M8.6,8.2 10.4,3.2 13.6,8.8Z" fill="#6B8090"/><path d="M6,16.6 5,20.4 8.8,17.8Z" fill="#6B8090"/><path d="M4.2,16.2c1.6,1.2 3.6,2 5.8,2.2" stroke="#6B8090" stroke-width=".8" fill="none"/><path d="M3.4,16.2 10,16.9" stroke="#FBF6E8" stroke-width="1.2" stroke-linecap="round"/><path d="M4.4,16.4 4.9,17.5M6,16.5 6.4,17.7M7.6,16.7 7.9,17.8M9.2,16.8 9.4,17.9" stroke="#8299AB" stroke-width=".55"/><circle cx="5.4" cy="12.8" r="1.05" fill="#FBF6E8"/><circle cx="5.3" cy="12.8" r=".55" fill="#2E2A26"/>`,
-temple:`<path d="M.6,20.9c4.6,-1.2 18.2,-1.2 22.8,0Z" fill="#9AAE8E"/><rect x="3.6" y="13.6" width="16.8" height="7.3" fill="#C85A52"/><rect x="3.6" y="19.9" width="16.8" height="1" fill="#8A3A36"/><g fill="#B24E47"><rect x="4.9" y="14" width="1.5" height="5.9"/><rect x="17.6" y="14" width="1.5" height="5.9"/></g><path d="M8.9,14.4h6.2v5.5H8.9Z" fill="#8A3A36"/><path d="M11.9,14.4h.2v5.5h-.2Z" fill="#6B2824"/><g fill="#F2D799"><circle cx="10.3" cy="16.2" r=".4"/><circle cx="13.7" cy="16.2" r=".4"/><circle cx="10.3" cy="18" r=".4"/><circle cx="13.7" cy="18" r=".4"/></g><path d="M.5,9.6C4.1,13.1 8,14.3 12,14.3s7.9,-1.2 11.5,-4.7L21.9,13.3C18.5,15.5 15,16.2 12,16.2S5.5,15.5 2.1,13.3Z" fill="#D9736A"/><path d="M1.6,10.8C5,13.4 8.5,14.5 12,14.5s7,-1.1 10.4,-3.7" fill="none" stroke="#F2D799" stroke-width=".6"/><path d="M3.9,4.2C6.6,6.9 9.3,7.9 12,7.9s5.4,-1 8.1,-3.7L18.9,7.2C16.4,8.9 14.2,9.5 12,9.5S7.6,8.9 5.1,7.2Z" fill="#D9736A"/><path d="M4.7,5.1C7.1,7.2 9.5,8.1 12,8.1s4.9,-.9 7.3,-3" fill="none" stroke="#F2D799" stroke-width=".55"/><path d="M12,4.2 10.5,6h3Z" fill="#F2D799"/><circle cx="12" cy="3" r="1.25" fill="#F2D799"/><circle cx="12" cy="3" r=".5" fill="#D9A33E"/><g><path d="M6.6,13.9v1.3M17.4,13.9v1.3" stroke="#8A3A36" stroke-width=".65"/><ellipse cx="6.6" cy="17" rx="1.5" ry="1.85" fill="#E85E54"/><ellipse cx="17.4" cy="17" rx="1.5" ry="1.85" fill="#E85E54"/><path d="M5.5,15.6h2.2M5.5,18.4h2.2M16.3,15.6h2.2M16.3,18.4h2.2" stroke="#F2D799" stroke-width=".62"/></g>`,
+temple:`<ellipse cx="12" cy="21.6" rx="11.2" ry="1.4" fill="#9AAE8E"/><path d="M1.6,19.2h20.8v2.4H1.6Z" fill="#CFC2A6"/><path d="M1.6,19.2h20.8v.7H1.6Z" fill="#E0D5BC"/><path d="M8.4,21.6h7.2v1H8.4Z" fill="#C2B294"/><path d="M7.4,22.6h9.2v.9H7.4Z" fill="#B5A587"/><path d="M3.2,13.4h17.6v5.8H3.2Z" fill="#C85A52"/><path d="M3.2,18.4h17.6v.8H3.2Z" fill="#8A3A36"/><g fill="#B24E47"><rect x="4.5" y="13.8" width="1.5" height="4.6"/><rect x="18" y="13.8" width="1.5" height="4.6"/></g><path d="M8.9,14.2h6.2v4.2H8.9Z" fill="#8A3A36"/><path d="M11.9,14.2h.2v4.2h-.2Z" fill="#6B2824"/><g fill="#F2D799"><circle cx="10.3" cy="15.6" r=".38"/><circle cx="13.7" cy="15.6" r=".38"/><circle cx="10.3" cy="17.2" r=".38"/><circle cx="13.7" cy="17.2" r=".38"/></g><path d="M.5,9.6C4.1,13.1 8,14.3 12,14.3s7.9,-1.2 11.5,-4.7L21.9,13.3C18.5,15.5 15,16.2 12,16.2S5.5,15.5 2.1,13.3Z" fill="#D9736A"/><path d="M1.6,10.8C5,13.4 8.5,14.5 12,14.5s7,-1.1 10.4,-3.7" fill="none" stroke="#F2D799" stroke-width=".6"/><path d="M3.9,4.2C6.6,6.9 9.3,7.9 12,7.9s5.4,-1 8.1,-3.7L18.9,7.2C16.4,8.9 14.2,9.5 12,9.5S7.6,8.9 5.1,7.2Z" fill="#D9736A"/><path d="M4.7,5.1C7.1,7.2 9.5,8.1 12,8.1s4.9,-.9 7.3,-3" fill="none" stroke="#F2D799" stroke-width=".55"/><path d="M12,4.2 10.5,6h3Z" fill="#F2D799"/><circle cx="12" cy="3" r="1.25" fill="#F2D799"/><circle cx="12" cy="3" r=".5" fill="#D9A33E"/><g><path d="M6.6,13.7v1.2M17.4,13.7v1.2" stroke="#8A3A36" stroke-width=".62"/><ellipse cx="6.6" cy="16.5" rx="1.42" ry="1.72" fill="#E85E54"/><ellipse cx="17.4" cy="16.5" rx="1.42" ry="1.72" fill="#E85E54"/><path d="M5.55,15.2h2.1M5.55,17.8h2.1M16.35,15.2h2.1M16.35,17.8h2.1" stroke="#F2D799" stroke-width=".6"/></g>`,
 mosasaur:`<path d="M20.4,16.2c1.4,-1.6 1.8,-3.8 1,-5.8 -1.6,1 -2.6,2.6 -2.8,4.4Z" fill="#6E8CA6"/><path d="M19,12.6c1.6,1.4 2.4,3.4 2.2,5.4 -1.8,-.6 -3.2,-2 -3.8,-3.8Z" fill="#6E8CA6"/><path d="M2.2,8.6c2.8,-.6 5.6,.6 7.4,2.8 1.6,2 4,3.2 6.6,3.2 1.4,0 2.6,-.4 3.6,-1.2l.6,1.6c-1.4,1.4 -3.4,2.2 -5.6,2.2 -3.6,0 -6.8,-1.8 -8.6,-4.6 -1,-1.6 -2.6,-2.6 -4.4,-2.8Z" fill="#7E9CB4"/><path d="M2.2,8.6 7.4,6.4c1.6,-.7 3.4,.2 3.8,1.9l.4,1.9Z" fill="#9AB6CA"/><path d="M11.6,10.2c1.2,1.4 2.8,2.4 4.6,2.8l4.2,-1.6c.6,-.2 .6,-1.1 0,-1.4L12,5.8c-.8,-.4 -1.6,.4 -1.3,1.2Z" fill="#9AB6CA"/><path d="M11.4,8.8 19.8,10.3l-5.2,2c-1.4,-.5 -2.6,-1.6 -3.2,-3Z" fill="#CFE0EA"/><g fill="#FBF6E8"><path d="M12.6,8.4 13.1,9.9 11.9,9.5ZM14.6,8.8 15.1,10.3 13.9,9.9ZM16.6,9.2 17.1,10.7 15.9,10.3Z"/></g><path d="M6.8,11.8c-1.2,1.8 -3,2.8 -5,2.8 .6,-2 2.2,-3.4 4.2,-3.8Z" fill="#6E8CA6"/><path d="M11.4,14.6c.6,1.8 .2,3.8 -1,5.2 -1.2,-1.6 -1.4,-3.6 -.6,-5.2Z" fill="#6E8CA6"/><circle cx="10.6" cy="7.6" r=".95" fill="#2E3A44"/><circle cx="10.4" cy="7.4" r=".34" fill="#FBF6E8"/>`,
 };
 const art = k => `<svg class="ar" viewBox="0 0 24 24" aria-hidden="true">${ART[k]||''}</svg>`;
@@ -2243,7 +2268,7 @@ const HELP = {
     '剛開始學乘法，先玩 🔰',
     '闖關遊戲，或完成攤子任務，賺取金幣',
     `金幣可以玩轉蛋，有 ${STICKERS.length} 種等你蒐集喔！`],
-   note:'給大人：紀錄只存在這台裝置的瀏覽器裡，手機太久沒玩可能會被清掉。<b>請到右上角的「挑戰者」頁面把紀錄存成檔案</b>。iPhone 請用 Safari「加入主畫面」，從圖示進來玩。'},
+   note:'給大人：請固定用<b>同一台裝置、同一個瀏覽器</b>玩，紀錄才留得住；建議用<b>平板</b>。紀錄存在這台裝置的瀏覽器裡，太久沒玩或清除瀏覽資料就會不見。iPhone 請用 Safari「加入主畫面」，從圖示進來玩。'},
   stages:{t:'怎麼玩？', li:[
     '每關 10 題，答對 8 題就過關',
     '答錯的題目等一下會再出現',
@@ -2300,8 +2325,8 @@ const HELP = {
     '最多 6 位挑戰者',
     '每個人的進度分開記',
     '點「換我玩」就換人',
-    '紀錄可以存成檔案帶著走'],
-   note:'紀錄存在這台裝置的瀏覽器裡：清除瀏覽資料、換裝置、或 iPhone 太久沒進來（約一週）都會不見。下面的「存成檔案」會下載一個 .json，換手機時用「從檔案還原」就接得回來。'}
+    '點鉛筆可以改名字和頭貼'],
+   note:'給大人：請固定用<b>同一台裝置、同一個瀏覽器</b>玩，紀錄才留得住；建議用<b>平板</b>。紀錄存在這台裝置的瀏覽器裡，沒有上傳到網路，太久沒玩、清除瀏覽資料或換裝置就會不見。'}
 };
 function helper(txt){
   return `<p class="helper">${txt}</p>`;
@@ -2484,7 +2509,7 @@ function stickerHTML(s, extra=''){
 
 /* ---------- views ---------- */
 let currentView='home', game=null, lastSetup=null, uiTier=null;
-let pickFor='review', reviewTable=2, revOpen={}, revShine={}, autoT=null, autoI=0;
+let pickFor='review', reviewTable=2, revPairs=null, revOpen={}, revShine={}, autoT=null, autoI=0;
 function heroW(){ return Math.min(window.innerWidth-28, (currentView==='home'||currentView==='welcome')?1080:620); }
 function go(name){
   stopAuto();
@@ -2508,7 +2533,7 @@ const VIEWS = {
       <section class="card" style="max-width:460px;margin:0 auto">
         <h2 style="font-size:21px;text-align:center">你的名字是？</h2>
         <p class="tdesc" style="margin:6px 0 14px;text-align:center">打名字，金幣和貼紙才留得住<br>
-          <small>（紀錄存在這台裝置，之後可以到「挑戰者」頁面備份）</small></p>
+          <small>（紀錄存在這台裝置的瀏覽器裡，請固定用同一台裝置玩）</small></p>
         ${nameForm({name:'', avatar:AVATARS[0], act:'createPlayer', btn:'開始玩', owned:GUEST?(me()||{}).owned:null})}
         <div class="guestbox">
           <button class="btn sage" data-act="guestStart">${ic('user')} 用訪客模式玩</button>
@@ -2579,15 +2604,15 @@ const VIEWS = {
         : `<p class="note">最多 ${MAX_PLAYERS} 位挑戰者</p>`}
       <p class="note">每位挑戰者的金幣、貼紙和每日任務都是分開記錄的。</p>
       <section class="card bak">
-        <h3>備份紀錄</h3>
-        <p class="note"><b>給大人：</b>下面這一段小朋友不用看。紀錄是存在這台裝置的瀏覽器裡的。<b>手機太久沒玩、清除瀏覽資料、或換一台裝置，紀錄就會不見</b>。
-          存成檔案就帶得走，換手機也還原得回來。</p>
-        <div class="rbtns" style="margin-top:10px">
-          <button class="btn sun" data-act="backup">${ic('book')} 存成檔案</button>
-          <button class="btn" data-act="restore">${ic('back')} 從檔案還原</button>
-        </div>
-        <p class="note" style="margin-top:8px">iPhone、iPad 請用 Safari 的「分享 → 加入主畫面」，
-          從主畫面的圖示進來玩，紀錄才不會被系統清掉。</p>
+        <h3>給大人的說明</h3>
+        <ol class="grown">
+          <li><b>請固定用同一台裝置、同一個瀏覽器玩</b>，遊戲紀錄才留得住。</li>
+          <li>建議用<b>平板</b>玩，畫面大，玩起來最舒服。</li>
+          <li><b>紀錄存在哪裡：</b>紀錄是存在這台裝置的瀏覽器裡的，沒有上傳到網路。
+            太久沒玩、清除瀏覽資料、或換一台裝置，紀錄就會不見。</li>
+        </ol>
+        <p class="note" style="margin-top:10px;text-align:left">iPhone、iPad 請用 Safari 的「分享 → 加入主畫面」，
+          從主畫面的圖示進來玩，紀錄比較不會被系統清掉。</p>
       </section>`;
   },
 
@@ -2609,23 +2634,28 @@ const VIEWS = {
       ${helper(rev?'選一張乘法表，9 張卡片點一下就翻開，還會唸口訣'
                   :'選一張乘法表，它的九個答案就會藏在同一張圖裡。')}
       <div class="picks">${btns}
+        <button class="pickbtn allbtn" data-act="start" data-arg="0">
+          <span class="n">${ic('dice')}</span><span class="lbl">綜合挑戰</span>
+          <small>${rev?'九題隨機抽':'各種乘法都有'}</small></button>
         ${rev?'':`<button class="pickbtn mixbtn" style="background:var(--sky)" data-act="gallery">${ic('image')} 我的畫廊 <small>已收藏 ${(me().art||[]).length} 張</small></button>`}
       </div>
       <p class="note">${rev?'翻開卡片會唸出口訣，不計分也不影響熟練度'
-        :`選 2 的乘法，畫面裡就藏著 2、4、6……18 這九個答案，題目會隨機出`}</p>`;
+        :`選 2 的乘法，畫面裡就藏著 2、4、6……18 這九個答案，題目會隨機出`}<br>
+        <b>綜合挑戰</b>的九題會從 2~9 的乘法裡隨機抽，不會重複</p>`;
   },
 
   review(){
     const t=reviewTable;
-    const cards=[1,2,3,4,5,6,7,8,9].map(b=>
-      `<button class="fcard ${revOpen[b]?'on':''}" data-act="flip" data-arg="${b}" aria-label="${t} 乘 ${b}">
+    const cards=[1,2,3,4,5,6,7,8,9].map(b=>{
+      const p=revPair(b);
+      return `<button class="fcard ${revOpen[b]?'on':''}" data-act="flip" data-arg="${b}" aria-label="${p.a} 乘 ${p.b}">
         <span class="fin">
-          <span class="face front">${t}<small>×</small>${b}</span>
-          <span class="face back">${t*b}${revOpen[b]?shineHTML(revShine[b]||0):''}</span>
-        </span></button>`).join('');
+          <span class="face front">${p.a}<small>×</small>${p.b}</span>
+          <span class="face back">${p.a*p.b}${revOpen[b]?shineHTML(revShine[b]||0):''}</span>
+        </span></button>`;}).join('');
     const open=[1,2,3,4,5,6,7,8,9].filter(b=>revOpen[b]).length;
     view.innerHTML=`
-      <div class="backrow"><button class="iconbtn" data-act="reviewPick" aria-label="返回">${ic('back')}</button><h2>翻翻樂 ${t} 的乘法</h2></div>
+      <div class="backrow"><button class="iconbtn" data-act="reviewPick" aria-label="返回">${ic('back')}</button><h2>翻翻樂 ${tableName(t)}</h2></div>
       ${helper(`點卡片翻開，會唸口訣${canSpeak?'':'（這台裝置沒有語音）'}　已翻開 <b id="flipn">${open}/9</b>`)}
       <div class="flipgrid">${cards}</div>
       <div class="rbtns" style="margin-top:20px">
@@ -2658,7 +2688,7 @@ const VIEWS = {
     const list=me().art||[];
     const cells=list.map((a,i)=>`<button class="gcell" data-act="art" data-arg="${i}">
       <span class="art">${artHTML(a,{full:true})}</span>
-      <span class="gcap">${a.t} 的乘法<small>${esc(artScene(a).name)}　${esc(a.d)}</small></span></button>`).join('');
+      <span class="gcap">${tableName(a.t)}<small>${esc(artScene(a).name)}　${esc(a.d)}</small></span></button>`).join('');
     view.innerHTML=`
       <div class="backrow"><button class="iconbtn" data-act="huntPick" aria-label="返回">${ic('back')}</button><h2>畫廊 ${list.length}</h2></div>
       ${list.length
@@ -3234,59 +3264,6 @@ function claimBonus(tier){
   toast(`${T.name}三個都完成！再拿 ${T.bonus} 枚金幣`);
   setTimeout(()=>{ go('home'); openTier(tier); coinDoneCheck(); },250);
 }
-/* ---------- 備份／還原紀錄 ---------- */
-/* 手機瀏覽器可能會把網站資料清掉（iPhone 超過一陣子沒玩就會清），
-   所以提供「存成檔案」和「從檔案還原」，換手機、重灌也帶得走 */
-let pendingRestore = null;
-function exportSave(){
-  if(!state.players.length) return toast('還沒有紀錄可以備份喔');
-  try{
-    const blob = new Blob([JSON.stringify(state)], {type:'application/json'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = `乘乘熱氣球-紀錄-${todayStr()}.json`;
-    document.body.appendChild(a); a.click(); a.remove();
-    setTimeout(()=>URL.revokeObjectURL(url), 2000);
-    sfx.coin(); toast('紀錄存成檔案了！放在「檔案」或「下載」裡');
-  }catch(e){ toast('這台裝置沒辦法下載檔案'); }
-}
-function importSave(){
-  const inp = document.createElement('input');
-  inp.type = 'file'; inp.accept = 'application/json,.json';
-  inp.style.display = 'none';
-  inp.onchange = ()=>{
-    const f = inp.files && inp.files[0];
-    inp.remove();
-    if(!f) return;
-    const r = new FileReader();
-    r.onload = ()=>{
-      let data = null;
-      try{ data = JSON.parse(String(r.result)); }catch(e){}
-      const next = data ? migrate(data) : null;
-      if(!next || !next.players.length){
-        return showModal(`<h3>這個檔案打不開</h3><p>看起來不是乘乘熱氣球的紀錄檔，<br>請選副檔名是 <b>.json</b> 的那一個。</p>
-          <div class="row"><button class="btn sun" data-act="closeModal">好</button></div>`);
-      }
-      pendingRestore = next;
-      const names = next.players.map(x=>esc(x.name)).join('、');
-      showModal(`<h3>要還原紀錄嗎？</h3>
-        <p>檔案裡有 <b>${next.players.length}</b> 位挑戰者：${names}。</p>
-        <p class="note" style="margin-top:6px">還原之後，<b>這台裝置現在的紀錄會被蓋掉</b>，沒辦法復原喔。</p>
-        <div class="row"><button class="btn" data-act="closeModal">先不要</button><button class="btn sun" data-act="restoreOk">確定還原</button></div>`);
-    };
-    r.onerror = ()=>toast('讀不到這個檔案');
-    r.readAsText(f);
-  };
-  document.body.appendChild(inp);
-  inp.click();
-}
-function restoreSave(){
-  if(!pendingRestore) return;
-  state = pendingRestore; pendingRestore = null;
-  GUEST = false; uiTier = null;
-  save(); closeModal(); zyApply(); updateTop(); go('home');
-  toast('紀錄還原好了！'); sfx.fanfare();
-}
 function askRename(id){
   const p=state.players.find(x=>x.id===id); if(!p) return;
   formAvatar=p.avatar;
@@ -3622,6 +3599,26 @@ function finishSnake(){
 /* ---------- 尋寶模式：數字融進完整場景裡，隨機出題，找到就圈起來 ---------- */
 /* 一張畫只存 {乘法表, 場景, 亂數種子, 日期}，畫面都用種子重新算出來，所以畫廊能永遠重現同一張 */
 function artRand(a){ return seeded('mul99art#'+a.t+'#'+a.s+'#'+a.k); }
+/* table 0 = 綜合挑戰：九題從 2~9 的乘法裡隨機挑，不重複（交換律算同一題）*/
+function mixPairs(rand){
+  const out=[], used=new Set();
+  let guard=0;
+  while(out.length<ART_N && guard++<400){
+    const x=2+Math.floor(rand()*8), y=2+Math.floor(rand()*8);
+    const k=Math.min(x,y)+'x'+Math.max(x,y);
+    if(used.has(k)) continue;
+    used.add(k); out.push({a:x, b:y});
+  }
+  while(out.length<ART_N) out.push({a:2+out.length%8, b:3});
+  return out;
+}
+/* 一張畫要藏的九題：指定乘法表就是 t×1~9，綜合挑戰則由同一顆種子決定，
+   所以同一張畫重看、收進畫廊，題目都一樣 */
+function artPairs(a){
+  if(a.t) return Array.from({length:ART_N}, (_,i)=>({a:a.t, b:i+1}));
+  return mixPairs(seeded('mul99mix#'+a.s+'#'+a.k));
+}
+const tableName = t => t ? `${t} 的乘法` : '綜合挑戰';
 function artScene(a){ return SCENES[((a.s%SCENES.length)+SCENES.length)%SCENES.length]; }
 function artLayout(a){
   const r=artRand(a), S=artScene(a);
@@ -3651,7 +3648,8 @@ function artLayout(a){
     nums.push({ v, b, x:clamp(sp[0]+(r()*2-1)*2.5, 5, 95), y, c:sp[2],
       z:Math.round(sp[1]*2)+1, s:4.6+r()*2.6, rot:r()*44-22, sk:r()*16-8, op:(0.62+r()*0.26).toFixed(2) });
   };
-  for(let b=1;b<=ART_N;b++) addAt(spots[b-1], a.t*b, b);
+  const pairs=artPairs(a);
+  for(let b=1;b<=ART_N;b++) addAt(spots[b-1], pairs[b-1].a*pairs[b-1].b, b);
   const used=new Set(nums.map(q=>q.v));
   const want=Math.min(spots.length, ART_N+ART_DECOY+Math.floor(r()*3));
   let i=ART_N, guard=0;
@@ -3679,7 +3677,7 @@ function startHunt(table){
   endGame();
   lastSetup={mode:'hunt', table};
   const art={ t:table, s:rnd(SCENES.length), k:Date.now()%1000000, d:todayStr() };
-  game={mode:'hunt', table, art, order:shuffle([1,2,3,4,5,6,7,8,9]), pos:0, firstFind:0,
+  game={mode:'hunt', table, art, pairs:artPairs(art), order:shuffle([1,2,3,4,5,6,7,8,9]), pos:0, firstFind:0,
     combo:0, maxCombo:0, locked:false, miss:0, hinted:false, hints:0, t:null};
   go('hunt');
   huntNext();
@@ -3694,9 +3692,9 @@ function huntNext(){
   if(!game || game.mode!=='hunt') return;
   if(game.pos>=ART_N) return finishHunt();
   game.locked=false; game.miss=0; game.hinted=false;
-  const t=game.table, b=game.order[game.pos];
-  $('#hask').innerHTML=`${t} <span class="op">×</span> ${b} <span class="op">=</span> ?<span class="hchant">答案藏在畫面裡，找到就點它</span>`;
-  $('#qnum').textContent=`${b}/${ART_N}`;
+  const slot=game.order[game.pos], p=game.pairs[slot-1];
+  $('#hask').innerHTML=`${p.a} <span class="op">×</span> ${p.b} <span class="op">=</span> ?<span class="hchant">答案藏在畫面裡，找到就點它</span>`;
+  $('#qnum').textContent=`${game.pos+1}/${ART_N}`;
   $('#trackfill').style.width=(game.pos/ART_N*100)+'%';
   hnote(game.pos===0 ? '數字跟畫面同色，仔細看每個角落' : `還剩 ${ART_N-game.pos} 個答案`);
   huntStrip();
@@ -3712,7 +3710,8 @@ function artSplash(el){
 }
 function huntPick(v, el){
   if(!game || game.mode!=='hunt' || game.locked || !el || el.classList.contains('on')) return;
-  const t=game.table, b=game.order[game.pos], ans=t*b, d=ensureDaily();
+  const slot=game.order[game.pos], p=game.pairs[slot-1];
+  const t=p.a, b=p.b, ans=t*b, d=ensureDaily();
   if(v===ans){
     game.locked=true;
     const clean = game.miss===0 && !game.hinted;
@@ -3763,7 +3762,8 @@ function finishHunt(){
   if(!Array.isArray(m.art)) m.art=[];
   m.art.unshift({t:game.art.t, s:game.art.s, k:game.art.k, d:todayStr()});
   if(m.art.length>MAX_ART) m.art.length=MAX_ART;
-  d.p.rounds++; d.p.hunts++; d.p.tables[game.table]=true;
+  d.p.rounds++; d.p.hunts++;
+  if(game.table) d.p.tables[game.table]=true; else d.p.mix++;   /* 綜合挑戰算一次綜合 */
   if(score===total) d.p.perfect=1;
   markPlayed();
   document.querySelectorAll('.anum:not(.on)').forEach(n=>n.classList.add('fade'));
@@ -3776,7 +3776,7 @@ function finishHunt(){
 function showArt(i){
   const list=me().art||[], a=list[i];
   if(!a) return;
-  showModal(`<h3>${a.t} 的乘法</h3>
+  showModal(`<h3>${tableName(a.t)}</h3>
     <div class="art artwrap">${artHTML(a,{full:true})}</div>
     <p>${esc(artScene(a).name)}　${a.d.replace(/^(\d+)-(\d+)-(\d+)$/,(m,y,mo,dd)=>`${+mo} 月 ${+dd} 日`)}完成</p>
     <div class="row"><button class="btn sun" data-act="closeModal">好</button></div>`);
@@ -3786,7 +3786,13 @@ function showArt(i){
 function startReview(table){
   endGame(); stopAuto();
   reviewTable=table; revOpen={}; revShine={};
+  /* 綜合挑戰每開一次就換九題；指定乘法表就是固定的 t×1~9 */
+  revPairs = table ? null : mixPairs(Math.random);
   go('review');
+}
+/* 第 b 張卡片是哪一題（b 從 1 數到 9）*/
+function revPair(b){
+  return revPairs ? revPairs[b-1] : {a:reviewTable, b};
 }
 /* 翻開的卡片背面補上那個閃亮圖案（翻面只改 class，不重畫整頁，所以要自己塞進去）*/
 function paintShine(b){
@@ -3806,7 +3812,8 @@ function flipCard(b){
   paintShine(b);
   sfx.tap();
   if(open){
-    say(chant(reviewTable,b));
+    const p=revPair(b);
+    say(chant(p.a,p.b));
     markReviewed();
   }
   updateFlipCount();
@@ -4242,9 +4249,6 @@ document.addEventListener('click', e=>{
     }
     case 'use': usePlayer(arg); break;
     case 'rename': askRename(arg); break;
-    case 'backup': exportSave(); break;
-    case 'restore': importSave(); break;
-    case 'restoreOk': restoreSave(); break;
     case 'renameOk': {
       const p=state.players.find(x=>x.id===arg), n=readName();
       if(!p) { closeModal(); break; }
