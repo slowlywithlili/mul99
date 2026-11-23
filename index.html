@@ -1438,7 +1438,12 @@ function fixPlayer(src){
   out.owned = fixOwned(p.owned);
   const bud = STICKER_OLD[p.buddy] || p.buddy;      /* 舊編號的夥伴也跟著搬家 */
   out.buddy = (STICKER_IDS.has(bud) && out.owned[bud]) ? bud : '';
-  out.avatar = avaOk(p.avatar, out.owned) ? p.avatar : (AVA_OLD[p.avatar] || AVATARS[0]);
+  /* 貼紙頭像也要跟著舊編號搬家，不然會被打回預設熱氣球。
+     avatar 一律先當成字串處理：存檔是不可信的輸入，{} 之類的東西拿去當物件的鍵會丟例外 */
+  const rawAva = typeof p.avatar==='string' ? p.avatar : '';
+  const oldAva = (rawAva.slice(0,2)==='s:' && STICKER_OLD[rawAva.slice(2)])
+    ? 's:'+STICKER_OLD[rawAva.slice(2)] : rawAva;
+  out.avatar = avaOk(oldAva, out.owned) ? oldAva : (AVA_OLD[rawAva] || AVATARS[0]);
   out.facts = fixFacts(p.facts);
   out.stages = fixStages(p.stages);
   out.art = fixArt(p.art);
@@ -1469,11 +1474,17 @@ const LS_BAK = LS_KEY + '-bak';
 function lsRead(k){ try{ const s=localStorage.getItem(k); return s?JSON.parse(s):null; }catch(e){ return null; } }
 /* 讀存檔：主檔壞掉或空了就改讀備份檔，兩份都在同一個瀏覽器裡
    （不會互相覆蓋：只有「有挑戰者」的狀態才會寫進備份） */
+/* 「有挑戰者」不只是陣列不空，裡面至少要有一個看起來像真人的紀錄，
+   不然 {"players":[{}]} 這種壞掉的主檔會被當成好的，還反過來蓋掉備份 */
+function okSave(s){
+  return !!(s && Array.isArray(s.players) && s.players.some(p=>p && typeof p==='object' &&
+    ((typeof p.id==='string' && ID_RE.test(p.id)) || String(p.name==null?'':p.name).trim())));
+}
 function lsLoad(){
   const main = lsRead(LS_KEY);
-  if(main && Array.isArray(main.players) && main.players.length) return main;
+  if(okSave(main)) return main;
   const bak = lsRead(LS_BAK);
-  if(bak && Array.isArray(bak.players) && bak.players.length){
+  if(okSave(bak)){
     try{ localStorage.setItem(LS_KEY, JSON.stringify(bak)); }catch(e){}
     return bak;
   }
@@ -1513,14 +1524,58 @@ function removePlayer(id){
 }
 
 let cloudRef=null, cloudTimer=null, cloudBusy=false, cloudDirty=false;
+let saveWarned=false, saveWarnT=null;
+function warnSaveFail(){
+  if(saveWarned) return; saveWarned=true;
+  /* 存檔常常是「按鈕 → save() → closeModal()」的順序，直接跳會被同一次點擊收掉；
+     所以等現在這個彈窗關掉、下一拍再跳 */
+  const pop=()=>{
+    if(document.getElementById('modal')){ saveWarnT=setTimeout(pop, 1200); return; }
+    popSaveFail();
+  };
+  clearTimeout(saveWarnT); saveWarnT=setTimeout(pop, 500);
+}
+function popSaveFail(){
+  showModal(`<h3>紀錄暫時存不起來</h3>
+    <p>這台裝置的瀏覽器空間滿了，剛剛拿到的金幣和貼紙可能沒有存住。</p>
+    <p>請大人幫忙清一下瀏覽器的空間，再重新整理一次就好了。</p>
+    <div class="row"><button class="btn sun" data-act="closeModal">知道了</button></div>`);
+}
 function save(){
   if(GUEST) return;            /* 訪客模式不寫入任何紀錄 */
   state.savedAt = Date.now();
   const json = JSON.stringify(state);
-  try{ localStorage.setItem(LS_KEY, json); }catch(e){}
-  if(state.players.length){ try{ localStorage.setItem(LS_BAK, json); }catch(e){} }
+  let wrote=false;
+  try{ localStorage.setItem(LS_KEY, json); wrote=true; }catch(e){}
+  /* 主檔沒寫成功就別動備份檔，上一份好的紀錄要留著 */
+  if(wrote && state.players.length){ try{ localStorage.setItem(LS_BAK, json); }catch(e){} }
+  if(!wrote) warnSaveFail();
   if(cloudRef){ clearTimeout(cloudTimer); cloudTimer=setTimeout(pushCloud, 800); }
 }
+/* ---- 同一個瀏覽器開了兩個分頁：舊的那個不要把新紀錄蓋回去 ---- */
+let tabStale=false;
+function newerSave(){
+  const cur=lsRead(LS_KEY);
+  return (okSave(cur) && num(cur.savedAt,9e15) > num(state.savedAt,9e15)) ? cur : null;
+}
+function adoptNewer(){
+  const cur=newerSave();
+  tabStale=false;
+  if(!cur) return false;
+  let next; try{ next=migrate(cur); }catch(e){ return false; }   /* 壞掉的存檔不要害這個分頁一起死 */
+  endGame(); closeModal();
+  state=next; uiTier=null;
+  zyApply();                       /* 注音是另一個分頁改的，要跟著套用 */
+  updateTop(); go(hasPlayer()?'home':'welcome');
+  toast('紀錄已經跟另一個視窗同步好了');
+  return true;
+}
+window.addEventListener('storage', e=>{
+  if(GUEST || (e.key && e.key!==LS_KEY)) return;
+  if(!newerSave()) return;
+  if(inGame()){ tabStale=true; return; }   /* 玩到一半先不要打斷，回首頁再同步 */
+  adoptNewer();
+});
 async function pushCloud(){
   if(!cloudRef) return;
   if(cloudBusy){ cloudDirty=true; return; }
@@ -1606,8 +1661,7 @@ function ensureDaily(){
   const t = todayStr();
   let d = m.daily;
   if(!d || d.date!==t){
-    const keep = (d && d.date===t) ? d.p : null;   /* 同一天換版本，進度留著 */
-    d = m.daily = { date:t, tiers:{}, p:keep || blankP() };
+    d = m.daily = { date:t, tiers:{}, p:blankP() };
     save();
   }
   if(!d.tiers) d.tiers = {};
@@ -2376,7 +2430,7 @@ const HELP = {
     `${DRAW_COST} 枚金幣轉一次`,
     '每次都是還沒有的貼紙',
     '點貼紙可以叫它出來陪你玩',
-    '40 張收集完就是大冒險家！']},
+    `${STICKERS.length} 張收集完就是大冒險家！`]},
   gallery:{t:'我的畫廊', li:[
     '尋寶完成的畫都在這裡',
     '點一張看大圖']},
@@ -2573,6 +2627,7 @@ let pickFor='review', reviewTable=2, revPairs=null, revOpen={}, revShine={}, aut
 function heroW(){ return Math.min(window.innerWidth-28, (currentView==='home'||currentView==='welcome')?1080:620); }
 function go(name){
   stopAuto();
+  if(tabStale && (name==='home'||name==='welcome') && adoptNewer()) return;
   currentView=name;
   view.className='v-'+name;
   document.body.dataset.view=name;
@@ -2890,7 +2945,8 @@ const VIEWS = {
     }).join('');
     const cleared=Object.keys(sv).length;
     const left=Math.max(0, STAGE_COIN_CAP-d.p.stageCoins);
-    const leftNew=Math.max(0, STAGE_FIRST_CAP-d.p.firstCoins);
+    const unc=STAGES.length-cleared;
+    const leftNew=Math.min(unc*2, Math.max(0, STAGE_FIRST_CAP-d.p.firstCoins));
     view.innerHTML=`
       <div class="backrow"><button class="iconbtn" data-act="home" aria-label="返回">${ic('back')}</button><h2>乘法實戰家 ${cleared}/${STAGES.length}</h2></div>
       ${helper('一關 10 題，答對 8 題就過關。答錯的會再出一次')}
@@ -3085,13 +3141,14 @@ function startTimed(){
           requestAnimationFrame(()=>{ if(f0) f0.style.transition=''; }); }
   game.timer=setInterval(()=>{
     if(!game) return;
+    if(document.getElementById('modal')) return;   /* 說明／確認彈窗打開時，時間先停住 */
     game.timeLeft--;
     updateTimeBar();
     if(game.timeLeft<=0) finishTimed();
   },1000);
 }
 function endGame(){
-  if(game){ clearInterval(game.timer); clearTimeout(game.t); }
+  if(game){ clearInterval(game.timer); clearTimeout(game.t); clearTimeout(game.badT); }
   game=null;
 }
 function updateTimeBar(){
@@ -3158,7 +3215,7 @@ function submit(val){
   game.locked=true;
   const it=game.cur, ans=it.a*it.b, ok=val===ans;
   const d=ensureDaily();
-  record(it.a,it.b,ok);
+  if(!it.retry) record(it.a,it.b,ok);   /* 答錯重來的那一次不算熟練度 */
   const qc=$('#qcard'), slot=$('#slot'), fb=$('#fb');
   qc.classList.remove('enter');
   if(ok){
@@ -3285,7 +3342,8 @@ function coinsLeftToday(){
     t.claimed.forEach(c=>{ if(!c) left++; });
     if(!t.bonus) left += T.bonus;
   });
-  left += Math.max(0, STAGE_FIRST_CAP - d.p.firstCoins);
+  const mm=me(), unc=STAGES.filter(S=>!(mm.stages||{})[S.n]).length;   /* 關卡全破就沒有首次通關的金幣了 */
+  left += Math.min(unc*2, Math.max(0, STAGE_FIRST_CAP - d.p.firstCoins));   /* 一關一次全對可以拿 2 枚 */
   left += Math.max(0, STAGE_COIN_CAP  - d.p.stageCoins);
   if(!d.p.timedCoins) left += 1;
   return left;
@@ -3299,7 +3357,7 @@ function coinDoneCheck(){
   setTimeout(()=>{
     showModal(`<div class="owl" aria-hidden="true" style="width:74px">${bearSVG()}</div>
       <h3>今天的金幣拿完囉！</h3>
-      <p>你今天把 <b>${COIN_MAX_DAY}</b> 枚金幣全部拿到手了，很認真喔。</p>
+      <p>你今天的金幣全部拿到手了，很認真喔。</p>
       <p>遊戲還是可以繼續玩，明天金幣就會再長出來。</p>
       <div class="row"><button class="btn sun big" data-act="closeModal">知道了！</button></div>`);
     sfx.fanfare();
@@ -3360,7 +3418,13 @@ function draw(){
   const btn=$('#drawbtn'); if(btn) btn.disabled=true;
   const m=$('#machine'); if(m){ m.classList.remove('spin'); void m.offsetWidth; m.classList.add('spin'); }
   sfx.spin();
-  setTimeout(()=>{ drawing=false; showReveal(s,true); }, reduceMotion?100:1000);
+  const who=state.activeId;
+  setTimeout(()=>{
+    drawing=false;
+    /* 轉蛋動畫跑完前就離開轉蛋機或換人了，就不要硬跳出來 */
+    if(currentView!=='book' || state.activeId!==who){ justOpened=''; return; }
+    showReveal(s,true);
+  }, reduceMotion?100:1000);
 }
 /* 這一抽剛好打開新分類的話，收下貼紙之後跳出來報喜 */
 let justOpened = '';
@@ -3414,6 +3478,7 @@ function snakeRun(){
   game.timer = setInterval(()=>{
     if(!game || game.mode!=='snake') return;
     if(currentView!=='snake'){ endGame(); return; }
+    if(document.getElementById('modal')) return;   /* 彈窗打開時蛇先不要動 */
     if(game.paused || game.over) return;
     snakeStep();
   }, game.ms);
@@ -3806,7 +3871,7 @@ function huntPick(v, el){
 }
 function huntHint(){
   if(!game || game.mode!=='hunt' || game.locked) return;
-  const ans=game.table*game.order[game.pos];
+  const hp=game.pairs[game.order[game.pos]-1], ans=hp.a*hp.b;   /* 綜合挑戰 table=0，答案要從 pairs 拿 */
   const el=document.querySelector(`.anum[data-arg="${ans}"]:not(.on)`);
   if(!el) return;
   game.hinted=true; game.hints++;
@@ -3888,8 +3953,9 @@ function markReviewed(){
   for(let b=1;b<=9;b++) if(!revOpen[b]) return;
   if(!d.p.revk[reviewTable]){
     d.p.revk[reviewTable]=1; d.p.reviews++;
+    markPlayed();                                 /* 只玩翻翻樂也要算今天有玩過 */
     save(); checkQuests();
-    toast(`${reviewTable} 的乘法複習完成！`);
+    toast(`${tableName(reviewTable)}複習完成！`);
   }
 }
 function flipAll(open){
@@ -4156,6 +4222,7 @@ function pairClear(){
 function pairTap(i){
   const g=game; if(!g || g.mode!=='pair' || g.locked) return;
   if(g.style==='diff') return diffTap(i);
+  if(g.badT){ clearTimeout(g.badT); g.badT=null; }   /* 小孩手快：上一次配錯的收尾不要洗掉這次選的卡 */
   const c=g.cards[i]; if(!c || c.ok) return;
   g.cards.forEach(x=>{ x.bad=false; });
   if(g.sel===i){ g.sel=-1; sfx.tap(); go('pair'); return; }
@@ -4189,8 +4256,9 @@ function pairTap(i){
     go('pair');
     pnote(`慢慢來，${f.a} × ${f.b} = ${f.p}，${c.a} × ${c.b} = ${c.p}，不一樣喔`);
     sfx.wrong();
-    g.t=setTimeout(()=>{
-      if(game && game.mode==='pair' && !game.locked){ pairClear(); go('pair'); pnote('再找找看，哪兩張的答案一樣？'); }
+    g.badT=setTimeout(()=>{
+      g.badT=null;
+      if(game===g && game.mode==='pair' && !game.locked && g.sel<0){ pairClear(); go('pair'); pnote('再找找看，哪兩張的答案一樣？'); }
     }, 1200);
   }
 }
@@ -4389,7 +4457,10 @@ document.addEventListener('keydown', e=>{
     else if(e.key==='Enter'){ if(document.activeElement && document.activeElement.dataset && document.activeElement.dataset.act==='next'){ e.preventDefault(); } pressKey('ok'); e.preventDefault(); }
   }
 });
-document.addEventListener('visibilitychange', ()=>{ if(document.hidden) save(); });
+document.addEventListener('visibilitychange', ()=>{
+  if(document.hidden){ if(!tabStale) save(); return; }   /* 過期的分頁不要回寫 */
+  if(!GUEST && !inGame() && newerSave()) adoptNewer();
+});
 
 /* 「最後更新」直接讀這個檔案的 Last-Modified，不用自己維護日期 */
 (function(){
