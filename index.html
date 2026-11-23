@@ -705,6 +705,7 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 }
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition:none!important}
+  .bal{animation:none}   /* 進場的淡入上飄：不要只是縮到 0.01ms，整個不做 */
 }
 
 /* ===================== 乘乘熱氣球：嘉年華元件 ===================== */
@@ -824,7 +825,10 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 .modes{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:26px}
 @media (min-width:700px){ .modes{grid-template-columns:repeat(3,1fr);gap:22px} }
 .bal{background:none;border:0;padding:0 2px 8px;cursor:pointer;display:flex;flex-direction:column;
-  align-items:center;text-align:center;color:var(--ink);animation:none}
+  align-items:center;text-align:center;color:var(--ink);
+  animation:balrise .72s cubic-bezier(.22,.92,.3,1) var(--ed,0s) backwards}
+/* 回到首頁就重畫一次 .modes，所以這段進場每次進主畫面都會再跑一遍 */
+@keyframes balrise{from{opacity:0;transform:translateY(32px)}to{opacity:1;transform:none}}
 .bal .env{position:relative;container-type:inline-size;width:100%;max-width:220px;aspect-ratio:auto;
   filter:none;animation:balfloat var(--t,5s) ease-in-out var(--d,0s) infinite}
 @media (min-width:700px){ .bal .env{max-width:290px} }
@@ -2389,7 +2393,7 @@ const MODES = [
 const EASY_ACTS = MODES.filter(x=>x.grp==='easy').map(x=>x.act);
 function balloonsHTML(m){
   return MODES.map((x,i)=>`<button class="bal" data-act="${x.act}"
-      style="${cvar(balColor(i))};--d:${(i*0.43).toFixed(2)}s;--t:${(4.6+(i%3)*0.8).toFixed(1)}s">
+      style="${cvar(balColor(i))};--d:${(i*0.43).toFixed(2)}s;--t:${(4.6+(i%3)*0.8).toFixed(1)}s;--ed:${(i*0.08).toFixed(2)}s">
       <span class="env">${balloon({shape:x.shape,pat:x.pat,glyph:x.ic})}<span class="tag ${x.grp}">${x.grp==='easy'?ic('rookie'):''}${x.name}</span></span>
       <span class="sub">${x.sub(m)}</span></button>`).join('');
 }
