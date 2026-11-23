@@ -161,6 +161,11 @@ h1,h2,h3,p{margin:0}
 .iconbtn{background:var(--surface2);border:1.5px solid var(--hair);border-radius:999px;width:38px;height:38px;cursor:pointer;font-size:19.5px;display:grid;place-items:center;flex:none}
 
 main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
+
+/* 進主畫面的淡入上飄：由上而下一個接一個。延遲（--ed）由 riseHome() 依畫面順序填，
+   置頂那排在 #view 外面所以本來就不會動，陪我玩的小夥伴掛在 body 上也不受影響 */
+.rise{animation:risein 1.44s cubic-bezier(.22,.92,.3,1) var(--ed,0s) backwards}
+@keyframes risein{from{opacity:0;transform:translateY(32px)}to{opacity:1;transform:none}}
 #view.v-home,#view.v-welcome{max-width:1080px}
 .card{background:var(--surface);border:1.5px solid var(--hair);border-radius:22px;box-shadow:0 5px 15px var(--shadow);padding:16px}
 .btn{font-weight:700;border:1.5px solid var(--hair);border-radius:16px;padding:11px 18px;background:var(--surface);color:var(--ink);box-shadow:0 4px 12px var(--shadow);cursor:pointer;transition:transform .08s,box-shadow .08s;font-size:19.5px}
@@ -708,7 +713,7 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 }
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition:none!important}
-  .bal{animation:none}   /* 進場的淡入上飄：不要只是縮到 0.01ms，整個不做 */
+  .rise{animation:none}   /* 進場的淡入上飄：不要只是縮到 0.01ms，整個不做 */
 }
 
 /* ===================== 乘乘熱氣球：嘉年華元件 ===================== */
@@ -828,10 +833,7 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 .modes{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:26px}
 @media (min-width:700px){ .modes{grid-template-columns:repeat(3,1fr);gap:22px} }
 .bal{background:none;border:0;padding:0 2px 8px;cursor:pointer;display:flex;flex-direction:column;
-  align-items:center;text-align:center;color:var(--ink);
-  animation:balrise .72s cubic-bezier(.22,.92,.3,1) var(--ed,0s) backwards}
-/* 回到首頁就重畫一次 .modes，所以這段進場每次進主畫面都會再跑一遍 */
-@keyframes balrise{from{opacity:0;transform:translateY(32px)}to{opacity:1;transform:none}}
+  align-items:center;text-align:center;color:var(--ink)}
 .bal .env{position:relative;container-type:inline-size;width:100%;max-width:220px;aspect-ratio:auto;
   filter:none;animation:balfloat var(--t,5s) ease-in-out var(--d,0s) infinite}
 @media (min-width:700px){ .bal .env{max-width:290px} }
@@ -2400,9 +2402,24 @@ const MODES = [
     }}
 ];
 const EASY_ACTS = MODES.filter(x=>x.grp==='easy').map(x=>x.act);
+/* ---- 進主畫面的淡入上飄 ---- */
+const RISE_STEP = 0.08;   /* 上下相鄰的物件差幾秒 */
+const RISE_LATE = 1.00;   /* 兩個攤子和轉蛋機再晚幾秒才進來 */
+/* 由上而下：旗幟→大標→副標→換人→連續天數那排→訪客提示→小提示→六顆氣球，
+   最後才是轉蛋機和兩個攤子。置頂那排在 #view 外面、小夥伴掛在 body 上，都不會被選到。
+   querySelectorAll 回傳的本來就是畫面順序，所以不用自己排 */
+function riseHome(){
+  const main=[...document.querySelectorAll(
+    '#view .bunting, #view .hero h1, #view .subt, #view .who, #view .chips, #view .guestbar, #view .helper, #view .bal')];
+  main.forEach((el,i)=>{ el.classList.add('rise'); el.style.setProperty('--ed', (i*RISE_STEP).toFixed(2)+'s'); });
+  const late=((main.length-1)*RISE_STEP + RISE_LATE).toFixed(2)+'s';
+  document.querySelectorAll('#view .gdock, #view .sdock').forEach(el=>{
+    el.classList.add('rise'); el.style.setProperty('--ed', late);
+  });
+}
 function balloonsHTML(m){
   return MODES.map((x,i)=>`<button class="bal" data-act="${x.act}"
-      style="${cvar(balColor(i))};--d:${(i*0.43).toFixed(2)}s;--t:${(4.6+(i%3)*0.8).toFixed(1)}s;--ed:${(i*0.08).toFixed(2)}s">
+      style="${cvar(balColor(i))};--d:${(i*0.43).toFixed(2)}s;--t:${(4.6+(i%3)*0.8).toFixed(1)}s">
       <span class="env">${balloon({shape:x.shape,pat:x.pat,glyph:x.ic})}<span class="tag ${x.grp}">${x.grp==='easy'?ic('rookie'):''}${x.name}</span></span>
       <span class="sub">${x.sub(m)}</span></button>`).join('');
 }
@@ -2481,15 +2498,17 @@ const MK_IC = {'\u{1F530}':'rookie', '\u{1F642}':'smile'};
 const mk = t => String(t).replace(/[\u{1F530}\u{1F642}]/gu, m=>ic(MK_IC[m]));
 /* 右上角的金幣，點一下說明那是什麼 */
 const INFO = {
+  /* 這份清單是寫給七歲小孩看的：一句一件事、不講上限數字、不用「首次通關」這種詞。
+     規則細節（每天幾枚、誰有上限）留給下面那行動態的「今天還能拿 N 枚」和給大人的小字 */
   coin:{t:'金幣怎麼拿？', ic:'coin', li:[
-    '<b>首頁的攤子</b>：兩個攤子各三個任務，每完成一個拿 1 枚',
-    '一個攤子三個都完成，初級再送 1 枚、超級再送 2 枚（攤子一天最多 9 枚）',
-    '<b>乘法實戰家</b>：還沒過的關卡，一次全對拿 2 枚、普通過關 1 枚（一天最多 2 枚）',
-    `已經過關的再玩一次，每天還可以再拿 ${STAGE_COIN_CAP} 枚`,
-    `<b>比快挑戰</b>：60 秒內答對 ${TIMED_GOAL} 題，每天 1 枚`,
-    `所以<b>一天最多 ${COIN_MAX_DAY} 枚</b>，拿完了明天再長出來`,
-    `${DRAW_COST} 枚金幣轉一次轉蛋，不會轉到重複的`],
-    note:'金幣每天有上限，是為了眼睛休息 🙂。'}
+    '玩完遊戲，回首頁看攤子',
+    '攤子上做到的事，點一下就拿 1 枚',
+    '一個攤子三件事都做到，還會多送你金幣',
+    '乘法實戰家：過關就有金幣，黃色（還沒過）的那幾關給比較多',
+    `比快挑戰：答對 ${TIMED_GOAL} 題，有 1 枚`,
+    `${DRAW_COST} 枚金幣可以轉一次轉蛋`,
+    '今天的金幣拿完就沒有了，明天會再長出來'],
+    note:`金幣每天有上限（一天最多 ${COIN_MAX_DAY} 枚），是為了眼睛休息 🙂。`}
 };
 function showInfo(kind){
   const f=INFO[kind]; if(!f) return;
@@ -2727,6 +2746,7 @@ const VIEWS = {
       <section class="modes">${balloonsHTML(m)}</section>
       <div class="gdock"><button class="gbtn" data-act="book" aria-label="我的轉蛋機">${gachaSVG()}<b>我的轉蛋機</b></button></div>
       <div class="sdock"><div class="sdrow">${stalls}</div></div>`;
+    riseHome();   /* 同一拍就掛上去，不然會先閃一下完整的畫面 */
   },
 
   players(){
