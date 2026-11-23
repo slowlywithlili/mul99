@@ -86,7 +86,7 @@
   --hill0:#C9DCDA; --hill1:#D6E8C6; --hill2:#BEDAA6; --hill3:#A3C98A; --hill4:#8AB670;
   /* 攤位列的寬度；換算成高度，好給主畫面留位置 */
   --sdw:min(100vw - 16px,360px,44vh);
-  --credh:46px;   /* 畫面最下面留給「利利寫生活製作」的高度，攤位不能蓋到 */
+  --credh:34px;   /* 畫面最下面留給「利利寫生活製作」的高度，攤位不能蓋到。實際值由 fitCredit() 量 */
   --dockh:calc((min(100vw - 16px,360px,44vh) - 12px)/2*0.8625 + var(--credh) + 10px);
   --ic2:color-mix(in srgb,currentColor 42%,var(--surface));   /* 符號的第二層顏色 */
   --on-color:#3A4650;
@@ -547,14 +547,17 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 .lkey:active{transform:translateY(4px);box-shadow:0 1px 3px var(--shadow)}
 .lkey.fn{background:var(--surface2);font-size:21px}
 
-.credit{display:flex;flex-wrap:wrap;justify-content:center;align-items:baseline;gap:2px 6px;
-  padding:4px 12px calc(7px + env(safe-area-inset-bottom,0px));font-size:14.5px;
-  color:var(--ink);font-weight:600;line-height:1.5;text-align:center}
-/* 窄螢幕頁尾會變兩、三行，攤位要再往上一點才不會蓋到 */
-@media (max-width:560px){ :root{--credh:70px} }
-@media (max-width:372px){ :root{--credh:92px} }
-.credit a{display:inline-block;color:var(--ink);text-decoration:none;padding:1px 9px;border:2px dashed var(--hair);border-radius:999px;background:var(--surface2);opacity:.9}
+.credit{display:flex;flex-wrap:wrap;justify-content:center;align-items:baseline;gap:1px 5px;
+  padding:1px 10px 3px;font-size:12.5px;   /* 安全區由 html 的 padding 負責，這裡不要再加一次 */
+  color:var(--ink);font-weight:600;line-height:1.45;text-align:center}
+/* --credh 由 fitCredit() 量實際高度填進來，下面這幾個只是 JS 還沒跑之前的備胎 */
+@media (max-width:560px){ :root{--credh:52px} }
+@media (max-width:372px){ :root{--credh:70px} }
+.credit a{display:inline-block;color:var(--ink);text-decoration:none;padding:0 7px;border:1.5px dashed var(--hair);border-radius:999px;background:var(--surface2);opacity:.9}
 .credit a:hover{color:var(--ink);opacity:1}
+/* 字縮小了，但手指按的範圍要留住：上下各往外撐 9px，不影響版面高度 */
+.credit a{position:relative}
+.credit a::after{content:"";position:absolute;inset:-9px -5px}
 .credit .upd{display:inline-block;white-space:nowrap}
 
 /* 全站的圖案都是手繪 SVG，不再需要幫 emoji 降彩度 */
@@ -973,7 +976,7 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 <main id="view"></main>
 <div id="fx" aria-hidden="true"></div>
 <div class="toast" id="toast" role="status"></div>
-<footer class="credit">
+<footer class="credit nozy">
   <span class="made"><a href="https://www.instagram.com/slowlywithlili/" target="_blank" rel="noopener noreferrer">利利寫生活</a>製作，意見回饋請私訊留言</span>
   <span class="upd" id="upd"></span>
 </footer>
@@ -2404,7 +2407,7 @@ const MODES = [
 const EASY_ACTS = MODES.filter(x=>x.grp==='easy').map(x=>x.act);
 /* ---- 進主畫面的淡入上飄 ---- */
 const RISE_STEP = 0.08;   /* 上下相鄰的物件差幾秒 */
-const RISE_LATE = 1.00;   /* 兩個攤子和轉蛋機再晚幾秒才進來 */
+const RISE_LATE = 0.50;   /* 兩個攤子和轉蛋機再晚幾秒才進來 */
 /* 由上而下：旗幟→大標→副標→換人→連續天數那排→訪客提示→小提示→六顆氣球，
    最後才是轉蛋機和兩個攤子。置頂那排在 #view 外面、小夥伴掛在 body 上，都不會被選到。
    querySelectorAll 回傳的本來就是畫面順序，所以不用自己排 */
@@ -2732,7 +2735,7 @@ const VIEWS = {
     const tip = firstTime ? '第一次玩嗎？先按綠色的 🔰 氣球，從「乘法翻翻樂」開始。'
       : m.coins>=DRAW_COST ? `你有 ${m.coins} 枚金幣，可以去右上角的轉蛋機玩了！`
       : ownedCount>=STICKERS.length ? `${STICKERS.length} 種貼紙全部收集完成，你好厲害！`
-      : `完成下面攤子的任務就能拿金幣，集滿 ${STICKERS.length} 種貼紙吧！`;
+      : '';   /* 平常不放話——攤子和氣球自己說得夠清楚了，畫面留白比較好看 */
     view.innerHTML=`
       ${TITLE()}
         ${ GUEST ? '' : `<button class="who" data-act="players">${avaSVG(m.avatar,'ava')}<b>${esc(m.name)}</b><span class="sw">換人 ▾</span></button>` }
@@ -2742,7 +2745,7 @@ const VIEWS = {
         </div>
       </section>
       ${ GUEST ? `<div class="guestbar">${ic('warn','lg')}<span><b>訪客模式</b>：沒有金幣可以蒐集，貼紙和紀錄也不會留下來</span><button class="btn small" data-act="toName">取名字</button></div>` : '' }
-      ${helper(mk(tip))}
+      ${tip?helper(mk(tip)):''}
       <section class="modes">${balloonsHTML(m)}</section>
       <div class="gdock"><button class="gbtn" data-act="book" aria-label="我的轉蛋機">${gachaSVG()}<b>我的轉蛋機</b></button></div>
       <div class="sdock"><div class="sdrow">${stalls}</div></div>`;
@@ -4525,6 +4528,19 @@ document.addEventListener('visibilitychange', ()=>{
   const z=n=>String(n).padStart(2,'0');
   if(el && !isNaN(d)) el.textContent=`／最後更新：${d.getFullYear()}.${z(d.getMonth()+1)}.${z(d.getDate())}`;
 })();
+/* 頁尾實際多高就留多高，攤位剛好停在它正上方。
+   字一改、換個寬度變成兩行三行都會自己跟上，不用每個斷點手調 */
+let credT=null;
+function fitCredit(){
+  const el=document.querySelector('.credit');
+  if(!el) return;
+  /* +6 是留一點呼吸：捲到最底時文件尾端有幾 px 的零頭，不留的話攤子會壓到字 */
+  const h=Math.ceil(el.getBoundingClientRect().height)+6;
+  if(h>6) document.documentElement.style.setProperty('--credh', h+'px');
+}
+addEventListener('resize', ()=>{ clearTimeout(credT); credT=setTimeout(fitCredit, 80); });
+if(document.fonts && document.fonts.ready) document.fonts.ready.then(fitCredit);
+fitCredit();
 ensureDaily();
 const mdw=document.getElementById('meadow'); if(mdw) mdw.innerHTML=meadowHTML();
 zyApply();          /* 先決定要不要注音，之後畫面一有新文字就會自動補選擇子 */
