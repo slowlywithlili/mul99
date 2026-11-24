@@ -39,7 +39,7 @@ $OLD/fontenv/bin/python3 make-font.py \
   $OLD/fontdl/BpmfGenSenRounded-M.ttf $OLD/fontdl/BpmfGenSenRounded-B.ttf
 ```
 
-- 目前 **978 字**。字數只會往上，突然變少代表有東西被誤刪。
+- 目前 **1012 字**。字數只會往上，突然變少代表有東西被誤刪。
 - 唯一的警告「什=ㄕㄜˊ 字型只有 shen2／shi2」是舊有的、無害。
 - `$OLD` 是**更早一個 session 的暫存區，隨時可能被清掉**。清掉的話要重建 venv（fonttools + brotli）並重新下載 [ButTaiwan/bpmfvs](https://github.com/ButTaiwan/bpmfvs) 的 `BpmfGenSenRounded.zip`（SIL OFL 1.1）。多音字對照表在 `zhuyin.txt`。
 - 注音**不是 `<ruby>`**，是用 Unicode 變體選擇子（U+E0100–E01EF，代理對 `\uDB40[\uDC00-\uDFFF]`）畫進漢字字形裡。`zyOne()`（index.html:1321）只對多音字插選擇子；`zySkip()`（index.html:1312）會跳過 SCRIPT/STYLE/TEXTAREA/INPUT、SVG 命名空間、和帶 `nozy` class 的節點。
@@ -123,7 +123,7 @@ curl -s "https://slowlywithlili.github.io/mul99/?cb=$RANDOM" -o /tmp/live.html
 
 ```bash
 cd ~/personal/mul99-tests
-./run.sh              # 完整矩陣（21 支）
+./run.sh              # 完整矩陣（22 支）
 ./run.sh r3.html      # 只跑一支
 ```
 
@@ -137,6 +137,7 @@ cd ~/personal/mul99-tests
 | `r4` | 遊戲中提示句的位置與不位移、貪食蛇任務＝兩條彩虹、任務完成的一句話、光暈再縮小、鼓勵句增刪、刪畫文案、說明清單的句號、已淘汰用詞 |
 | `r5` | 17 個場景的資料完整、舊場景順序沒動、場景道具不跟貼紙共用、同一場景不重複出現、回首頁氣球的圓底 |
 | `r6` | 補氣站：誰會進去、何時出現、兩天才算補好、答錯歸零、金幣、訪客、首頁氣球、沒動到熟練度 |
+| `r7` | 頁尾三段（連結、分隔線、最後更新）、「關於遊戲」整頁的內容與連結、回首頁、`HELP.about`、遊戲中按到會先問 |
 | `rise` / `foot` | 進場動畫 / 頁尾與首頁提示 |
 | `host` / `r2host` / `visual` / `drv_visual` | 版面（多畫面 × 多寬度）|
 | `v_all` | 貼紙、轉蛋、畫作 |
@@ -243,6 +244,16 @@ cd ~/personal/mul99-tests
   翻翻樂不呼叫 `record`，所以它自動不算，也不要幫它加。
 - **補氣站的 `m.pump` 和熟練度 `m.facts` 不可以合併。** facts 只有 `{c,w,s}`，沒有日期，
   而且 `key()` 把 5×3 和 3×5 併成同一題；補氣站要日期、而且 7×8 和 8×7 分開算。
+- **頁尾固定三段：`利利寫生活 製作｜關於遊戲｜最後更新：年.月.日`。**
+  「｜」要掛在前一段的尾巴（`<span class="sep">`），不能獨立一格 —— 頁尾在 320px 會換行，
+  獨立一格的話分隔線會變成下一行的開頭。日期讀 `document.lastModified`，不要手動維護。
+  站內換頁用 `<button class="lk">`，外部連結才用 `<a>`，兩者共用同一條 `.credit` 樣式。
+- **寫給家長的話有兩份，不要合併也不要互相取代**：頁尾進去的「關於遊戲」整頁（`VIEWS.about`，
+  長版：誰做的、為什麼做、紀錄存在哪裡、iOS 要加到主畫面），和「挑戰者」頁下方那張三句卡片
+  （短版，家長在切換孩子的當下才看得到）。兩條路徑不一樣，少一邊就有人看不到。
+- **「關於遊戲」整頁是給大人看的，但沒有標 `nozy`**（跟「挑戰者」那張卡片一致），
+  所以改它的字**一樣要重建注音字型**，「一」「不」的變調也要補進 `zhuyin.txt` 的 `[詞]` 區。
+  `.about` 靠左、行高 1.8、18px，刻意跟給小孩的畫面（置中、大字、短句）長得不一樣。
   但 `m.pump` **只存日期和補氣進度**，不要再抄一份 c/w/s。
 - **`PUMP_N` / `PUMP_DAYS` / `PUMP_MAX` 一定要宣告在 `fixPump()` 之前。**
   讀存檔（`migrate → fixPlayer → fixPump`）是在載入當下跑的，常數宣告晚了會丟 TDZ 例外，整個 app 打不開。

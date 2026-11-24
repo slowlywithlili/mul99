@@ -577,12 +577,25 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 /* --credh 由 fitCredit() 量實際高度填進來，下面這幾個只是 JS 還沒跑之前的備胎 */
 @media (max-width:560px){ :root{--credh:52px} }
 @media (max-width:372px){ :root{--credh:70px} }
-.credit a{display:inline-block;color:var(--ink);text-decoration:none;padding:0 7px;border:1.5px dashed var(--hair);border-radius:999px;background:var(--surface2);opacity:.9}
-.credit a:hover{color:var(--ink);opacity:1}
+.credit a,.credit .lk{display:inline-block;color:var(--ink);text-decoration:none;padding:0 7px;border:1.5px dashed var(--hair);border-radius:999px;background:var(--surface2);opacity:.9}
+.credit .lk{font:inherit;line-height:inherit;cursor:pointer}
+.credit a:hover,.credit .lk:hover{color:var(--ink);opacity:1}
 /* 字縮小了，但手指按的範圍要留住：上下各往外撐 9px，不影響版面高度 */
-.credit a{position:relative}
-.credit a::after{content:"";position:absolute;inset:-9px -5px}
+.credit a,.credit .lk{position:relative}
+.credit a::after,.credit .lk::after{content:"";position:absolute;inset:-9px -5px}
+/* 分隔線掛在前一段的尾巴，換行時才不會變成下一行的開頭 */
+.credit .sep{color:var(--muted);opacity:.55;font-style:normal;padding:0 1px}
 .credit .upd{display:inline-block;white-space:nowrap}
+
+/* 「關於遊戲」：整頁都是寫給大人看的長文，靠左讀、行高放寬 */
+.about{text-align:left;margin-bottom:14px}
+.about h3{font-size:22px;margin-bottom:9px}
+.about p{font-size:18px;line-height:1.8;margin:0 0 11px;color:var(--ink)}
+.about p:last-child{margin-bottom:0}
+/* 文章裡唯一能點的東西，做得跟頁尾的連結一樣，大人一眼看得出來、手指也按得到 */
+.about a{display:inline-block;color:var(--ink);text-decoration:none;padding:1px 9px;
+  border:1.5px dashed var(--hair);border-radius:999px;background:var(--surface2)}
+.about .tip{margin-top:15px;color:var(--muted);font-size:17px}
 
 /* 全站的圖案都是手繪 SVG，不再需要幫 emoji 降彩度 */
 
@@ -1026,7 +1039,8 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 <div id="fx" aria-hidden="true"></div>
 <div class="toast" id="toast" role="status"></div>
 <footer class="credit nozy">
-  <span class="made"><a href="https://www.instagram.com/slowlywithlili/" target="_blank" rel="noopener noreferrer">利利寫生活</a>製作，意見回饋請私訊留言</span>
+  <span class="made"><a href="https://www.instagram.com/slowlywithlili/" target="_blank" rel="noopener noreferrer">利利寫生活</a> 製作<span class="sep">｜</span></span>
+  <span><button type="button" class="lk" data-act="about">關於遊戲</button><span class="sep">｜</span></span>
   <span class="upd" id="upd"></span>
 </footer>
 
@@ -1495,7 +1509,7 @@ const PRAISE = ['答對了！','就是這樣！','完全正確！','你算出來
 /* 字型自己會畫注音，這裡只放「預設讀音不對」的字：字後面那個看不見的
    異體字選擇子（U+E01E0~5）會挑出正確的讀音，E01E0 代表不標注音 */
 const ZY_CHAR_SRC = "什\uDB40\uDDE0,喔\uDB40\uDDE1,囉\uDB40\uDDE2,鑽\uDB40\uDDE1";
-const ZY_WORD_SRC = "一下=一\uDB40\uDDE1下,一個=一\uDB40\uDDE1個,一回=一\uDB40\uDDE2回,一定=一\uDB40\uDDE1定,一對=一\uDB40\uDDE1對,一張=一\uDB40\uDDE2張,一排=一\uDB40\uDDE2排,一格=一\uDB40\uDDE2格,一條=一\uDB40\uDDE2條,一樣=一\uDB40\uDDE1樣,一次=一\uDB40\uDDE1次,一步=一\uDB40\uDDE1步,一起=一\uDB40\uDDE2起,一遍=一\uDB40\uDDE1遍,一關=一\uDB40\uDDE2關,一顆=一\uDB40\uDDE2顆,一題=一\uDB40\uDDE2題,一點=一\uDB40\uDDE2點,不一樣=不一\uDB40\uDDE1樣,不到=不\uDB40\uDDE1到,不太=不\uDB40\uDDE1太,不是=不\uDB40\uDDE1是,不會=不\uDB40\uDDE1會,不用=不\uDB40\uDDE1用,不要=不\uDB40\uDDE1要,不見=不\uDB40\uDDE1見,不計=不\uDB40\uDDE1計,數數看=數\uDB40\uDDE1數\uDB40\uDDE1看,重玩=重\uDB40\uDDE1玩,長大=長\uDB40\uDDE1大";
+const ZY_WORD_SRC = "一下=一\uDB40\uDDE1下,一個=一\uDB40\uDDE1個,一台=一\uDB40\uDDE2台,一回=一\uDB40\uDDE2回,一定=一\uDB40\uDDE1定,一對=一\uDB40\uDDE1對,一張=一\uDB40\uDDE2張,一排=一\uDB40\uDDE2排,一格=一\uDB40\uDDE2格,一條=一\uDB40\uDDE2條,一樣=一\uDB40\uDDE1樣,一次=一\uDB40\uDDE1次,一步=一\uDB40\uDDE1步,一段=一\uDB40\uDDE1段,一起=一\uDB40\uDDE2起,一遍=一\uDB40\uDDE1遍,一關=一\uDB40\uDDE2關,一頁=一\uDB40\uDDE1頁,一顆=一\uDB40\uDDE2顆,一題=一\uDB40\uDDE2題,一點=一\uDB40\uDDE2點,不一樣=不一\uDB40\uDDE1樣,不再=不\uDB40\uDDE1再,不到=不\uDB40\uDDE1到,不太=不\uDB40\uDDE1太,不是=不\uDB40\uDDE1是,不會=不\uDB40\uDDE1會,不用=不\uDB40\uDDE1用,不要=不\uDB40\uDDE1要,不見=不\uDB40\uDDE1見,不計=不\uDB40\uDDE1計,數數看=數\uDB40\uDDE1數\uDB40\uDDE1看,重玩=重\uDB40\uDDE1玩,長大=長\uDB40\uDDE1大";
 /* ZY-TABLE-END */
 const ZY_C = {}, ZY_W = {};
 let ZY_WMAX = 0;
@@ -2868,6 +2882,9 @@ const HELP = {
   gallery:{t:'我的畫廊', li:[
     '尋寶完成的畫都在這裡。',
     '點一張看大圖。']},
+  about:{t:'關於遊戲', li:[
+    '這一頁是寫給大人看的。',
+    '左上角的箭頭可以回去繼續玩。']},
   players:{t:'挑戰者', li:[
     '最多 6 位挑戰者。',
     '每個人的進度分開記。',
@@ -3174,6 +3191,24 @@ const VIEWS = {
         </ol>
         <p class="note" style="margin-top:10px;text-align:left">iPhone、iPad 請用 Safari 的「分享 → 加入主畫面」，
           從主畫面的圖示進來玩，紀錄比較不會被系統清掉。</p>
+      </section>`;
+  },
+
+  /* 頁尾「關於遊戲」進來的那一頁，整頁都是寫給大人看的 */
+  about(){
+    view.innerHTML=`
+      <div class="backrow"><button class="iconbtn" data-act="home" aria-label="返回">${ic('back')}</button><h2>給大人的說明</h2></div>
+      <section class="card about">
+        <h3>關於這個遊戲</h3>
+        <p>我是利利，兩個孩子的媽媽。這個遊戲是做給我女兒的。我在遊戲裡加了很多正向語言和鼓勵機制，希望陪孩子度過枯燥的背誦過程。</p>
+        <p>女兒現在不再排斥乘法，所以我分享出來，希望這個遊戲也對大家有幫助。</p>
+        <p>有任何建議，歡迎私訊我的 IG <a href="https://www.instagram.com/slowlywithlili/" target="_blank" rel="noopener noreferrer">利利寫生活</a>，我會慢慢改。</p>
+      </section>
+      <section class="card about">
+        <h3>怎麼保存紀錄？</h3>
+        <p>遊戲紀錄只存在這台裝置的瀏覽器裡，沒有上傳到網路。換裝置、換瀏覽器、清除瀏覽資料，紀錄就會不見。所以請固定用同一台裝置、同一個瀏覽器玩。</p>
+        <p>iPhone、iPad 的話，用 Safari 玩時，如果一段時間沒有打開這個遊戲，系統可能會自動清掉紀錄。建議用 Safari 的<b>「分享 → 加入主畫面」</b>，之後都從主畫面的圖示進來玩，紀錄比較不會被清掉。</p>
+        <p class="tip">小提醒：用平板玩畫面比較大，玩起來最舒服。</p>
       </section>`;
   },
 
@@ -4916,6 +4951,7 @@ document.addEventListener('click', e=>{
     case 'bonus': claimBonus(arg); break;
     case 'tier': sfx.tap(); openTier(arg); break;
     case 'players': closeModal(); if(inGame()){ askQuit(); break; } endGame(); go('players'); break;
+    case 'about': closeModal(); if(inGame()){ askQuit(); break; } endGame(); go('about'); break;
     case 'addForm': go('addPlayer'); break;
     case 'setava': {
       const m=me(), st=STICKER_BY[arg];
@@ -5030,7 +5066,7 @@ document.addEventListener('visibilitychange', ()=>{
 (function(){
   const el=document.getElementById('upd'), d=new Date(document.lastModified);
   const z=n=>String(n).padStart(2,'0');
-  if(el && !isNaN(d)) el.textContent=`／最後更新：${d.getFullYear()}.${z(d.getMonth()+1)}.${z(d.getDate())}`;
+  if(el && !isNaN(d)) el.textContent=`最後更新：${d.getFullYear()}.${z(d.getMonth()+1)}.${z(d.getDate())}`;
 })();
 /* 頁尾實際多高就留多高，攤位剛好停在它正上方。
    字一改、換個寬度變成兩行三行都會自己跟上，不用每個斷點手調 */
