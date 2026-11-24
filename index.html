@@ -294,6 +294,21 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 .stat b{display:block;font-family:var(--num);font-size:30px;line-height:1.2}
 .stat span{font-size:16px;color:var(--muted)}
 .badge{display:inline-block;background:var(--sun);color:var(--on-color);border:1.5px solid var(--hair);border-radius:99px;padding:2px 12px;font-weight:700;margin-top:6px}
+/* 結果畫面上的「按我拿金幣」。金幣在過關當下就已經入帳了，這顆按鈕負責的是
+   「自己拿到」的感覺：音效、金幣飛到右上角、右上角的數字這時候才跳上去 */
+.coinget{display:inline-flex;align-items:center;gap:8px;margin:8px auto 0;animation:coinwait 1.5s ease-in-out infinite}
+.coinget .ic{width:1.25em;height:1.25em;flex:none}
+@keyframes coinwait{0%,100%{transform:none}50%{transform:translateY(-4px)}}
+.badge.got{background:color-mix(in srgb,var(--sun) 72%,var(--surface));color:var(--ink)}
+.badge.got .ic{width:1.1em;height:1.1em;vertical-align:-3px}
+.flycoin{position:absolute;width:32px;height:32px;pointer-events:none;color:var(--sun);--ic2:var(--surface);
+  animation:coinfly .8s cubic-bezier(.35,0,.5,1) forwards}
+.flycoin .ic{width:100%;height:100%;display:block}
+@keyframes coinfly{
+  0%{transform:translate(0,0) scale(.5);opacity:0}
+  14%{transform:translate(calc(var(--dx)*.14),calc(var(--dy)*.14 - 22px)) scale(1.15);opacity:1}
+  100%{transform:translate(var(--dx),var(--dy)) scale(.55);opacity:0}}
+@media (prefers-reduced-motion:reduce){ .coinget{animation:none} .flycoin{display:none} }
 .rbtns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:8px}
 /* 選乘法表畫面裡的「綜合挑戰」：用紫色跟 2~9 分開，一看就知道不一樣 */
 .pickbtn.allbtn{grid-column:1/-1;flex-direction:row;flex-wrap:wrap;justify-content:center;align-items:center;gap:4px 10px;
@@ -458,7 +473,14 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 .stage .sno{font-family:var(--num);font-size:16px;color:var(--muted);font-weight:600}
 .stage b{font-size:22px}
 .stage .ss{font-size:17px;letter-spacing:1px}
-/* 還沒過關的給暖黃底——第一次過關才有比較多金幣，所以要最顯眼 */
+/* 「過這一關就有金幣」的記號。一天只有 3 枚，所以只掛在「下一個還沒過的關卡」，
+   今天的額度用完就不掛 —— 12 關全掛等於騙人（這是 2026-11-24 加的：小孩找不到金幣在哪）*/
+.stage .cointag{display:inline-flex;align-items:center;gap:5px;margin-top:6px;align-self:flex-start;
+  padding:3px 11px;border-radius:999px;font-size:15.5px;font-weight:700;color:var(--ink);
+  background:color-mix(in srgb,var(--sun) 80%,var(--surface));
+  border:1.5px solid color-mix(in srgb,var(--sun) 96%,var(--edge))}
+.stage .cointag .ic{width:1.15em;height:1.15em;flex:none}
+/* 還沒過關的給暖黃底＝「這一關還沒過」的事實標記，不是金幣的承諾 */
 .stage.todo{background:color-mix(in srgb,var(--sun) 46%,var(--surface));border-color:color-mix(in srgb,var(--sun) 88%,var(--edge))}
 .stage.done{background:color-mix(in srgb,var(--mint) 26%,var(--surface))}
 .stage.boss{background:color-mix(in srgb,var(--grape) 24%,var(--surface))}
@@ -571,6 +593,14 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 .lkey:active{transform:translateY(4px);box-shadow:0 1px 3px var(--shadow)}
 .lkey.fn{background:var(--surface2);font-size:21px}
 
+/* 有新版本的橫幅：掛在標題列裡面。標題列是 sticky，所以它會跟著黏在上面，
+   而且是正常的流排版，不會蓋到下面的內容 */
+.updbar{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;
+  padding:8px 12px;background:var(--sun);color:var(--on-color);font-weight:700;font-size:18px;
+  border-top:1.5px solid var(--hair)}
+.updbar[hidden]{display:none}
+.updbar .btn{padding:5px 13px;font-size:16.5px;flex:none}
+
 .credit{display:flex;flex-wrap:wrap;justify-content:center;align-items:baseline;gap:1px 5px;
   padding:1px 10px 3px;font-size:12.5px;   /* 安全區由 html 的 padding 負責，這裡不要再加一次 */
   color:var(--ink);font-weight:600;line-height:1.45;text-align:center}
@@ -671,9 +701,10 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 .toast.show{transform:translateX(-50%) translateY(0);opacity:1;visibility:visible}
 #fx{position:fixed;inset:0;pointer-events:none;z-index:25;overflow:hidden}
 /* 陪我玩的小夥伴：貼紙在畫面上到處飄，偶爾講話、偶爾冒閃亮 */
-.buddy{position:fixed;z-index:16;pointer-events:none;width:max-content;
+/* 貼紙本體可以點（點一下就說話），說話泡泡不吃手指，免得擋到下面的按鈕 */
+.buddy{position:fixed;z-index:16;pointer-events:none;width:max-content;cursor:pointer;
   transition:left 5s cubic-bezier(.42,0,.3,1),top 5s cubic-bezier(.42,0,.3,1)}
-.buddy .bart{position:relative;display:grid;place-items:center;line-height:0;
+.buddy .bart{position:relative;display:grid;place-items:center;line-height:0;pointer-events:auto;
   animation:bbob 2.6s ease-in-out infinite;
   filter:drop-shadow(0 1px 0 rgba(90,68,53,.10)) drop-shadow(0 5px 8px var(--shadow))}
 .buddy .bart .emo{font-size:clamp(62px,17vw,88px);line-height:0;position:relative;z-index:1}
@@ -1024,14 +1055,14 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
     <path d="M8.5,2 C12.5,5.5 12.5,11.5 8.5,15 C4.5,11.5 4.5,5.5 8.5,2Z" fill="#fff" opacity=".3"/></pattern>
 </svg>
 <header class="topbar"><div class="in">
-  <button class="logo" data-act="home" aria-label="回首頁"><span class="mini" id="logoBal"></span><span>乘乘熱氣球</span></button>
+  <button class="logo" data-act="logo" aria-label="回首頁"><span class="mini" id="logoBal"></span><span>乘乘熱氣球</span></button>
   <button class="helpbtn" data-act="help" aria-label="我教你玩，點一下看說明"><span class="hbal" id="helpBal"></span><b>我教你玩</b></button>
   <div class="spacer"></div>
   <button class="pill" data-act="info" data-arg="coin" aria-label="金幣怎麼拿？"><i class="ic" data-ic="coin"></i><span id="coins">0</span></button>
   <button class="iconbtn" id="whobtn" data-act="players" aria-label="切換挑戰者"></button>
   <button class="iconbtn nozy" id="zybtn" data-act="zy" aria-label="注音開關"><b>ㄅ</b><s>/</s><b>國</b></button>
   <button class="iconbtn" id="mutebtn" data-act="mute" aria-label="音效開關"></button>
-</div></header>
+</div><div class="updbar" id="updbar" hidden></div></header>
 <svg class="torn" viewBox="0 0 1200 14" preserveAspectRatio="none" aria-hidden="true">
   <path d="M0,0 H1200 V7 C1100,12 1000,3 900,8 C800,13 700,4 600,9 C500,14 400,4 300,9 C200,13 100,4 0,9 Z" fill="currentColor"/>
 </svg>
@@ -1509,7 +1540,7 @@ const PRAISE = ['答對了！','就是這樣！','完全正確！','你算出來
 /* 字型自己會畫注音，這裡只放「預設讀音不對」的字：字後面那個看不見的
    異體字選擇子（U+E01E0~5）會挑出正確的讀音，E01E0 代表不標注音 */
 const ZY_CHAR_SRC = "什\uDB40\uDDE0,喔\uDB40\uDDE1,囉\uDB40\uDDE2,鑽\uDB40\uDDE1";
-const ZY_WORD_SRC = "一下=一\uDB40\uDDE1下,一個=一\uDB40\uDDE1個,一台=一\uDB40\uDDE2台,一回=一\uDB40\uDDE2回,一定=一\uDB40\uDDE1定,一對=一\uDB40\uDDE1對,一張=一\uDB40\uDDE2張,一排=一\uDB40\uDDE2排,一格=一\uDB40\uDDE2格,一條=一\uDB40\uDDE2條,一樣=一\uDB40\uDDE1樣,一次=一\uDB40\uDDE1次,一步=一\uDB40\uDDE1步,一段=一\uDB40\uDDE1段,一起=一\uDB40\uDDE2起,一遍=一\uDB40\uDDE1遍,一關=一\uDB40\uDDE2關,一頁=一\uDB40\uDDE1頁,一顆=一\uDB40\uDDE2顆,一題=一\uDB40\uDDE2題,一點=一\uDB40\uDDE2點,不一樣=不一\uDB40\uDDE1樣,不再=不\uDB40\uDDE1再,不到=不\uDB40\uDDE1到,不太=不\uDB40\uDDE1太,不是=不\uDB40\uDDE1是,不會=不\uDB40\uDDE1會,不用=不\uDB40\uDDE1用,不要=不\uDB40\uDDE1要,不見=不\uDB40\uDDE1見,不計=不\uDB40\uDDE1計,數數看=數\uDB40\uDDE1數\uDB40\uDDE1看,重玩=重\uDB40\uDDE1玩,長大=長\uDB40\uDDE1大";
+const ZY_WORD_SRC = "一下=一\uDB40\uDDE1下,一個=一\uDB40\uDDE1個,一台=一\uDB40\uDDE2台,一回=一\uDB40\uDDE2回,一定=一\uDB40\uDDE1定,一對=一\uDB40\uDDE1對,一張=一\uDB40\uDDE2張,一排=一\uDB40\uDDE2排,一枚=一\uDB40\uDDE2枚,一格=一\uDB40\uDDE2格,一條=一\uDB40\uDDE2條,一樣=一\uDB40\uDDE1樣,一次=一\uDB40\uDDE1次,一步=一\uDB40\uDDE1步,一段=一\uDB40\uDDE1段,一起=一\uDB40\uDDE2起,一遍=一\uDB40\uDDE1遍,一關=一\uDB40\uDDE2關,一頁=一\uDB40\uDDE1頁,一顆=一\uDB40\uDDE2顆,一題=一\uDB40\uDDE2題,一點=一\uDB40\uDDE2點,不一樣=不一\uDB40\uDDE1樣,不再=不\uDB40\uDDE1再,不到=不\uDB40\uDDE1到,不太=不\uDB40\uDDE1太,不是=不\uDB40\uDDE1是,不會=不\uDB40\uDDE1會,不用=不\uDB40\uDDE1用,不算=不\uDB40\uDDE1算,不要=不\uDB40\uDDE1要,不見=不\uDB40\uDDE1見,不計=不\uDB40\uDDE1計,數數看=數\uDB40\uDDE1數\uDB40\uDDE1看,更新=更\uDB40\uDDE1新,重玩=重\uDB40\uDDE1玩,長大=長\uDB40\uDDE1大";
 /* ZY-TABLE-END */
 const ZY_C = {}, ZY_W = {};
 let ZY_WMAX = 0;
@@ -1618,7 +1649,7 @@ const MAX_PLAYERS = 6;
 function uid(){ return 'p'+Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
 function blankPlayer(name,avatar){
   return { id:uid(), name:name||'挑戰者', avatar:avatar||AVATARS[0], createdAt:Date.now(),
-    coins:0, owned:{}, facts:{}, stages:{}, art:[], pump:[], daily:null, streak:{last:'',count:0},
+    coins:0, owned:{}, facts:{}, fsplit:1, stages:{}, art:[], pump:[], daily:null, streak:{last:'',count:0},
     timedBest:0, snakeBest:0, buddy:'' };
 }
 function defaultState(){
@@ -1634,7 +1665,7 @@ const obj = v => (v && typeof v==='object' && !Array.isArray(v)) ? v : {};
 function num(v,max){ const n=Math.floor(Number(v)); return (isFinite(n) && n>0) ? Math.min(n,max) : 0; }
 function fixFacts(src){
   const f=obj(src), out={};
-  for(let a=1;a<=9;a++) for(let b=a;b<=9;b++){
+  for(let a=1;a<=9;a++) for(let b=1;b<=9;b++){
     const k=a+'x'+b, v=obj(f[k]);
     if(f[k]) out[k]={ c:num(v.c,999999), w:num(v.w,999999), s:num(v.s,999) };
   }
@@ -1737,6 +1768,17 @@ function fixPlayer(src){
     ? 's:'+STICKER_OLD[rawAva.slice(2)] : rawAva;
   out.avatar = avaOk(oldAva, out.owned) ? oldAva : (AVA_OLD[rawAva] || AVATARS[0]);
   out.facts = fixFacts(p.facts);
+  /* 以前 5×3 和 3×5 存成同一筆，現在分開算。舊存檔只有一邊有資料，
+     直接分開的話小孩的綠點會少一半，所以搬一次：把 a×b 的成績複製一份給 b×a。
+     只做一次（fsplit），不然小孩之後單獨練某一邊，下次載入又會被複製回去 */
+  out.fsplit = p.fsplit===1 ? 1 : 0;
+  if(!out.fsplit){
+    Object.keys(out.facts).forEach(k=>{
+      const q=k.split('x'), rev=q[1]+'x'+q[0];
+      if(q[0]!==q[1] && !out.facts[rev]) out.facts[rev]={...out.facts[k]};
+    });
+    out.fsplit = 1;
+  }
   out.stages = fixStages(p.stages);
   out.art = fixArt(p.art);
   out.pump = fixPump(p.pump);
@@ -2035,19 +2077,22 @@ function markPlayed(){
 }
 
 /* ---------- facts / mastery ---------- */
-const key = (a,b) => Math.min(a,b)+'x'+Math.max(a,b);
+/* 7×8 和 8×7 是兩題，不合併。
+   學校教的是「7個8」和「8個7」，意義不一樣，所以小綠點也分開亮。
+   （2026-11-24 以前是合併的，舊存檔由 fixPlayer 的 fsplit 一次性複製成兩邊，綠點不會倒退）*/
+const key = (a,b) => a+'x'+b;
 function record(a,b,ok){
   const m=me(), k=key(a,b), f=m.facts[k]||{c:0,w:0,s:0};
   const before=level(a,b);
   if(ok){ f.c++; f.s++; } else { f.w++; f.s=0; }
   m.facts[k]=f;
-  if(!ok) pumpAdd(a,b);              /* 答錯就排進補氣站，隔天再練（熟練度的算法沒變）*/
+  if(!ok) pumpAdd(a,b);              /* 答錯就排進補氣站，隔天再練 */
   if(ok && before<3 && level(a,b)===3 && m.daily && m.daily.p) m.daily.p.mastered++;
 }
 /* ---------- 補氣站 ---------- */
 /* 答錯過的題目，隔天變成一顆漏氣的熱氣球，要到補氣站重新練。
    為什麼要另外存一份：熟練度 facts[] 只記「答對幾次／答錯幾次／連續答對幾次」，
-   既沒有日期，又把 5x3 和 3x5 併成同一題，所以推不出「昨天答錯了哪幾題」。
+   沒有日期，所以推不出「昨天答錯了哪幾題」。
    這裡只存「哪一題、休息到哪天、已經補好的日子」，不重複記熟練度的那三個數字。 */
 /* 答錯就進補氣站。掛在 record() 裡，所有有對錯的遊戲都會經過那裡；
    翻翻樂沒有作答、不呼叫 record，所以自動不算 */
@@ -2093,8 +2138,8 @@ function level(a,b){
 }
 function weightOf(a,b){ const l=level(a,b); return [2.2,3.5,1.6,0.5][l]; }
 /* 小綠點＝那一張乘法表的熟練度：同一題「連續答對 3 次」才算熟練（亮綠點），
-   已經答對過但還沒連三次是「快熟了」（半亮）。乘法是交換的，所以 5×3 和 3×5 算同一題。
-   翻翻樂不計分，看提示或答錯重來的那一次也不算，所以點點不會動 */
+   已經答對過但還沒連三次是「快熟了」（半亮）。7×8 和 8×7 分開算。
+   翻翻樂沒有作答，看提示或同一回合再出一次的那一次也不算，所以點點不會動 */
 function masteryDots(t){
   let full=0, half=0;
   for(let b=1;b<=9;b++){ const l=level(t,b); if(l===3) full++; else if(l===2) half++; }
@@ -2830,13 +2875,14 @@ const HELP = {
     `過一關有 1 枚金幣，一天最多 ${STAGE_CAP} 枚。`,
     '12 關都可以直接玩。']},
   review:{t:'怎麼玩？', li:[
-    '點卡片翻開，同時唸口訣。',
-    '9 張翻完就是一張乘法表。',
-    '不計分，放心亂翻！']},
-  pick:{t:'選哪一張？', li:[
-    '2~9 點哪一張都可以。',
-    '小綠點亮幾顆，就是熟了幾題。'],
-   note:'小綠點怎麼亮：同一題<b>連續答對 3 次</b>才會變成亮綠點，答對過但還沒連三次是半亮的。乘法可以交換，所以 5×3 和 3×5 算同一題。只有自己算出來的才算，看了提示、或是再出一次的那一題不算。'},
+    '點一張卡片，它會翻開、還會唸口訣。',
+    '9 張都翻開，就看完一張乘法表了。',
+    '想翻幾次就翻幾次。']},
+  pick:{t:'要選哪一張？', li:[
+    '2 到 9，點哪一張都可以。',
+    '一張乘法表有 9 題。',
+    '下面亮幾顆綠點，就是你記住了幾題。'],
+   note:'給大人：小綠點是熟練度。同一題<b>連續答對 3 次</b>才會變成亮綠點，答對過但還沒連三次是半亮的。<b>7×8 和 8×7 分開算</b>。只有「第一次就自己算出來」才算數：看了提示、或是同一回合再出一次的那一題都不算；翻翻樂沒有作答，所以不會動到小綠點。'},
   hunt:{t:'怎麼玩？', li:[
     '先算出答案是多少。',
     '答案藏在畫裡，顏色跟畫一樣。',
@@ -2869,11 +2915,13 @@ const HELP = {
     '照順序填：每排幾個 × 有幾排。',
     '數不清楚就按「提示」。']},
   pairPick:{t:'配對消消樂', li:[
-    '選難度，數字越大越難。']},
+    '卡片越多、數字越大，就越難。',
+    '選一個，點了就開始。']},
   pair:{t:'怎麼玩？', li:[
-    '4×1 和 2×2 都是 4，就是一對。',
     '點兩張答案一樣的卡片。',
-    '配對成功會唸口訣，卡片就消失。']},
+    '像 4×1 和 2×2，答案都是 4。',
+    '配成一對會唸口訣，卡片就不見了。',
+    '點錯沒關係，再點一次就好。']},
   book:{t:'我的轉蛋機', li:[
     `${DRAW_COST} 枚金幣轉一次。`,
     '每次都是還沒有的貼紙。',
@@ -2902,22 +2950,38 @@ const mk = t => String(t).replace(/[\u{1F530}\u{1F642}]/gu, m=>ic(MK_IC[m]));
 const INFO = {
   /* 這份清單是寫給七歲小孩看的：一句一件事、不講上限數字、不用「首次通關」這種詞。
      規則細節（每天幾枚、誰有上限）留給下面那行動態的「今天還能拿 N 枚」和給大人的小字 */
-  coin:{t:'金幣怎麼拿？', ic:'coin', li:[
-    '玩完遊戲，回首頁看攤子。',
-    '攤子上做到的事，點一下就拿 1 枚。',
-    '一個攤子三件事都做到，還會多送你金幣。',
-    `乘法實戰家：過一關 1 枚，今天最多 ${STAGE_CAP} 枚。`,
-    `比快挑戰：答對 ${TIMED_GOAL} 題，有 1 枚。`,
-    '補氣站：那幾題全部答對，有 1 枚。',
-    `${DRAW_COST} 枚金幣可以轉一次轉蛋。`,
-    '今天的金幣拿完就沒有了，明天會再長出來。'],
-    note:`金幣每天有上限（一天最多 ${COIN_MAX_DAY} 枚），是為了讓眼睛休息 🙂。`}
+  coin:{t:'金幣怎麼拿？', ic:'coin', li:() => {
+    /* 補氣站那一條只有「今天真的有題目要補」才列出來。
+       不然小孩在乘法實戰家按問號，會看到一個今天根本不存在的關卡 */
+    const li = ['回首頁，做攤子上的事就有金幣。',
+      '一個攤子三件事都做到，還會多送你。',
+      `乘法實戰家：過一關 1 枚，今天最多 ${STAGE_CAP} 枚。`,
+      `比快挑戰：答對 ${TIMED_GOAL} 題，有 1 枚。`];
+    if(!GUEST && pumpDue().length) li.push('補氣站：那幾題全部答對，有 1 枚。');
+    li.push(`${DRAW_COST} 枚金幣可以轉一次轉蛋。`);
+    li.push('今天的拿完了，明天會再長出來。');
+    return li;
+  },
+    note:`金幣每天有上限（一天最多 ${COIN_MAX_DAY} 枚），是為了讓眼睛休息 🙂。`},
+  /* 乘法實戰家頁面上那個問號：只回答「這裡現在還可以怎麼拿」，一兩句就好。
+     小孩今天找不到金幣在哪，就是因為原本那份清單太長，而且講的是全站 */
+  here:{t:'這裡的金幣', ic:'coin', li:() => {
+    const d=ensureDaily();
+    if(GUEST || !d) return ['訪客模式不會留下金幣喔。'];
+    const st=Math.max(0, STAGE_CAP - d.p.stageCoins), ti=d.p.timedCoins?0:1;
+    const li=[];
+    if(st) li.push('再過 1 關，就可以拿到金幣喔！');
+    if(ti) li.push(`比快挑戰答對 ${TIMED_GOAL} 題，也可以拿到金幣喔！`);
+    if(!li.length) li.push('這裡今天的金幣拿完了，明天會再長出來。');
+    return li;
+  }}
 };
 function showInfo(kind){
   const f=INFO[kind]; if(!f) return;
   const m=me(), n = m?m.coins:0;
+  const li = typeof f.li==='function' ? f.li() : f.li;
   showModal(`<h3>${ic(f.ic)} ${f.t}</h3>
-    <ul class="helplist" style="margin-top:10px">${f.li.map(x=>`<li>${mk(x)}</li>`).join('')}</ul>
+    <ul class="helplist" style="margin-top:10px">${li.map(x=>`<li>${mk(x)}</li>`).join('')}</ul>
     <p class="infonow">你現在有 <b>${n}</b> 枚金幣${GUEST?'':`，今天還能拿 <b>${coinsLeftToday()}</b> 枚`}</p>
     ${GUEST?'<p class="note" style="margin-top:4px">訪客模式不會留下金幣喔。</p>':''}
     ${f.note?`<p class="note helpnote">${mk(f.note)}</p>`:''}
@@ -2941,15 +3005,34 @@ function showHelp(){
 /* 小夥伴只說兩種話：肯定「他剛剛做了什麼」（努力、沒放棄、自己想出來），
    以及把卡住講成一件正常的事。不預言結果（「下次就會答對」會變成壓力），
    不出現「錯」字，不用六歲讀不懂的詞。意思重複的只留一句 */
-const BUDDY_SAY = [
-  /* 陪伴與肯定「他剛剛做了什麼」 */
+/* 小夥伴講的話分成兩種，而且是「一句鼓勵、一句閒聊」輪流出現的。
+   全部都是鼓勵，它就變成一直在說教的大人；全部都是閒聊，又少了陪伴的感覺 */
+/* 鼓勵句：陪伴，而且只肯定「他剛剛做了什麼」。不誇聰明、不預言結果 */
+const BUDDY_CARE = [
   '慢慢來，不用急', '再試一次看看', '你剛剛很努力', '再想一下下',
   '一題一題來', '你比剛才進步了', '難的題目才好玩', '想過才會變厲害',
-  '你剛剛沒有放棄', '你自己想出來的', '我陪你一起算', '眼睛累了就休息',
-  /* 幾句純粹好玩的閒聊，讓小夥伴像個會分心的朋友，不是一直在鼓勵的大人 */
+  '你剛剛沒有放棄', '你自己想出來的', '我陪你一起算', '眼睛累了就休息'];
+/* 趣味句：純粹好玩的閒聊，讓小夥伴像個會分心的朋友 */
+const BUDDY_FUN = [
   '六七⋯⋯四十二！', '不想睡覺怎麼辦？', '哇喔～！', '數字好好玩',
   '我也在偷偷算', '要不要喝口水？', '這題我也想一下', '肚子有點餓了'];
-let buddyT = null, buddyStep = 0;
+const BUDDY_SAY = BUDDY_CARE.concat(BUDDY_FUN);
+let buddyT = null, buddyStep = 0, buddySaid = 0;
+/* 鼓勵、趣味、鼓勵、趣味⋯⋯輪流；同一種裡面才是隨機挑 */
+function buddyLine(){
+  const pool = (buddySaid++ % 2 === 0) ? BUDDY_CARE : BUDDY_FUN;
+  return pool[rnd(pool.length)];
+}
+let buddyHide = null;
+/* 說一句話：自己定時說、還有小孩點它的時候都走這裡 */
+function buddySay(el){
+  const b = el && el.querySelector('.bsay');
+  if(!b) return;
+  b.textContent = buddyLine();
+  b.classList.add('on');
+  clearTimeout(buddyHide);
+  buddyHide = setTimeout(()=>b.classList.remove('on'), 3000);
+}
 function buddyOf(){
   const m = me();
   if(!m || !m.buddy) return null;
@@ -2983,11 +3066,7 @@ function buddyHop(el){
     el.style.top  = Math.round(top + Math.random()*(bot - top)) + 'px';
   }
   buddyStep++;
-  if(buddyStep % 3 === 1){
-    const b = el.querySelector('.bsay');
-    if(b){ b.textContent = BUDDY_SAY[rnd(BUDDY_SAY.length)]; b.classList.add('on');
-      setTimeout(()=>b.classList.remove('on'), 3000); }
-  }
+  if(buddyStep % 3 === 1) buddySay(el);
   if(buddyStep % 2 === 0) buddySpark(el);
   return sec;
 }
@@ -3007,12 +3086,16 @@ function floatBuddy(){
   }
   if(!el){
     el = document.createElement('div');
-    el.id = 'buddy'; el.className = 'buddy'; el.setAttribute('aria-hidden','true');
+    el.id = 'buddy'; el.className = 'buddy';
+    el.dataset.act = 'btalk';
     el.style.left = Math.round(innerWidth*0.42) + 'px';
     el.style.top  = Math.round(innerHeight*0.45) + 'px';
     document.body.appendChild(el);
   }
   el.className = 'buddy r-' + s.rar;   /* 稀有／閃亮才有金光 */
+  el.dataset.act = 'btalk';
+  el.setAttribute('role','button');
+  el.setAttribute('aria-label', s.name + '，點一下跟它說話');
   if(el.dataset.sid !== s.id){      /* 換夥伴才重畫，免得把說話泡泡洗掉 */
     el.dataset.sid = s.id;
     el.innerHTML = `<span class="bsay"></span>
@@ -3031,7 +3114,9 @@ function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=rnd(i+1); [a[i],a[j]
 function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function updateTop(){
   const m=me();
-  $('#coins').textContent=m?m.coins:0;
+  /* coinHold：結果畫面上還沒按「按我拿金幣」之前，右上角先停在舊的數字，
+     按下去才跳上來。存檔裡的金幣在過關當下就已經加好了，不會因為沒按而不見 */
+  $('#coins').textContent=Math.max(0, (m?m.coins:0) - coinHold);
   const lb=$('#logoBal'); if(lb && !lb.firstChild) lb.innerHTML=balloon({pat:'pat-zig',mini:true});
   const hb=$('#helpBal'); if(hb && !hb.firstChild) hb.innerHTML=bearSVG();
   lb.style.cssText='--c1:#D4EEED;--c2:#A8DCDD;--c3:#46959B';
@@ -3083,12 +3168,13 @@ function stickerHTML(s, extra=''){
 }
 
 /* ---------- views ---------- */
-let currentView='home', game=null, lastSetup=null, uiTier=null;
+let currentView='home', game=null, lastSetup=null, uiTier=null, coinHold=0;
 let pickFor='review', reviewTable=2, revPairs=null, revOpen={}, revShine={}, autoT=null, autoI=0;
 let galEdit=false;   /* 畫廊的整理模式 */
 function heroW(){ return Math.min(window.innerWidth-28, (currentView==='home'||currentView==='welcome')?1080:620); }
 function go(name){
   stopAuto();
+  coinHold=0;        /* 離開結果畫面就不再壓著右上角的數字 */
   if(tabStale && (name==='home'||name==='welcome') && adoptNewer()) return;
   if(name!=='gallery') galEdit=false;   /* 離開畫廊就收起整理模式，下次進來是乾淨的 */
   currentView=name;
@@ -3200,7 +3286,8 @@ const VIEWS = {
       <div class="backrow"><button class="iconbtn" data-act="home" aria-label="返回">${ic('back')}</button><h2>給大人的說明</h2></div>
       <section class="card about">
         <h3>關於這個遊戲</h3>
-        <p>我是利利，兩個孩子的媽媽。這個遊戲是做給我女兒的。我在遊戲裡加了很多正向語言和鼓勵機制，希望陪孩子度過枯燥的背誦過程。</p>
+        <p>我是利利。這個遊戲是做給我女兒的。</p>
+        <p>我為了鼓勵她，在遊戲裡加了很多正向語言和鼓勵機制，希望陪她度過枯燥的背誦過程。</p>
         <p>女兒現在不再排斥乘法，所以我分享出來，希望這個遊戲也對大家有幫助。</p>
         <p>有任何建議，歡迎私訊我的 IG <a href="https://www.instagram.com/slowlywithlili/" target="_blank" rel="noopener noreferrer">利利寫生活</a>，我會慢慢改。</p>
       </section>
@@ -3250,7 +3337,7 @@ const VIEWS = {
     const open=[1,2,3,4,5,6,7,8,9].filter(b=>revOpen[b]).length;
     view.innerHTML=`
       <div class="backrow"><button class="iconbtn" data-act="reviewPick" aria-label="返回">${ic('back')}</button><h2>翻翻樂 ${tableName(t)}</h2></div>
-      <p class="note topnote">點卡片翻開就會唸口訣${canSpeak?'':'（這台裝置沒有語音）'}；不計分，可以放心亂翻</p>
+      <p class="note topnote">點卡片翻開就會唸口訣${canSpeak?'':'（這台裝置沒有語音）'}；想翻幾次都可以</p>
       <p class="thinkfirst">先想想看，再翻答案。<i>已翻開 <span id="flipn">${open}/9</span></i></p>
       <div class="flipgrid">${cards}</div>
       <div class="rbtns" style="margin-top:20px">
@@ -3421,6 +3508,11 @@ const VIEWS = {
 
   stages(){
     const m=me(), sv=m.stages||{}, mode=state.settings.input;   /* 今天還剩幾枚交給 playCoinsLeft() 算 */
+    /* 金幣記號只掛一顆：掛在「下一個還沒過的關卡」，而且今天還有額度才掛 */
+    const d0=ensureDaily();
+    const stLeft = (!GUEST && d0) ? Math.max(0, STAGE_CAP - d0.p.stageCoins) : 0;
+    const nextCoin = stLeft ? ((STAGES.find(S=>!sv[S.n])||{}).n || 0) : 0;
+    const timedLeft = (!GUEST && d0 && !d0.p.timedCoins) ? 1 : 0;
     const cards=STAGES.map(S=>{
       const got=sv[S.n], st=got?got.best:0;
       let dots='';
@@ -3430,14 +3522,15 @@ const VIEWS = {
         <span class="sno">第 ${S.n} 關</span>
         <b>${S.label}</b>
         <span class="ss">${got?(st===3?'一次全對過關！':'已經過關'):'還沒玩過'}</span>
+        ${S.n===nextCoin?`<span class="cointag">${ic('coin')} 過關就有 1 枚金幣</span>`:''}
         ${dots}</button>`;
     }).join('');
     const cleared=Object.keys(sv).length;
     view.innerHTML=`
       <div class="backrow"><button class="iconbtn" data-act="home" aria-label="返回">${ic('back')}</button><h2>乘法實戰家 ${cleared}/${STAGES.length}</h2></div>
       ${helper('一關 10 題，答對 8 題就過關，不熟的會再出一次。12 關都可以直接玩。')}
-      <p class="note topnote">這裡今天還能拿 <b>${playCoinsLeft()}</b> 枚金幣
-        <button class="inqa" data-act="info" data-arg="coin" aria-label="金幣怎麼拿？">?</button></p>
+      <p class="note topnote">${coinHintHere()}
+        <button class="inqa" data-act="info" data-arg="here" aria-label="這裡的金幣怎麼拿？">?</button></p>
       <div class="seg" role="group" aria-label="作答方式">
         <button class="${mode==='type'?'on':''}" data-act="input" data-arg="type">自己打數字</button>
         <button class="${mode==='choice'?'on':''}" data-act="input" data-arg="choice">選答案</button>
@@ -3447,7 +3540,9 @@ const VIEWS = {
         <span class="sno">想比快嗎？</span>
         <b>${ic('clock')} 比快挑戰</b>
         <span class="ss">60 秒內答對越多越好${m.timedBest?`・最好 ${m.timedBest} 題`:''}</span>
-        <span class="sno">答對 ${TIMED_GOAL} 題以上，拿 1 枚金幣（每天一次）</span>
+        ${timedLeft
+          ? `<span class="cointag">${ic('coin')} 答對 ${TIMED_GOAL} 題就有 1 枚金幣</span>`
+          : `<span class="sno">${GUEST?`答對 ${TIMED_GOAL} 題有 1 枚金幣（每天一次）`:'今天這一枚金幣已經拿過了'}</span>`}
       </button>
       <h3 style="font-size:17px;margin:18px 2px 10px">一關一關練</h3>
       <div class="slist">${cards}</div>`;
@@ -3489,9 +3584,13 @@ const VIEWS = {
       ? `<div class="stat"><b>${r.score}</b><span>60 秒答對題數</span></div>`
       : `<div class="stat"><b>${r.score}/${r.total}</b><span>${r.slabel ? r.slabel : r.hunt?'一次就找到':`第一次就答對${r.stage?`（過關要 ${r.need} 題）`:''}`}</span></div>`;
     let badge='';
-    if(r.newBest) badge=`<div class="badge">${ic('trophy')} 新紀錄！${r.coins?`　${ic('coin')} 拿到 ${r.coins} 枚金幣`:''}</div>`;
-    else if(r.coins) badge=`<div class="badge">${ic('coin')} 拿到 ${r.coins} 枚金幣</div>`;
-    else if(r.capped) badge='<div class="badge">這個遊戲今天的金幣拿完了。</div>';
+    if(r.newBest) badge=`<div class="badge">${ic('trophy')} 新紀錄！</div>`;
+    else if(!r.coins && r.capped) badge='<div class="badge">這個遊戲今天的金幣拿完了。</div>';
+    /* 金幣讓小孩自己按一下才「拿到」，才有拿到的感覺 */
+    const coinrow = !r.coins ? ''
+      : r.got ? `<div class="badge got">${ic('coin')} 拿到 ${r.coins} 枚金幣！</div>`
+      : `<button class="btn sun big coinget" data-act="getcoin">${ic('coin')} 按我拿金幣！</button>`;
+    if(r.coins && !r.got) coinHold = r.coins;   /* go() 的 updateTop() 會讀它 */
     const nextN = r.stage && r.cleared && r.stage<STAGES.length ? r.stage+1 : 0;
     view.innerHTML=`
       <section class="card result">
@@ -3499,6 +3598,7 @@ const VIEWS = {
         <div class="bigicon ${r.hard?'hard':'easy'}">${ic(bigIc)}</div>
         <h2>${title}</h2>
         ${badge}
+        ${coinrow}
         <div class="stats">
           ${statA}
           ${r.snake
@@ -3523,6 +3623,9 @@ const VIEWS = {
       </section>`;
     /* 慶典感：🔰 的三個遊戲放閃亮，後面三個難的放彩帶 */
     if(r.stage && !r.cleared){ sfx.wrong(); }
+    /* 貪食蛇愛心用完＝這一局結束，不是過關，所以不放煙火也不放彩帶。
+       結果畫面本來就不罵人也不扣東西，慶祝反而怪 */
+    else if(r.snake && !r.win){ /* 不放特效 */ }
     else if(r.hard) confettiWin();
     else sparkleWin();
   },
@@ -3647,6 +3750,38 @@ function finishPump(){
   go('result');
 }
 /* 補好一題：一顆補過的熱氣球淡進來，然後飄走 */
+/* 結果畫面那顆「按我拿金幣」：金幣早就入帳了，這裡只做「拿到的感覺」 */
+function takeCoin(btn){
+  if(!game || !game.result || game.result.got || !game.result.coins) return;
+  game.result.got = true;
+  sfx.coin();
+  coinFly(btn);
+  coinHold = 0;
+  updateTop();
+  const b=document.createElement('div');
+  b.className='badge got';
+  b.innerHTML=`${ic('coin')} 拿到 ${game.result.coins} 枚金幣！`;
+  btn.replaceWith(b);           /* 新字的注音由 zyObs 自己補上 */
+}
+/* 金幣從按鈕飛到右上角的金幣數字那裡 */
+function coinFly(from){
+  if(reduceMotion || !from) return;
+  const fx=document.getElementById('fx'); if(!fx) return;
+  const a=from.getBoundingClientRect(), t=document.getElementById('coins');
+  const b=(t||document.documentElement).getBoundingClientRect();
+  const x0=a.left+a.width/2, y0=a.top+a.height/2;
+  for(let i=0;i<3;i++){
+    const el=document.createElement('i');
+    el.className='flycoin';
+    el.innerHTML=ic('coin');
+    el.style.left=(x0-16)+'px'; el.style.top=(y0-16)+'px';
+    el.style.setProperty('--dx', Math.round(b.left+b.width/2-x0)+'px');
+    el.style.setProperty('--dy', Math.round(b.top+b.height/2-y0)+'px');
+    el.style.animationDelay=(i*0.11)+'s';
+    fx.appendChild(el);
+    setTimeout(()=>el.remove(), 1300+i*120);
+  }
+}
 function pumpFly(el){
   if(reduceMotion || !el) return;
   const r=el.getBoundingClientRect(), f=document.createElement('div');
@@ -3896,6 +4031,15 @@ function playCoinsLeft(){
   if(!d.p.timedCoins) n += 1;
   n += pumpCoinLeft();
   return n;
+}
+/* 乘法實戰家頁面最上面那一句。原本只寫「今天還能拿 N 枚」——
+   小孩看得懂數字，但不知道要去哪裡按，所以改成直接指路 */
+function coinHintHere(){
+  const d=ensureDaily();
+  if(GUEST || !d) return '訪客模式不會留下金幣喔。';
+  if(Math.max(0, STAGE_CAP - d.p.stageCoins)) return '有金幣記號的那一關，過關就有 1 枚金幣！';
+  if(!d.p.timedCoins) return '過關的金幣今天拿完了，比快挑戰還有 1 枚！';
+  return '這裡今天的金幣拿完了，明天會再長出來。';
 }
 /* 補氣站：全部補好給 1 枚，一天一次。
    沒有題目可以補的日子不算這一枚，否則首頁會顯示一枚今天永遠拿不到的金幣 */
@@ -4909,6 +5053,20 @@ document.addEventListener('click', e=>{
     case 'home':
       if(inGame()){ askQuit(); break; }
       closeModal(); endGame(); go('home'); break;
+    /* 左上角那顆氣球：回首頁，順便問一次伺服器有沒有新版本。
+       他本來是把它當成「重新整理」在按的，所以把檢查掛在這裡最直覺 */
+    case 'logo':
+      updCheck(true);
+      if(inGame()){ askQuit(); break; }
+      closeModal(); endGame(); go('home'); break;
+    case 'reload': doReload(); break;
+    case 'getcoin': takeCoin(el); break;
+    /* 點一下小夥伴：馬上說一句話、灑閃亮。不影響任何遊戲規則 */
+    case 'btalk': {
+      const bd=document.getElementById('buddy');
+      if(bd){ buddySay(bd); buddySpark(bd); sfx.tap(); }
+      break;
+    }
     case 'reviewPick': pickFor='review'; go('pick'); break;
     case 'huntPick': pickFor='hunt'; go('pick'); break;
     case 'snakePick': go('snakePick'); break;
@@ -5068,6 +5226,39 @@ document.addEventListener('visibilitychange', ()=>{
   const z=n=>String(n).padStart(2,'0');
   if(el && !isNaN(d)) el.textContent=`最後更新：${d.getFullYear()}.${z(d.getMonth()+1)}.${z(d.getDate())}`;
 })();
+/* ---------- 有新版本就讓他知道 ---------- */
+/* iPhone 用「加入主畫面」之後，Safari 會把這一頁留在快取裡很久，
+   不主動問的話，推上去的更新傳不到小孩的裝置上。
+   作法：跟伺服器要一次這一頁的 Last-Modified（HEAD 只拿表頭，不下載 400KB 的內容），
+   比手上這一份新就把橫幅打開。不用自己維護版本號，推上去就會被看到。 */
+let updAsk=0, updFound=false;
+function updCheck(force){
+  if(updFound || !/^https?:$/.test(location.protocol)) return;
+  const now=Date.now();
+  if(!force && now-updAsk < 300000) return;       /* 五分鐘內問過就不再問 */
+  updAsk=now;
+  const mine=Date.parse(document.lastModified);
+  if(isNaN(mine)) return;
+  /* 帶一個不重複的參數，才不會拿到瀏覽器自己存的那一份 */
+  fetch(location.pathname+'?v='+now, {method:'HEAD', cache:'no-store'})
+    .then(r=>{
+      const lm=Date.parse(r.headers.get('last-modified')||'');
+      if(!isNaN(lm) && lm-mine > 2000) showUpd();   /* 差兩秒以上才算，避開秒數進位 */
+    })
+    .catch(()=>{});
+}
+function showUpd(){
+  if(updFound) return;
+  updFound=true;
+  const bar=document.getElementById('updbar');
+  if(!bar || !bar.hidden) return;
+  bar.innerHTML='<span>遊戲更新了！</span><button class="btn small" data-act="reload">換成新的</button>';
+  bar.hidden=false;      /* 新字的注音由 zyObs 這個 MutationObserver 自己補上 */
+  fitCredit();
+}
+/* 重新載入一定要換網址，不然 Safari 會再拿一次快取裡的舊檔 */
+function doReload(){ location.replace(location.pathname+'?v='+Date.now()); }
+
 /* 頁尾實際多高就留多高，攤位剛好停在它正上方。
    字一改、換個寬度變成兩行三行都會自己跟上，不用每個斷點手調 */
 let credT=null;
@@ -5087,6 +5278,9 @@ zyApply();          /* 先決定要不要注音，之後畫面一有新文字就
 updateTop();
 go('home');
 initCloud();
+/* 開啟後三秒問一次有沒有新版本（不跟第一次繪製搶），之後每次回到這個分頁再問 */
+setTimeout(()=>updCheck(true), 3000);
+addEventListener('visibilitychange', ()=>{ if(!document.hidden) updCheck(false); });
 </script>
 </body>
 </html>
