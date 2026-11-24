@@ -152,7 +152,11 @@ h1,h2,h3,p{margin:0}
 /* top bar */
 .topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:6;background:var(--surface);border-bottom:0}
 .topbar .in{max-width:620px;margin:0 auto;display:flex;align-items:center;gap:8px;padding:10px 14px}
-.logo{background:none;border:0;padding:4px 2px;cursor:pointer;font-weight:700;font-size:22px;display:flex;align-items:center;gap:6px}
+.logo{background:none;border:0;padding:4px 2px;cursor:pointer;font-weight:700;font-size:22px;display:flex;align-items:center;gap:6px;position:relative}
+/* 左上角這顆氣球就是「回首頁」鍵。字再小、氣球再小，手指按得到的範圍都要有 44×44：
+   先往上下各撐 4px（高度 38→46），窄螢幕字藏起來之後再往左撐（見 max-width:420px）。
+   用 ::after 撐不影響版面高度 */
+.logo::after{content:"";position:absolute;inset:-4px 0}
 .logo .mini{font-family:var(--num);font-weight:700;background:var(--sun);color:var(--on-color);border:1.5px solid var(--hair);border-radius:9px;padding:0 6px;font-size:18.5px}
 .spacer{flex:1}
 .pill{display:inline-flex;align-items:center;gap:5px;background:var(--surface2);border:1.5px solid var(--hair);border-radius:999px;padding:2px 11px;font-family:var(--num);font-weight:600;font-size:19.5px;color:var(--ink);cursor:pointer}
@@ -427,8 +431,10 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 .anum.hintme{-webkit-text-stroke:3px #C06A60;animation:pulse .8s 3}
 .anum.fade{opacity:0;transition:opacity 1.2s}
 .splash{position:absolute;width:16cqw;height:16cqw;border-radius:50%;transform:translate(-50%,-50%);background:var(--sp,#DDBB7B);pointer-events:none;animation:splash 1.1s ease-out forwards;z-index:450}
-.hbtns{display:flex;align-items:center;gap:10px;margin-top:12px}
-.hbtns .note{margin:0;text-align:left;flex:1;font-size:17px}
+/* 遊戲中的提示句放在圖／盤面「上面」：小孩視線由上往下，擺下面等於沒寫。
+   高度固定留兩行，訊息長短變化時下面的畫或盤面不會上下跳 */
+.note.gnote{margin:0 0 10px;font-size:17px;line-height:1.25;min-height:2.5em;
+  display:flex;align-items:center;justify-content:center;text-align:center}
 .ggrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
 .gcell{background:var(--surface);border:1.5px solid var(--hair);border-radius:20px;box-shadow:0 4px 12px var(--shadow);padding:8px;cursor:pointer;display:flex;flex-direction:column;gap:6px;text-align:left}
 /* 整理模式：整張不再是按鈕，改成下面長出一排工具 */
@@ -658,12 +664,12 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 /* 稀有和閃亮的夥伴出來陪玩時，身上罩一層會呼吸的金光。
    光圈收小、貼著貼紙，中心加濃、外緣收快，才不會糊成一團淡霧；
    呼吸的幅度拉大、速度放慢，像在吸氣吐氣 */
-.buddy .bart::before{content:"";position:absolute;inset:-9%;border-radius:50%;z-index:0;display:none;
-  background:radial-gradient(circle,rgba(255,229,152,.92) 0%,rgba(252,210,112,.52) 40%,rgba(250,204,100,.13) 64%,rgba(250,204,100,0) 78%);
+.buddy .bart::before{content:"";position:absolute;inset:-5%;border-radius:50%;z-index:0;display:none;
+  background:radial-gradient(circle,rgba(255,229,152,.92) 0%,rgba(252,210,112,.52) 36%,rgba(250,204,100,.13) 58%,rgba(250,204,100,0) 72%);
   animation:bglow 3.6s ease-in-out infinite}
 .buddy.r-r .bart::before{display:block}
-.buddy.r-s .bart::before{display:block;inset:-14%;
-  background:radial-gradient(circle,rgba(255,242,190,1) 0%,rgba(253,216,120,.62) 38%,rgba(250,200,92,.18) 62%,rgba(250,200,92,0) 77%)}
+.buddy.r-s .bart::before{display:block;inset:-8%;
+  background:radial-gradient(circle,rgba(255,242,190,1) 0%,rgba(253,216,120,.62) 34%,rgba(250,200,92,.18) 56%,rgba(250,200,92,0) 70%)}
 @keyframes bglow{0%,100%{transform:scale(.9);opacity:.6}50%{transform:scale(1.14);opacity:1}}
 .buddy .bsay{position:absolute;left:50%;bottom:100%;translate:-50% 0;margin-bottom:6px;
   background:var(--surface);color:var(--ink);font-size:15px;font-weight:700;line-height:1.3;
@@ -716,6 +722,9 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
   .topbar .in{gap:5px;padding:10px 8px}
   .topbar .logo span:last-child{display:none}   /* 窄螢幕只留氣球，字放不下 */
   .topbar .logo{padding:4px 6px;min-width:34px;justify-content:center}   /* 字沒了也要留得住手指點的大小 */
+  /* 看起來還是一顆小氣球，按壓範圍撐到 44×46：往左撐到螢幕邊，右邊只多 2px，
+     才不會蓋到旁邊的「我教你玩」 */
+  .topbar .logo::after{inset:-4px -2px -4px -8px}
   .pill{padding:2px 8px}
   .pill{padding:2px 9px;font-size:18.5px}
   .tt{font-size:16px}
@@ -1607,7 +1616,7 @@ function adoptNewer(){
   state=next; uiTier=null;
   zyApply();                       /* 注音是另一個分頁改的，要跟著套用 */
   updateTop(); go(hasPlayer()?'home':'welcome');
-  toast('紀錄已經跟另一個視窗同步好了');
+  toast('紀錄已經跟另一個視窗同步好了。');
   return true;
 }
 window.addEventListener('storage', e=>{
@@ -1664,7 +1673,7 @@ const TIERS = [
 const TIER_BY = {}; TIERS.forEach(T=>{ TIER_BY[T.id]=T; });
 const TIER_QUESTS = {
   e:[{type:'review', target:1}, {type:'learn', target:1}, {type:'hunt', target:1}],
-  h:[{type:'pair', target:1}, {type:'snake', target:1}, {type:'stage', target:1}]
+  h:[{type:'pair', target:1}, {type:'snake', target:2}, {type:'stage', target:1}]
 };
 /* 今天還能拿幾枚金幣：六個任務＋兩個全完成獎勵＋實戰家＋比快挑戰 */
 const COIN_MAX_DAY = TIERS.reduce((t,T)=>t+TIER_QUESTS[T.id].length+T.bonus,0) + STAGE_CAP + 1;
@@ -1757,7 +1766,7 @@ function checkQuests(){
       if(!t.notified[i] && questDone(T.id,i)){
         t.notified[i] = true;
         const delay = 500 + (n++)*1100;
-        setTimeout(()=>{ toast(`${T.name}完成：${questText(q)}！可以去拿金幣了`); sfx.coin(); }, delay);
+        setTimeout(()=>{ toast(`${T.name}完成，可以去拿金幣了！`); sfx.coin(); }, delay);
       }
     });
   });
@@ -2450,68 +2459,68 @@ function balloonsHTML(m){
 /* ---------- 說明小幫手 ---------- */
 const HELP = {
   home:{t:'怎麼玩？', li:[
-    '剛開始學乘法，先玩 🔰',
-    '玩遊戲、做攤子任務，就有金幣',
-    `金幣可以玩轉蛋，有 ${STICKERS.length} 種等你蒐集喔！`],
+    '剛開始學乘法，先玩 🔰。',
+    '玩遊戲、做攤子任務，就有金幣。',
+    `金幣可以玩轉蛋，有 ${STICKERS.length} 種等你收集喔！`],
    note:'給大人：請固定用<b>同一台裝置、同一個瀏覽器</b>玩，紀錄才留得住；建議用<b>平板</b>。紀錄存在這台裝置的瀏覽器裡，太久沒玩或清除瀏覽資料就會不見。iPhone 請用 Safari「加入主畫面」，從圖示進來玩。'},
   stages:{t:'怎麼玩？', li:[
-    '每關 10 題，答對 8 題就過關',
-    '不熟的題目等一下會再出現',
-    `過一關有 1 枚金幣，一天最多 ${STAGE_CAP} 枚`,
-    '12 關都可以直接玩']},
+    '每關 10 題，答對 8 題就過關。',
+    '不熟的題目等一下會再出現。',
+    `過一關有 1 枚金幣，一天最多 ${STAGE_CAP} 枚。`,
+    '12 關都可以直接玩。']},
   review:{t:'怎麼玩？', li:[
-    '點卡片翻開，同時唸口訣',
-    '9 張翻完就是一張乘法表',
+    '點卡片翻開，同時唸口訣。',
+    '9 張翻完就是一張乘法表。',
     '不計分，放心亂翻！']},
   pick:{t:'選哪一張？', li:[
-    '2~9 點哪一張都可以',
-    '小綠點是這張表記熟幾題'],
+    '2~9 點哪一張都可以。',
+    '小綠點亮幾顆，就是熟了幾題。'],
    note:'小綠點怎麼亮：同一題<b>連續答對 3 次</b>才會變成亮綠點，答對過但還沒連三次是半亮的。乘法可以交換，所以 5×3 和 3×5 算同一題。只有自己算出來的才算，看了提示、或是再出一次的那一題不算。'},
   hunt:{t:'怎麼玩？', li:[
-    '先算出答案是多少',
-    '答案藏在畫裡，顏色跟畫一樣',
-    '找到就點它，會唸口訣',
-    '找不到就按「提示」']},
+    '先算出答案是多少。',
+    '答案藏在畫裡，顏色跟畫一樣。',
+    '找到就點它，會唸口訣。',
+    '找不到就按「提示」。']},
   play:{t:'怎麼按？', li:[
-    '打數字，再按「確定」',
-    '答完會唸一次口訣',
-    '不熟沒關係，等一下再出一次']},
+    '打數字，再按「確定」。',
+    '答完會唸一次口訣。',
+    '不熟沒關係，等一下再出一次。']},
   result:{t:'這一關結束了！', li:[
-    '看看第一次就答對幾題',
-    '回首頁領攤子的金幣']},
+    '看看第一次就答對幾題。',
+    '回首頁領攤子的金幣。']},
   snakePick:{t:'彩虹貪食蛇', li:[
-    '散步最簡單，賽跑最難',
-    '散步的蛇不會自己跑',
-    '再選一張乘法表就開始']},
+    '散步最簡單，賽跑最難。',
+    '散步的蛇不會自己跑。',
+    '再選一張乘法表就開始。']},
   snake:{t:'怎麼玩？', li:[
-    '吃到寫著正確答案的蘋果',
-    '點蛇頭前面那一格就轉彎',
-    '吃到 14 個就放煙火過關',
-    '吃到不對的，扣一顆愛心',
-    '撞到牆壁不會怎樣']},
+    '吃到寫著正確答案的蘋果。',
+    '點蛇頭前面那一格就轉彎。',
+    '吃到 14 個就放煙火過關。',
+    '吃到不對的，扣一顆愛心。',
+    '撞到牆壁不會怎樣。']},
   learn:{t:'怎麼玩？', li:[
-    '先數每排幾個，再數有幾排',
-    '照順序填：每排幾個 × 有幾排',
-    '數不清楚就按「提示」']},
+    '先數每排幾個，再數有幾排。',
+    '照順序填：每排幾個 × 有幾排。',
+    '數不清楚就按「提示」。']},
   pairPick:{t:'配對消消樂', li:[
-    '選難度，數字越大越難']},
+    '選難度，數字越大越難。']},
   pair:{t:'怎麼玩？', li:[
-    '4×1 和 2×2 都是 4，就是一對',
-    '點兩張答案一樣的卡片',
-    '配對成功會唸口訣，卡片就消失']},
+    '4×1 和 2×2 都是 4，就是一對。',
+    '點兩張答案一樣的卡片。',
+    '配對成功會唸口訣，卡片就消失。']},
   book:{t:'我的轉蛋機', li:[
-    `${DRAW_COST} 枚金幣轉一次`,
-    '每次都是還沒有的貼紙',
-    '點貼紙可以叫它出來陪你玩',
+    `${DRAW_COST} 枚金幣轉一次。`,
+    '每次都是還沒有的貼紙。',
+    '點貼紙可以叫它出來陪你玩。',
     `${STICKERS.length} 張收集完就是大冒險家！`]},
   gallery:{t:'我的畫廊', li:[
-    '尋寶完成的畫都在這裡',
-    '點一張看大圖']},
+    '尋寶完成的畫都在這裡。',
+    '點一張看大圖。']},
   players:{t:'挑戰者', li:[
-    '最多 6 位挑戰者',
-    '每個人的進度分開記',
-    '點「換我玩」就換人',
-    '點鉛筆可以改名字和頭貼'],
+    '最多 6 位挑戰者。',
+    '每個人的進度分開記。',
+    '點「換我玩」就換人。',
+    '點鉛筆可以改名字和頭貼。'],
    note:'給大人：請固定用<b>同一台裝置、同一個瀏覽器</b>玩，紀錄才留得住；建議用<b>平板</b>。紀錄存在這台裝置的瀏覽器裡，沒有上傳到網路，太久沒玩、清除瀏覽資料或換裝置就會不見。'}
 };
 function helper(txt){
@@ -2525,13 +2534,13 @@ const INFO = {
   /* 這份清單是寫給七歲小孩看的：一句一件事、不講上限數字、不用「首次通關」這種詞。
      規則細節（每天幾枚、誰有上限）留給下面那行動態的「今天還能拿 N 枚」和給大人的小字 */
   coin:{t:'金幣怎麼拿？', ic:'coin', li:[
-    '玩完遊戲，回首頁看攤子',
-    '攤子上做到的事，點一下就拿 1 枚',
-    '一個攤子三件事都做到，還會多送你金幣',
-    `乘法實戰家：過一關 1 枚，今天最多 ${STAGE_CAP} 枚`,
-    `比快挑戰：答對 ${TIMED_GOAL} 題，有 1 枚`,
-    `${DRAW_COST} 枚金幣可以轉一次轉蛋`,
-    '今天的金幣拿完就沒有了，明天會再長出來'],
+    '玩完遊戲，回首頁看攤子。',
+    '攤子上做到的事，點一下就拿 1 枚。',
+    '一個攤子三件事都做到，還會多送你金幣。',
+    `乘法實戰家：過一關 1 枚，今天最多 ${STAGE_CAP} 枚。`,
+    `比快挑戰：答對 ${TIMED_GOAL} 題，有 1 枚。`,
+    `${DRAW_COST} 枚金幣可以轉一次轉蛋。`,
+    '今天的金幣拿完就沒有了，明天會再長出來。'],
     note:`金幣每天有上限（一天最多 ${COIN_MAX_DAY} 枚），是為了讓眼睛休息 🙂。`}
 };
 function showInfo(kind){
@@ -2540,7 +2549,7 @@ function showInfo(kind){
   showModal(`<h3>${ic(f.ic)} ${f.t}</h3>
     <ul class="helplist" style="margin-top:10px">${f.li.map(x=>`<li>${mk(x)}</li>`).join('')}</ul>
     <p class="infonow">你現在有 <b>${n}</b> 枚金幣${GUEST?'':`，今天還能拿 <b>${coinsLeftToday()}</b> 枚`}</p>
-    ${GUEST?'<p class="note" style="margin-top:4px">訪客模式不會留下金幣喔</p>':''}
+    ${GUEST?'<p class="note" style="margin-top:4px">訪客模式不會留下金幣喔。</p>':''}
     ${f.note?`<p class="note helpnote">${mk(f.note)}</p>`:''}
     <div class="row"><button class="btn sun big" data-act="closeModal">知道了！</button></div>`);
   sfx.tap();
@@ -2562,11 +2571,13 @@ function showHelp(){
    以及把卡住講成一件正常的事。不預言結果（「下次就會答對」會變成壓力），
    不出現「錯」字，不用六歲讀不懂的詞。意思重複的只留一句 */
 const BUDDY_SAY = [
-  '慢慢來，不用急', '再試一次看看', '你會越來越熟', '你剛剛很努力',
-  '再想一下下', '不會也沒關係', '一題一題來', '你比剛才進步了',
-  '想不出來很正常', '難的題目才好玩', '你願意再試一次', '想過才會變厲害',
-  '我在這裡陪你', '慢慢想，沒關係', '你剛剛沒有放棄', '你自己想出來的',
-  '認真算就會進步', '我陪你一起算', '眼睛累了就休息', '我們一起加油'];
+  /* 陪伴與肯定「他剛剛做了什麼」 */
+  '慢慢來，不用急', '再試一次看看', '你剛剛很努力', '再想一下下',
+  '一題一題來', '你比剛才進步了', '難的題目才好玩', '想過才會變厲害',
+  '你剛剛沒有放棄', '你自己想出來的', '我陪你一起算', '眼睛累了就休息',
+  /* 幾句純粹好玩的閒聊，讓小夥伴像個會分心的朋友，不是一直在鼓勵的大人 */
+  '六七⋯⋯四十二！', '不想睡覺怎麼辦？', '哇喔～！', '數字好好玩',
+  '我也在偷偷算', '要不要喝口水？', '這題我也想一下', '肚子有點餓了'];
 let buddyT = null, buddyStep = 0;
 function buddyOf(){
   const m = me();
@@ -2728,13 +2739,13 @@ const VIEWS = {
       ${TITLE()}</section>
       <section class="card" style="max-width:460px;margin:0 auto">
         <h2 style="font-size:21px;text-align:center">你的名字是？</h2>
-        <p class="tdesc" style="margin:6px 0 14px;text-align:center">打名字，金幣和貼紙才留得住<br>
+        <p class="tdesc" style="margin:6px 0 14px;text-align:center">打名字，金幣和貼紙才留得住。<br>
           <small>（紀錄存在這台裝置的瀏覽器裡，請固定用同一台裝置玩）</small></p>
         ${nameForm({name:'', avatar:AVATARS[0], act:'createPlayer', btn:'開始玩', owned:GUEST?(me()||{}).owned:null})}
         <div class="guestbox">
           <button class="btn sage" data-act="guestStart">${ic('user')} 用訪客模式玩</button>
           <p class="note">不用打名字就能玩所有遊戲，<br>
-            但是<b>沒有金幣可以蒐集</b>，貼紙和紀錄也不會留下來。<br>
+            但是<b>沒有金幣可以收集</b>，貼紙和紀錄也不會留下來。<br>
             隨時可以回來取名字，變成正式的挑戰者。</p>
         </div>
       </section>`;
@@ -2751,7 +2762,7 @@ const VIEWS = {
       const ready = t.quests.some((q,k)=>!t.claimed[k] && questDone(T.id,k))
                  || (t.claimed.every(Boolean) && !t.bonus);
       return `<button class="stall ${ready?'ready':''}" data-act="tier" data-arg="${T.id}"
-          aria-label="${T.name}，完成 ${n} 之 3${ready?'，有金幣可以領':''}">${stallSVG(i)}
+          aria-label="${T.name}，3 件完成了 ${n} 件${ready?'，有金幣可以領':''}">${stallSVG(i)}
         ${ready?`<span class="bang" aria-hidden="true">${ic('bang')}</span>`:''}
         <span class="roofname">${T.name}</span>
         <span class="deskline"><b>${fin?'今天完成了':mk(T.short)}</b><i>${ready?ic('coin'):''}${n}/3</i></span></button>`;
@@ -2759,7 +2770,7 @@ const VIEWS = {
     const firstTime = !m.coins && !ownedCount && !Object.keys(m.stages||{}).length && !(m.art||[]).length;
     const tip = firstTime ? '第一次玩嗎？先按綠色的 🔰 氣球，從「乘法翻翻樂」開始。'
       : m.coins>=DRAW_COST ? `你有 ${m.coins} 枚金幣，可以去右上角的轉蛋機玩了！`
-      : ownedCount>=STICKERS.length ? `${STICKERS.length} 種貼紙全部收集完成，你好厲害！`
+      : ownedCount>=STICKERS.length ? `${STICKERS.length} 種貼紙全部收集完成！`
       : '';   /* 平常不放話——攤子和氣球自己說得夠清楚了，畫面留白比較好看 */
     view.innerHTML=`
       ${TITLE()}
@@ -2769,7 +2780,7 @@ const VIEWS = {
           <span class="pill">${ic('book')} ${ownedCount}/${STICKERS.length}</span>
         </div>
       </section>
-      ${ GUEST ? `<div class="guestbar">${ic('warn','lg')}<span><b>訪客模式</b>：沒有金幣可以蒐集，貼紙和紀錄也不會留下來</span><button class="btn small" data-act="toName">取名字</button></div>` : '' }
+      ${ GUEST ? `<div class="guestbar">${ic('warn','lg')}<span><b>訪客模式</b>：沒有金幣可以收集，貼紙和紀錄也不會留下來。</span><button class="btn small" data-act="toName">取名字</button></div>` : '' }
       ${tip?helper(mk(tip)):''}
       <section class="modes">${balloonsHTML(m)}</section>
       <div class="gdock"><button class="gbtn" data-act="book" aria-label="我的轉蛋機">${gachaSVG()}<b>我的轉蛋機</b></button></div>
@@ -2851,7 +2862,7 @@ const VIEWS = {
     view.innerHTML=`
       <div class="backrow"><button class="iconbtn" data-act="reviewPick" aria-label="返回">${ic('back')}</button><h2>翻翻樂 ${tableName(t)}</h2></div>
       <p class="note topnote">點卡片翻開就會唸口訣${canSpeak?'':'（這台裝置沒有語音）'}；不計分，可以放心亂翻</p>
-      <p class="thinkfirst">先想想看，再翻答案<i>已翻開 <span id="flipn">${open}/9</span></i></p>
+      <p class="thinkfirst">先想想看，再翻答案。<i>已翻開 <span id="flipn">${open}/9</span></i></p>
       <div class="flipgrid">${cards}</div>
       <div class="rbtns" style="margin-top:20px">
         <button class="btn small" data-act="flipnone">全部蓋起來</button>
@@ -2873,10 +2884,8 @@ const VIEWS = {
         <button class="btn small" data-act="hhint">${ic('find')} 提示</button>
       </div>
       <div class="hstrip" id="hstrip"></div>
-      <div class="art" id="art">${artHTML(game.art)}</div>
-      <div class="hbtns">
-        <span class="note" id="hnote">在「${esc(S.name)}」裡找答案</span>
-      </div>`;
+      <p class="note gnote" id="hnote">在「${esc(S.name)}」裡找答案。</p>
+      <div class="art" id="art">${artHTML(game.art)}</div>`;
   },
 
   gallery(){
@@ -2898,9 +2907,9 @@ const VIEWS = {
       <div class="backrow"><button class="iconbtn" data-act="huntPick" aria-label="返回">${ic('back')}</button><h2>畫廊 ${list.length}/${MAX_ART}</h2>
         ${list.length?`<button class="btn small ${galEdit?'sun':''}" data-act="galedit">${galEdit?'完成':'整理'}</button>`:''}</div>
       ${list.length
-        ? helper(galEdit?'用左右箭頭換位置，垃圾桶可以刪掉不要的畫'
-                        :`每找完一張畫就會收進來，最多收 ${MAX_ART} 張。點一張看大圖`)+`<div class="ggrid">${cells}</div>`
-        : helper(`把一張畫裡的 9 個答案都找出來，就會收進畫廊`)+
+        ? helper(galEdit?'用左右箭頭換位置，垃圾桶可以刪掉不要的畫。'
+                        :`每找完一張畫就會收進來，最多收 ${MAX_ART} 張。點一張看大圖。`)+`<div class="ggrid">${cells}</div>`
+        : helper(`把一張畫裡的 9 個答案都找出來，就會收進畫廊。`)+
           `<div style="margin-top:18px;text-align:center"><button class="btn sun big" data-act="huntPick">去尋寶遊戲</button></div>`}`;
   },
 
@@ -2932,8 +2941,8 @@ const VIEWS = {
         <span class="qnum" id="qnum"></span>
       </div>
       <div class="hask" id="snq" aria-live="polite"></div>
+      <p class="note gnote" id="snnote"></p>
       <div class="snboard" id="snboard" style="--n:${g.n}">${cells}</div>
-      <p class="note" id="snnote"></p>
       ${snakePadHTML()}`;
     bindSwipe();
     updateSnakeBar();
@@ -2958,7 +2967,7 @@ const VIEWS = {
         <span class="qnum" id="qnum">${Math.min(g.qi+1,g.total)}/${g.total}</span>
       </div>
       <div class="haskrow">
-        <div class="hask lask">這是幾乘幾呢？<span class="hchant">先填每排幾個，再填有幾排</span></div>
+        <div class="hask lask">這是幾乘幾呢？<span class="hchant">先填每排幾個，再填有幾排。</span></div>
         <button class="btn small" data-act="lhint">${ic('find')} 提示</button>
       </div>
       <p class="note lhint" id="lnote">先數每排幾個，再數有幾排</p>
@@ -2999,7 +3008,7 @@ const VIEWS = {
           <div class="track" id="track"><i id="trackfill" style="width:${g.done/g.total*100}%"></i></div>
           <span class="qnum">${g.done}/${g.total}</span>
         </div>
-        <div class="hask lask">找出答案一樣的兩張<span class="hchant big" id="pnote">例如 4×1 和 2×2 都是 4</span></div>
+        <div class="hask lask">找出答案一樣的兩張<span class="hchant big" id="pnote">例如 4×1 和 2×2 都是 4。</span></div>
         <div class="pgrid">${cells}</div>`;
     } else {
       const cells=g.cards.map((c,i)=>{
@@ -3015,9 +3024,9 @@ const VIEWS = {
           <div class="track" id="track"><i id="trackfill" style="width:${g.qi/g.total*100}%"></i></div>
           <span class="qnum">${Math.min(g.qi+1,g.total)}/${g.total}</span>
         </div>
-        <div class="hask lask">哪一張的答案不一樣？<span class="hchant">兩個算式算算看，答案不同的就是它</span></div>
+        <div class="hask lask">哪一張的答案不一樣？<span class="hchant">兩個算式算算看，答案不同的就是它。</span></div>
         <div class="pgrid two">${cells}</div>
-        <p class="note" id="pnote">其他幾張的兩個算式，答案都是一樣的</p>`;
+        <p class="note" id="pnote">其他幾張的兩個算式，答案都是一樣的。</p>`;
     }
   },
 
@@ -3037,7 +3046,7 @@ const VIEWS = {
     const cleared=Object.keys(sv).length;
     view.innerHTML=`
       <div class="backrow"><button class="iconbtn" data-act="home" aria-label="返回">${ic('back')}</button><h2>乘法實戰家 ${cleared}/${STAGES.length}</h2></div>
-      ${helper('一關 10 題，答對 8 題就過關，不熟的會再出一次。十二關都可以直接玩。')}
+      ${helper('一關 10 題，答對 8 題就過關，不熟的會再出一次。12 關都可以直接玩。')}
       <p class="note topnote">這裡今天還能拿 <b>${playCoinsLeft()}</b> 枚金幣
         <button class="inqa" data-act="info" data-arg="coin" aria-label="金幣怎麼拿？">?</button></p>
       <div class="seg" role="group" aria-label="作答方式">
@@ -3080,7 +3089,7 @@ const VIEWS = {
       : r.hunt ? (r.score===r.total?'九個答案全都一次找到！':'九個答案都找到了！')
       : r.stage
       ? (r.cleared ? (r.firstClear?`第 ${r.stage} 關通關！`:`第 ${r.stage} 關再次通關！`) : '差一點點！')
-      : (r.grade===3?'太厲害了！':r.grade===2?'做得很好！':'再練習一下會更棒！');
+      : (r.grade===3?'太厲害了！':r.grade===2?'做得很好！':'你剛剛很認真！');
     ensureDaily();
     const dn=TIERS.reduce((s,T)=>s+doneCount(T.id),0);
     const claimable=anyClaimable();
@@ -3088,11 +3097,11 @@ const VIEWS = {
       ? `<div class="stat"><b>${r.eaten}</b><span>吃到的答案</span></div>`
       : r.timed
       ? `<div class="stat"><b>${r.score}</b><span>60 秒答對題數</span></div>`
-      : `<div class="stat"><b>${r.score}/${r.total}</b><span>${r.slabel ? r.slabel : r.hunt?'一次就找到':`第一次就答對${r.stage?`（過關要 ${r.need}）`:''}`}</span></div>`;
+      : `<div class="stat"><b>${r.score}/${r.total}</b><span>${r.slabel ? r.slabel : r.hunt?'一次就找到':`第一次就答對${r.stage?`（過關要 ${r.need} 題）`:''}`}</span></div>`;
     let badge='';
     if(r.newBest) badge=`<div class="badge">${ic('trophy')} 新紀錄！${r.coins?`　${ic('coin')} 拿到 ${r.coins} 枚金幣`:''}</div>`;
     else if(r.coins) badge=`<div class="badge">${ic('coin')} 拿到 ${r.coins} 枚金幣</div>`;
-    else if(r.capped) badge='<div class="badge">這個遊戲今天的金幣拿完了</div>';
+    else if(r.capped) badge='<div class="badge">這個遊戲今天的金幣拿完了。</div>';
     const nextN = r.stage && r.cleared && r.stage<STAGES.length ? r.stage+1 : 0;
     view.innerHTML=`
       <section class="card result">
@@ -3107,7 +3116,7 @@ const VIEWS = {
             : `<div class="stat"><b>${r.maxCombo}</b><span>最多連續答對</span></div>`}
         </div>
         <p class="qsum">今日任務完成 ${dn}/6</p>
-        ${claimable?`<p class="getcoin">${ic('coin')} 攤子有金幣可以拿了，回首頁點它</p>`:''}
+        ${claimable?`<p class="getcoin">${ic('coin')} 攤子有金幣可以拿了，回首頁點它。</p>`:''}
         <div class="rbtns">
           ${r.hunt?`<button class="btn" data-act="gallery">看畫廊</button>`:''}
           ${nextN?`<button class="btn sun big" data-act="stage" data-arg="${nextN}">下一關 ${ic('play')}</button>`:''}
@@ -3131,7 +3140,7 @@ const VIEWS = {
       if(!themeOpen(th)){
         const need=(THEME_LOCK[th]||0)-total;
         return `<section class="theme lockedth"><h3>${THEMES[th].name} <small>還沒打開</small></h3>
-          <p class="lockmsg">${ic('lock')}<span>再收集到 <b>${need}</b> 張貼紙，這一類就會打開</span></p></section>`;
+          <p class="lockmsg">${ic('lock')}<span>再收集到 <b>${need}</b> 張貼紙，這一類就會打開。</span></p></section>`;
       }
       const have=list.filter(s=>owned[s.id]).length;
       const cells=bookOrder(list).map(s=> owned[s.id]
@@ -3139,13 +3148,13 @@ const VIEWS = {
         : `<div class="scell"><div class="sticker locked r-${s.rar}" style="--sbg:${sbg(s)}"><span>?</span></div><span class="sname dim ${s.rar}">${RARW[s.rar]}</span></div>`).join('');
       return `<section class="theme"><h3>${THEMES[th].name} <small>${have}/${list.length}</small></h3>`+
         `<div class="sgrid${list.length<5?' trophy':''}">${cells}</div>`+
-        (list.length<5?`<p class="trophynote">收集滿 ${THEME_LOCK[th]} 張才打得開的三張</p>`:'')+`</section>`;
+        (list.length<5?`<p class="trophynote">收集滿 ${THEME_LOCK[th]} 張才打得開的三張。</p>`:'')+`</section>`;
     }).join('');
     const nl=nextLock();
     view.innerHTML=`
       <div class="backrow"><button class="iconbtn" data-act="home" aria-label="返回">${ic('back')}</button><h2>我的轉蛋機 ${total}/${STICKERS.length}</h2></div>
-      ${helper(me().coins>=DRAW_COST?`${DRAW_COST} 枚金幣轉一次，點貼紙可以叫它出來陪你玩，或換成你的頭像`:`轉一次要 ${DRAW_COST} 枚金幣，去首頁攤子做任務`)}
-      ${nl?`<p class="nextlock">${ic('lock')}<span>再收集到 <b>${nl.left}</b> 張，就會打開「${THEMES[nl.th].name}」</span></p>`:''}
+      ${helper(me().coins>=DRAW_COST?`${DRAW_COST} 枚金幣轉一次，點貼紙可以叫它出來陪你玩，或換成你的頭像。`:`轉一次要 ${DRAW_COST} 枚金幣，去首頁攤子做任務。`)}
+      ${nl?`<p class="nextlock">${ic('lock')}<span>再收集到 <b>${nl.left}</b> 張，就會打開「${THEMES[nl.th].name}」。</span></p>`:''}
       <section class="card gacha">
         <div class="machine" id="machine" aria-hidden="true">${gachaSVG()}</div>
         <div class="gachainfo">
@@ -3320,9 +3329,9 @@ function submit(val){
     game.combo=0;
     slot.innerHTML=`<s>${val}</s>${ans}`; qc.classList.add('wrong');
     const ch=chant(it.a,it.b);
-    let html=`<div class="wrongmsg">慢慢來，答案是 <b>${ans}</b></div><div class="chant">${ch}${canSpeak?`<button class="say" data-act="say" data-arg="${ch}" aria-label="唸口訣">🔊</button>`:''}</div>`;
+    let html=`<div class="wrongmsg">慢慢來，答案是 <b>${ans}</b>。</div><div class="chant">${ch}${canSpeak?`<button class="say" data-act="say" data-arg="${ch}" aria-label="唸口訣">🔊</button>`:''}</div>`;
     if(game.mode!=='timed'){
-      if(!it.retry){ game.queue.push({a:it.a,b:it.b,retry:true}); html+='<div class="retrynote">這題等一下會再出現一次</div>'; }
+      if(!it.retry){ game.queue.push({a:it.a,b:it.b,retry:true}); html+='<div class="retrynote">這題等一下會再出現一次。</div>'; }
       fb.innerHTML=html;
       $('#inputArea').innerHTML='<div class="nextwrap"><button class="btn big sun" data-act="next">下一題</button></div>';
       game.waiting=true;
@@ -3469,7 +3478,7 @@ function claimBonus(tier){
   t.bonus=true; me().coins+=T.bonus;
   save(); sfx.fanfare();
   burstAt(document.querySelector('[data-act="bonus"]'),40);
-  toast(`${T.name}三個都完成！再拿 ${T.bonus} 枚金幣`);
+  toast(`${T.name}三個都完成！再拿 ${T.bonus} 枚金幣。`);
   setTimeout(()=>{ go('home'); openTier(tier); coinDoneCheck(); },250);
 }
 function askRename(id){
@@ -3494,8 +3503,8 @@ function askDelArt(i){
   const a=(me().art||[])[i];
   if(!a) return;
   /* 刪掉就真的沒了，先問一次；預設那顆（會拿到焦點的）是「不要刪」 */
-  showModal(`<h3>要刪掉這張畫嗎？</h3>
-    <p>「${esc(artScene(a).name)}・${tableName(a.t)}」刪掉以後就找不回來了喔。</p>
+  showModal(`<h3>要刪掉嗎？</h3>
+    <p>「${esc(artScene(a).name)}・${tableName(a.t)}」刪掉就沒有了喔。</p>
     <div class="row"><button class="btn sun" data-act="closeModal">不要刪</button>
       <button class="btn" data-act="delArtYes" data-arg="${i}">確定刪掉</button></div>`);
 }
@@ -3503,7 +3512,7 @@ function delArt(i){
   const list=me().art||[];
   if(!list[i]) return;
   list.splice(i,1);
-  save(); closeModal(); go('gallery'); toast('已經刪掉了');
+  save(); closeModal(); go('gallery'); toast('已經刪掉了。');
 }
 function askDelete(id){
   const p=state.players.find(x=>x.id===id); if(!p) return;
@@ -3650,7 +3659,7 @@ function snakePause(){
   const g=game;
   if(!g || g.mode!=='snake' || g.over || g.lv.step) return;
   g.paused = !g.paused;
-  snakeNote(g.paused ? '暫停中，慢慢算，按方向鍵繼續' : '');
+  snakeNote(g.paused ? '暫停中，慢慢算，按方向鍵繼續。' : '');
   const b=document.querySelector('[data-act="spause"]');
   if(b) b.innerHTML = ic(g.paused ? 'play' : 'pause');
 }
@@ -3662,7 +3671,7 @@ function snakeStep(){
   if(g.snake.some((sg,i)=> i<g.snake.length-1 && sg.x===nx && sg.y===ny)){
     g.paused = true;
     g.snake.length = Math.max(3, g.snake.length-2);
-    snakeHurt('蛇打結了！換個方向再出發');
+    snakeHurt('蛇打結了！換個方向再出發。');
     paintSnake();
     return;
   }
@@ -3696,7 +3705,7 @@ function snakeEat(){
   if(head) burstAt(head, 10);
   if(g.eaten % RAINBOW.length === 0){
     g.rainbows++; d.p.rainbows++;
-    sfx.fanfare(); toast(`完成第 ${g.rainbows} 條彩虹！${g.rainbows>=2?'':'再一條就過關'}`);
+    sfx.fanfare(); toast(`完成第 ${g.rainbows} 條彩虹！${g.rainbows>=2?'':'再一條就過關。'}`);
     if(head) burstAt(head, 40);
     if(g.lv.up && g.ms>g.lv.min){ g.ms=Math.max(g.lv.min, g.ms-g.lv.up); snakeRun(); }
     if(g.lv.rocks) for(let i=0;i<2;i++){ const c=snakeFree(); if(c) g.rocks.push(c); }
@@ -3717,7 +3726,7 @@ function snakeMiss(v){
   record(a,b,false);
   g.combo=0;
   const inTable = v%a===0 && v/a>=1 && v/a<=9;
-  snakeHurt(inTable ? `那是 ${a} × ${v/a} = ${v} 喔，要找 ${a} × ${b}` : `${v} 不是 ${a} 的乘法喔`);
+  snakeHurt(inTable ? `那是 ${a} × ${v/a} = ${v} 喔，要找 ${a} × ${b}。` : `${v} 不是 ${a} 的乘法喔。`);
 }
 function snakeHurt(msg){
   const g=game;
@@ -3732,7 +3741,7 @@ function snakeHurt(msg){
 function snakeNote(msg){
   const el=document.getElementById('snnote');
   if(!el) return;
-  el.textContent = msg || (game && game.lv.step ? '點蛇頭前面那一格，或按方向鍵，走一步' : '點蛇頭前面、滑動畫面，或按方向鍵轉彎');
+  el.textContent = msg || (game && game.lv.step ? '點蛇頭前面那一格，或按方向鍵，走一步。' : '點蛇頭前面、滑動畫面，或按方向鍵轉彎。');
 }
 function updateSnakeBar(){
   const g=game; if(!g || g.mode!=='snake') return;
@@ -3930,10 +3939,10 @@ function huntNext(){
   if(game.pos>=ART_N) return finishHunt();
   game.locked=false; game.miss=0; game.hinted=false;
   const slot=game.order[game.pos], p=game.pairs[slot-1];
-  $('#hask').innerHTML=`${p.a} <span class="op">×</span> ${p.b} <span class="op">=</span> ?<span class="hchant">答案藏在畫面裡，找到就點它</span>`;
+  $('#hask').innerHTML=`${p.a} <span class="op">×</span> ${p.b} <span class="op">=</span> ?<span class="hchant">答案藏在畫面裡，找到就點它。</span>`;
   $('#qnum').textContent=`${game.pos+1}/${ART_N}`;
   $('#trackfill').style.width=(game.pos/ART_N*100)+'%';
-  hnote(game.pos===0 ? '數字跟畫面同色，仔細看每個角落' : `還剩 ${ART_N-game.pos} 個答案`);
+  hnote(game.pos===0 ? '數字跟畫面同色，仔細看每個角落。' : `還剩 ${ART_N-game.pos} 個答案`);
   huntStrip();
 }
 function hnote(msg){ const el=document.getElementById('hnote'); if(el) el.textContent=msg; }
@@ -3975,7 +3984,7 @@ function huntPick(v, el){
     setTimeout(()=>el.classList.remove('bad'),520);
     sfx.wrong();
     const inTable = v%t===0 && v/t>=1 && v/t<=9;
-    if(game.miss===1) hnote(inTable ? `慢慢來，那是 ${t} × ${v/t} = ${v}，現在要找 ${t} × ${b}` : `慢慢來，${v} 不是 ${t} 的乘法喔`);
+    if(game.miss===1) hnote(inTable ? `慢慢來，那是 ${t} × ${v/t} = ${v}，現在要找 ${t} × ${b}。` : `慢慢來，${v} 不是 ${t} 的乘法喔。`);
     else if(game.miss===2){ const ch=chant(t,b); hnote(`提示：${ch}`); say(ch); }
     else huntHint();
     save();
@@ -3989,7 +3998,7 @@ function huntHint(){
   game.hinted=true; game.hints++;
   el.classList.remove('hintme'); void el.offsetWidth; el.classList.add('hintme');
   setTimeout(()=>el.classList.remove('hintme'), 2600);
-  hnote(`答案是 ${ans}，看閃紅色的那個數字`);
+  hnote(`答案是 ${ans}，看閃紅色的那個數字。`);
   sfx.tap();
 }
 function finishHunt(){
@@ -4139,7 +4148,7 @@ function learnKey(k){
     if(v!==q.b) return learnBad(0,v);
     g.pick.push(v); g.hint=0;      /* 填對了提示就收起來，要再按才會出現 */
     go('learn');
-    lnote('對了！再數數看總共有幾排');
+    lnote('對了！再數數看總共有幾排。');
     return;
   }
   if(v!==q.a) return learnBad(1,v);
@@ -4153,8 +4162,8 @@ function learnBad(slot,v){
   go('learn');
   const box=document.getElementById('lbox');
   if(box){ box.classList.remove('bad'); void box.offsetWidth; box.classList.add('bad'); }
-  lfb(`<div class="lwrong">${ic('close')} 慢慢來，再數一次</div>`);
-  lnote(slot===0 ? '一排有幾個呢？一個一個數數看' : '總共有幾排呢？一排一排數數看');
+  lfb(`<div class="lwrong">${ic('close')} 慢慢來，再數一次。</div>`);
+  lnote(slot===0 ? '一排有幾個呢？一個一個數數看。' : '總共有幾排呢？一排一排數數看。');
   sfx.wrong();
 }
 /* 提示跟著現在在填哪一格走：
@@ -4366,7 +4375,7 @@ function pairTap(i){
     f.tried=c.tried=true; f.bad=c.bad=true; g.combo=0; g.sel=-1;
     record(c.a,c.b,false);
     go('pair');
-    pnote(`慢慢來，${f.a} × ${f.b} = ${f.p}，${c.a} × ${c.b} = ${c.p}，不一樣喔`);
+    pnote(`慢慢來，${f.a} × ${f.b} = ${f.p}，${c.a} × ${c.b} = ${c.p}，不一樣喔。`);
     sfx.wrong();
     g.badT=setTimeout(()=>{
       g.badT=null;
@@ -4396,7 +4405,7 @@ function diffTap(i){
     if(g.miss===0) record(c.l[0],c.l[1],false);
     g.miss++; g.combo=0; c.tried=true;
     go('pair');
-    pnote(`慢慢來，${c.l[0]} × ${c.l[1]} 和 ${c.r[0]} × ${c.r[1]} 都是 ${lp}，這兩個一樣喔`);
+    pnote(`慢慢來，${c.l[0]} × ${c.l[1]} 和 ${c.r[0]} × ${c.r[1]} 都是 ${lp}，這兩個一樣喔。`);
     sfx.wrong();
   }
 }
@@ -4479,11 +4488,11 @@ document.addEventListener('click', e=>{
       break;
     }
     case 'ava': formAvatar=arg; document.querySelectorAll('.ava-opt').forEach(b=>b.classList.toggle('on', b.dataset.arg===arg)); sfx.tap(); break;
-    case 'guestStart': startGuest(); updateTop(); go('home'); toast('訪客模式：沒有金幣可以蒐集喔'); break;
+    case 'guestStart': startGuest(); updateTop(); go('home'); toast('訪客模式：沒有金幣可以收集喔。'); break;
     case 'toName': go('welcome'); break;
     case 'createPlayer': {
       const n=readName();
-      if(!n){ toast('先打名字喔'); focusName(); break; }
+      if(!n){ toast('先打名字喔。'); focusName(); break; }
       if(GUEST){ const g=me(); GUEST=false; g.name=n; g.avatar=avaOk(formAvatar,g.owned)?formAvatar:AVATARS[0]; save(); }
       else addPlayer(n, formAvatar);
       updateTop(); go('home');
@@ -4496,12 +4505,12 @@ document.addEventListener('click', e=>{
     case 'renameOk': {
       const p=state.players.find(x=>x.id===arg), n=readName();
       if(!p) { closeModal(); break; }
-      if(!n){ toast('名字不能空白喔'); focusName(); break; }
+      if(!n){ toast('名字不能空白喔。'); focusName(); break; }
       p.name=n; p.avatar=avaOk(formAvatar,p.owned)?formAvatar:p.avatar; save(); closeModal(); updateTop(); go('players');
       break;
     }
     case 'delp': askDelete(arg); break;
-    case 'delYes': removePlayer(arg); closeModal(); updateTop(); go(hasPlayer()?'players':'home'); toast('已經刪除了'); break;
+    case 'delYes': removePlayer(arg); closeModal(); updateTop(); go(hasPlayer()?'players':'home'); toast('已經刪除了。'); break;
     case 'key': pressKey(arg); break;
     case 'choice': submit(+arg); break;
     case 'next': advance(); break;
@@ -4533,7 +4542,7 @@ document.addEventListener('click', e=>{
       const on = m.buddy!==s.id;
       m.buddy = on ? s.id : '';
       save(); sfx.tap(); closeModal(); floatBuddy();
-      toast(on ? `${s.name}出來陪你玩了！` : `${s.name}回去休息了`);
+      toast(on ? `${s.name}出來陪你玩了！` : `${s.name}回去休息了。`);
       if(currentView==='book') go('book');
       break;
     }
