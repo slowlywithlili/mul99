@@ -39,7 +39,7 @@ $OLD/fontenv/bin/python3 make-font.py \
   $OLD/fontdl/BpmfGenSenRounded-M.ttf $OLD/fontdl/BpmfGenSenRounded-B.ttf
 ```
 
-- 目前 **1034 字**。字數只會往上，突然變少代表有東西被誤刪。
+- 目前 **1065 字**。字數只會往上，突然變少代表有東西被誤刪。
 - 唯一的警告「什=ㄕㄜˊ 字型只有 shen2／shi2」是舊有的、無害。
 - `$OLD` 是**更早一個 session 的暫存區，隨時可能被清掉**。清掉的話要重建 venv（fonttools + brotli）並重新下載 [ButTaiwan/bpmfvs](https://github.com/ButTaiwan/bpmfvs) 的 `BpmfGenSenRounded.zip`（SIL OFL 1.1）。多音字對照表在 `zhuyin.txt`。
 - 注音**不是 `<ruby>`**，是用 Unicode 變體選擇子（U+E0100–E01EF，代理對 `\uDB40[\uDC00-\uDFFF]`）畫進漢字字形裡。`zyOne()`（index.html:1321）只對多音字插選擇子；`zySkip()`（index.html:1312）會跳過 SCRIPT/STYLE/TEXTAREA/INPUT、SVG 命名空間、和帶 `nozy` class 的節點。
@@ -234,6 +234,8 @@ cd ~/personal/mul99-tests
   目前 17 個：前 8 個是舊的（小房間、小公園、海邊沙灘、廚房、外太空、恐龍島、下雪天、夜市），
   後 9 個是後來加的（海底世界、過年的家、森林好朋友、遊樂園、平溪天燈、梵谷星空、聖誕節、賽車場、中秋團圓）。
   `r5.html` 盯著前 8 個的名字和順序。
+- **重畫一個場景會動到小孩舊的畫。** `bg`／`spots`／`plots` 一改，畫廊裡同一個場景的舊畫
+  就會變成新樣子（藏的九題不變）。要改之前先確認使用者知道這件事。
 - **場景道具不可以直接用貼紙的圖。** 貼紙要花 3 枚金幣轉蛋才抽得到，場景裡到處都是就不值錢了。
   `ART` 同時給貼紙和場景用，所以很容易不小心共用 —— `r5.html` 會把每個場景的 `items` 和 `STICKERS` 對一遍。
   天燈、聖誕樹、月餅這種兩邊都要有的東西，作法是**畫進背景 SVG 裡**，不做成可以到處灑的道具。
@@ -261,11 +263,14 @@ cd ~/personal/mul99-tests
   12 關全掛就是騙人，一顆都不掛小孩又找不到（真的發生過）。黃色底色只代表「還沒過關」。
 - **實戰家頁面的問號要用 `INFO.here`，不要用 `INFO.coin`**。那裡只回答「這一頁現在怎麼拿」，
   最多兩句；`INFO.coin`（右上角金幣）才是全站的清單，而且補氣站那一條**只有今天真的有題目要補才列**。
-- **結果畫面的金幣是一顆按鈕**（`data-act="getcoin"`），小孩自己按才響音效、才飛金幣、
-  右上角才跳數字。但**金幣在過關當下就已經入帳**，按鈕只負責「拿到的感覺」——
-  改成「按了才給」就會有小孩沒按到、金幣不見的問題。壓住右上角數字的是 `coinHold`。
+- **結果畫面的金幣是一顆按鈕**（`data-act="getcoin"`），**按下去才真的入帳**。
+  `finishStage/finishTimed/finishPump` 只把金幣掛在 `game.result.coins` ＋ `pend`
+  （`'stage'｜'timed'｜'pump'`），入帳、扣每日額度、`save()`、`coinDoneCheck()` 都在 `takeCoin()`。
+  每日上限在 `takeCoin()` 要**再檢查一次**（結果畫面可以擺著不按、去玩下一關、回頭再按）。
+  **沒按就離開＝那一枚今天就沒了**，這是使用者明確要的，不要「貼心」改回自動入帳。
+  寫測試時記得：跑完一場要 `document.querySelector('[data-act="getcoin"]').click()` 金幣才會進去。
 - **貪食蛇愛心用完不放慶祝特效**（`r.snake && !r.win`）。那不是過關。
-- **小夥伴的話分 `BUDDY_CARE`（12 句鼓勵）和 `BUDDY_FUN`（8 句閒聊），輪流出現**，
+- **小夥伴的話分 `BUDDY_CARE`（11 句鼓勵）和 `BUDDY_FUN`（9 句閒聊），輪流出現**，
   不要混成一包隨機 —— 全鼓勵像說教的大人，全閒聊少了陪伴感。點一下它會說話（`btalk`）。
 - **全站不要出現「計分」兩個字。** 這個遊戲沒有分數，只有金幣和小綠點。
   想講「翻翻樂不影響熟練度」就寫「不會動到小綠點」。`r8.html` 會掃所有畫面和說明視窗。

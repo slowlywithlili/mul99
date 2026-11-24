@@ -335,7 +335,8 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 
 /* gacha */
 .gacha{display:flex;align-items:center;gap:18px;margin-bottom:22px}
-.machine{position:relative;width:140px;flex:none}
+/* 轉蛋機整體放大 10%（140 → 154px）*/
+.machine{position:relative;width:154px;flex:none}
 .machine > svg{display:block;width:100%;height:auto;filter:drop-shadow(0 6px 10px var(--shadow))}
 .machine.spin > svg{animation:wobble .3s 3}
 .dome{position:relative;width:140px;height:130px;border:1.5px solid var(--hair);border-radius:70px 70px 14px 14px;background:color-mix(in srgb,#C3D6E2 70%,var(--surface));overflow:hidden}
@@ -624,7 +625,8 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 .about p:last-child{margin-bottom:0}
 /* 文章裡唯一能點的東西，做得跟頁尾的連結一樣，大人一眼看得出來、手指也按得到 */
 .about a{display:inline-block;color:var(--ink);text-decoration:none;padding:1px 9px;
-  border:1.5px dashed var(--hair);border-radius:999px;background:var(--surface2)}
+  border:1.5px dashed var(--edge);border-radius:999px;
+  background:color-mix(in srgb,var(--oat-l) 50%,var(--oat) 50%)}
 .about .tip{margin-top:15px;color:var(--muted);font-size:17px}
 
 /* 全站的圖案都是手繪 SVG，不再需要幫 emoji 降彩度 */
@@ -1303,21 +1305,45 @@ const SCENES = [
     items:['snowman','snowflake','penguin','pinetree','scarf','mitten','log','teapot','mountain','sock'] },
 
   { name:'夜市', ink:'#5E2A6E',
-    bg:'<rect width="100" height="100" fill="#F2C9A8"/><path d="M0 0h100v34H0z" fill="#E8B8D0"/>'+
-       '<circle cx="80" cy="16" r="7" fill="#FFF4D0"/>'+
-       '<path d="M4 36h40l-4 7H8z" fill="#E86A6A"/><path d="M12 36h6l-2 7h-6zM28 36h6l-2 7h-6z" fill="#FFF0F0"/>'+
-       '<rect x="8" y="43" width="32" height="23" fill="#F5E0C2"/><rect x="8" y="43" width="32" height="3" fill="#D9C2A0"/>'+
-       '<path d="M56 38h38l-4 7H60z" fill="#5FA8D8"/><path d="M64 38h6l-2 7h-6zM80 38h6l-2 7h-6z" fill="#EAF6FF"/>'+
-       '<rect x="60" y="45" width="30" height="21" fill="#F5E0C2"/><rect x="60" y="45" width="30" height="3" fill="#D9C2A0"/>'+
-       '<circle cx="24" cy="30" r="3.4" fill="#E8604C"/><circle cx="50" cy="26" r="3" fill="#E8604C"/><circle cx="74" cy="30" r="3.4" fill="#E8604C"/>'+
-       '<path d="M24 26v-4M50 22v-4M74 26v-4" stroke="#B5763F" stroke-width="1"/>'+
-       '<rect y="66" width="100" height="34" fill="#C9A88C"/><path d="M0 78h100M0 90h100" stroke="#B59478" stroke-width="1"/>',
-    spots:[[14,12,'#C892B0'],[44,10,'#C892B0'],[66,24,'#C892B0'],[94,8,'#C892B0'],[80,16,'#E0CFA0'],
-           [22,40,'#C44F4F'],[74,40,'#3F82B0'],
-           [20,54,'#CFB894'],[34,60,'#CFB894'],[70,54,'#CFB894'],[84,60,'#CFB894'],
-           [10,72,'#A88A6E'],[34,76,'#A88A6E'],[56,72,'#A88A6E'],[78,80,'#A88A6E'],[22,88,'#A88A6E'],[48,92,'#A88A6E'],[70,88,'#A88A6E'],[92,94,'#A88A6E'],[4,94,'#A88A6E']],
-    plots:[[14,62,7],[28,62,6],[64,62,7],[80,62,6],[44,70,7],[8,80,8],[30,82,8],[54,80,8],[76,76,8],[92,84,9],
-           [18,92,9],[60,94,9],[40,56,5],[88,52,5]],
+    bg:'<rect width="100" height="100" fill="#43344F"/><rect y="36" width="100" height="64" fill="#52405C"/>'+
+       '<defs><radialGradient id="nmglow"><stop offset="0" stop-color="#FFD98F" stop-opacity=".46"/><stop offset=".6" stop-color="#FFC978" stop-opacity=".15"/><stop offset="1" stop-color="#FFC978" stop-opacity="0"/></radialGradient></defs>'+
+       /* 兩條掛在街上的燈泡串 */
+       '<path d="M0 12q25 9 50 1t50 7" fill="none" stroke="#6B5673" stroke-width="1"/>'+
+       '<g fill="#FFE7A8"><circle cx="10" cy="15" r="1.7"/><circle cx="26" cy="16.8" r="1.7"/><circle cx="42" cy="16" r="1.7"/><circle cx="58" cy="14" r="1.7"/><circle cx="74" cy="15" r="1.7"/><circle cx="90" cy="17.4" r="1.7"/></g>'+
+       /* 三顆紅燈籠 */
+       '<path d="M18 20.6v-6M52 17.6v-5M86 21.6v-6" stroke="#7E6478" stroke-width=".9"/>'+
+       '<g fill="#D94A48"><ellipse cx="18" cy="27" rx="5.2" ry="6.2"/><ellipse cx="52" cy="24" rx="4.6" ry="5.6"/><ellipse cx="86" cy="28" rx="5" ry="6"/></g>'+
+       '<g fill="#F2B04A"><rect x="15.6" y="20.2" width="4.8" height="1.8" rx=".9"/><rect x="49.8" y="17.4" width="4.4" height="1.8" rx=".9"/><rect x="83.6" y="21.2" width="4.8" height="1.8" rx=".9"/>'+
+         '<rect x="15.6" y="32" width="4.8" height="1.8" rx=".9"/><rect x="49.8" y="28.8" width="4.4" height="1.8" rx=".9"/><rect x="83.6" y="33" width="4.8" height="1.8" rx=".9"/></g>'+
+       /* 攤子透出來的暖光 */
+       '<g fill="url(#nmglow)"><circle cx="25" cy="54" r="23"/><circle cx="75" cy="57" r="23"/></g>'+
+       /* 左邊的攤車：紅白雨棚、檯面、輪子 */
+       '<path d="M24 44.4v-4.4h6v4.4z" fill="#F2C86A"/>'+
+       '<path d="M6 44h38l-2.5 7H8.5z" fill="#D9574F"/>'+
+       '<path d="M13 44h5l-1.6 7h-5zM26 44h5l-1.6 7h-5zM39 44h4l-1.6 7h-4z" fill="#FBF3E6"/>'+
+       '<rect x="9" y="51" width="34" height="4" fill="#C9A45E"/>'+
+       '<rect x="11" y="55" width="30" height="13" fill="#8A6A46"/><rect x="11" y="55" width="30" height="2.4" fill="#A98253"/>'+
+       '<circle cx="17" cy="70" r="3.2" fill="#3F3340"/><circle cx="36" cy="70" r="3.2" fill="#3F3340"/>'+
+       /* 右邊的攤車：藍白雨棚 */
+       '<path d="M56 47h38l-2.5 7H58.5z" fill="#4E86B8"/>'+
+       '<path d="M63 47h5l-1.6 7h-5zM76 47h5l-1.6 7h-5zM89 47h4l-1.6 7h-4z" fill="#EAF6FF"/>'+
+       '<rect x="59" y="54" width="34" height="4" fill="#C9A45E"/>'+
+       '<rect x="61" y="58" width="30" height="12" fill="#8A6A46"/><rect x="61" y="58" width="30" height="2.4" fill="#A98253"/>'+
+       '<circle cx="67" cy="72" r="3.2" fill="#3F3340"/><circle cx="86" cy="72" r="3.2" fill="#3F3340"/>'+
+       /* 鍋子冒出來的熱氣 */
+       '<g fill="none" stroke="#E7D8E8" stroke-width="1.2" stroke-linecap="round" opacity=".45">'+
+         '<path d="M20 50q-3-5 0-9M31 49q3-5 0-9M70 53q-3-5 0-9M81 52q3-5 0-9"/></g>'+
+       /* 街道 */
+       '<rect y="74" width="100" height="26" fill="#3A2F42"/>'+
+       '<g fill="#F2C86A" opacity=".13"><rect x="8" y="74" width="28" height="26"/><rect x="58" y="74" width="28" height="26"/></g>'+
+       '<path d="M0 81h100" stroke="#4A3C52" stroke-width="1.4"/>',
+    spots:[[10,8,'#5A4A66'],[28,10,'#5A4A66'],[44,8,'#5A4A66'],[62,8,'#5A4A66'],[78,8,'#5A4A66'],[94,12,'#5A4A66'],
+           [18,27,'#C44F4F'],[52,24,'#C44F4F'],[86,28,'#C44F4F'],
+           [36,34,'#5A4A66'],[68,36,'#5A4A66'],
+           [24,61,'#A98253'],[76,64,'#A98253'],
+           [8,80,'#4A3C52'],[30,84,'#4A3C52'],[52,80,'#4A3C52'],[70,86,'#4A3C52'],[88,80,'#4A3C52'],[18,94,'#4A3C52'],[46,94,'#4A3C52']],
+    plots:[[15,58,6],[25,58,6],[35,58,6],[66,61,6],[77,61,6],[87,61,6],
+           [10,84,8],[34,88,9],[56,84,8],[78,90,9],[94,86,8],[22,96,9],[46,92,9],[66,96,9]],
     items:['dango','teadrink','lantern','shrimp','popcorn','corn','cup','dumpling','bear','candy'] }
 ,
 
@@ -1379,19 +1405,39 @@ const SCENES = [
     items:['fox','owl','rabbit','squirrel','acorn','mushroom','leaf','log','bird','butterfly'] },
 
   { name:'遊樂園', ink:'#8A3F6E',
-    bg:'<rect width="100" height="100" fill="#BFE8FF"/><ellipse cx="22" cy="14" rx="12" ry="5" fill="#FFFFFF"/><ellipse cx="68" cy="10" rx="10" ry="4.2" fill="#FFFFFF"/>'+
-       '<path d="M2 48q14-30 28-2t28-16 26 18" fill="none" stroke="#E8964E" stroke-width="2.6"/>'+
-       '<path d="M8 48v12M20 36v24M32 48v12M44 42v18M58 32v28M72 44v16M86 40v20" stroke="#D9A273" stroke-width="1.6"/>'+
-       '<rect x="24" y="24" width="10" height="5" rx="1.6" fill="#D9574F"/><rect x="35" y="26" width="9" height="5" rx="1.6" fill="#5FA8D8"/>'+
-       '<path d="M0 60q24-6 50 0t50-4v44H0z" fill="#8FD07A"/>'+
-       '<circle cx="18" cy="76" r="12" fill="none" stroke="#9A9BC0" stroke-width="2"/><path d="M18 64v24M6 76h24M9.5 67.5 26.5 84.5M26.5 67.5 9.5 84.5" stroke="#B195B8" stroke-width="1.2"/><rect x="16.6" y="76" width="2.8" height="14" fill="#9A7B55"/>'+
-       '<path d="M62 74h30L77 62z" fill="#D9574F"/><path d="M69 62.5 73 74M77 62v12M85 62.5 81 74" stroke="#FBF3E6" stroke-width="1.4"/>'+
-       '<rect x="62" y="74" width="30" height="3" fill="#E3C06A"/><rect x="65" y="77" width="2.4" height="10" fill="#C9A45E"/><rect x="86" y="77" width="2.4" height="10" fill="#C9A45E"/><rect x="75" y="77" width="2.4" height="10" fill="#C9A45E"/>',
-    spots:[[10,10,'#8FC4E0'],[40,8,'#8FC4E0'],[62,20,'#8FC4E0'],[90,12,'#8FC4E0'],[76,34,'#8FC4E0'],[6,34,'#8FC4E0'],[48,52,'#8FC4E0'],
-           [28,26,'#C9834A'],[52,38,'#C9834A'],[78,66,'#B8443E'],[68,70,'#B8443E'],[18,70,'#8A8BAC'],
-           [12,86,'#6FA85C'],[36,80,'#6FA85C'],[56,86,'#6FA85C'],[80,88,'#6FA85C'],[96,78,'#6FA85C'],[28,94,'#6FA85C'],[66,94,'#6FA85C'],[4,66,'#6FA85C']],
-    plots:[[10,66,6],[30,70,7],[46,74,7],[56,66,6],[40,88,9],[60,90,9],[84,92,9],[94,70,7],[22,90,9],
-           [72,84,8],[6,78,7],[50,80,8],[88,66,6],[34,62,5]],
+    bg:'<rect width="100" height="100" fill="#BFE8FF"/>'+
+       '<ellipse cx="24" cy="12" rx="13" ry="5" fill="#FFFFFF"/><ellipse cx="72" cy="8" rx="11" ry="4.4" fill="#FFFFFF"/>'+
+       /* 雲霄飛車：軌道、支架、兩節車廂 */
+       '<path d="M2 34q12-26 24-4t22-14 24 16 26-6" fill="none" stroke="#E8964E" stroke-width="2.6"/>'+
+       '<path d="M8 33v12M18 21v22M30 31v13M44 19v24M58 29v15M70 39v8M84 25v18M94 27v16" stroke="#D9A273" stroke-width="1.4"/>'+
+       '<rect x="37" y="15.6" width="9" height="5" rx="1.6" fill="#D9574F"/><rect x="47.6" y="17.6" width="8" height="5" rx="1.6" fill="#5FA8D8"/>'+
+       /* 草地 */
+       '<path d="M0 68q24-6 50 0t50-4v40H0z" fill="#8FD07A"/>'+
+       '<path d="M0 82q26 6 52-2t48 4v18H0z" fill="#7FC46A"/>'+
+       /* 摩天輪 */
+       '<path d="M24 54 15.4 80.4M24 54 32.6 80.4" stroke="#9A7B55" stroke-width="2.2"/>'+
+       '<g fill="none" stroke="#9A9BC0"><circle cx="24" cy="54" r="19" stroke-width="2.2"/><circle cx="24" cy="54" r="11.5" stroke-width="1.2"/></g>'+
+       '<g stroke="#B195B8" stroke-width="1.2"><path d="M24 35v38M5 54h38M10.6 40.6 37.4 67.4M37.4 40.6 10.6 67.4"/></g>'+
+       '<g fill="#E8964E"><circle cx="24" cy="35" r="3.2"/><circle cx="43" cy="54" r="3.2"/><circle cx="24" cy="73" r="3.2"/><circle cx="5" cy="54" r="3.2"/></g>'+
+       '<g fill="#D9574F"><circle cx="37.4" cy="40.6" r="3.2"/><circle cx="37.4" cy="67.4" r="3.2"/><circle cx="10.6" cy="67.4" r="3.2"/><circle cx="10.6" cy="40.6" r="3.2"/></g>'+
+       '<circle cx="24" cy="54" r="2.8" fill="#8A8BAC"/>'+
+       '<rect x="14" y="79.4" width="20" height="2.6" rx="1" fill="#9A7B55"/>'+
+       /* 旋轉木馬：條紋屋頂、旗子、柱子、兩匹木馬 */
+       '<path d="M79 42.4v-5.4" stroke="#C9A45E" stroke-width="1"/><path d="M79 37h6l-1.8 2.6L85 42.2h-6z" fill="#D9574F"/>'+
+       '<path d="M62 62h34L79 42.4z" fill="#D9574F"/>'+
+       '<path d="M70.6 50 74 62M79 42.4V62M87.4 50 84 62" stroke="#FBF3E6" stroke-width="1.6"/>'+
+       '<rect x="61" y="62" width="36" height="3.4" rx="1" fill="#E3C06A"/>'+
+       '<g fill="#C9A45E"><rect x="64.6" y="65.4" width="2.4" height="12"/><rect x="77.8" y="65.4" width="2.4" height="12"/><rect x="90.6" y="65.4" width="2.4" height="12"/></g>'+
+       '<rect x="61" y="77.4" width="36" height="3.4" rx="1" fill="#E3C06A"/>'+
+       '<g fill="#FBF3E6"><path d="M69.4 77.4v-4.2l1.4-2 2.4 1.4 1.4-1.8 1.4 1.2v5.4z"/><path d="M83.4 77.4v-4.2l1.4-2 2.4 1.4 1.4-1.8 1.4 1.2v5.4z"/></g>'+
+       '<g fill="#C9A45E"><circle cx="71.4" cy="72.6" r=".7"/><circle cx="85.4" cy="72.6" r=".7"/></g>',
+    spots:[[10,10,'#8FC4E0'],[40,8,'#8FC4E0'],[60,14,'#8FC4E0'],[90,10,'#8FC4E0'],[76,24,'#8FC4E0'],
+           [41,18,'#C9834A'],[52,21,'#C9834A'],
+           [24,35,'#B8443E'],[43,54,'#C9834A'],[24,73,'#B8443E'],
+           [79,55,'#B8443E'],[70,70,'#C9A45E'],
+           [8,76,'#6FA85C'],[30,82,'#6FA85C'],[50,76,'#6FA85C'],[56,90,'#6FA85C'],[86,86,'#6FA85C'],[96,74,'#6FA85C'],[14,94,'#6FA85C'],[44,96,'#6FA85C']],
+    plots:[[48,74,7],[52,84,8],[30,90,9],[8,92,9],[70,88,8],[88,90,9],[60,94,9],
+           [42,92,9],[20,86,8],[96,82,7],[46,66,6],[56,70,6],[76,94,9],[6,84,8]],
     items:['balloonS','popcorn','candy','softserve','ticket','windmill','bear','ball','kite','cup'] },
 
   { name:'平溪天燈', ink:'#5A3A6E',
@@ -1418,30 +1464,44 @@ const SCENES = [
     items:['lantern','bento','brush','teapot','cup','dango','cat','dog','bird','flower'] },
 
   { name:'梵谷星空', ink:'#2A3A7A',
-    bg:'<rect width="100" height="100" fill="#2E4A8E"/><rect width="100" height="58" fill="#33508F"/>'+
-       '<path d="M8 20q12-12 22 0t-12 14q-12 2-12-8 0-6 8-6" fill="none" stroke="#6E8ECF" stroke-width="3.4"/>'+
-       '<path d="M11 21q9-8 16 0t-9 10q-8 1-8-6" fill="none" stroke="#8CA6DC" stroke-width="2.2"/>'+
-       '<path d="M44 14q14-10 22 2t-14 12q-10 0-10-8" fill="none" stroke="#5E80C4" stroke-width="3"/>'+
-       '<path d="M47 15q10-7 16 2t-10 9q-7 0-7-6" fill="none" stroke="#7E9AD4" stroke-width="2"/>'+
-       '<path d="M0 40q20 10 40 0t60 4" fill="none" stroke="#5E80C4" stroke-width="2.6"/>'+
-       '<path d="M0 45q22 9 42-1t58 5" fill="none" stroke="#7E9AD4" stroke-width="1.8"/>'+
-       '<path d="M0 50q24-8 50 2t50-4" fill="none" stroke="#4A6AB0" stroke-width="2.2"/>'+
-       '<path d="M0 32q18-7 34 1t30-3 36 4" fill="none" stroke="#4A6AB0" stroke-width="1.8"/>'+
-       '<g stroke="#8CA6DC" stroke-width="1.5" stroke-linecap="round" fill="none" opacity=".75">'+
-         '<path d="M3 10q5-3 9 0M34 6q5-3 10 1M70 20q6-3 11 1M88 36q5-3 10 0M24 44q6-3 11 1M52 46q6-3 11 1M6 54q6-3 11 1M76 52q6-3 11 1M60 26q5-3 9 1M16 36q5-3 9 1"/></g>'+
-       '<circle cx="84" cy="16" r="7" fill="#F2D98A"/><circle cx="84" cy="16" r="10.5" fill="none" stroke="#E8CE80" stroke-width="1.4" opacity=".5"/>'+
-       '<g fill="#F2E09A"><circle cx="18" cy="12" r="2.2"/><circle cx="36" cy="26" r="1.8"/><circle cx="58" cy="10" r="2"/><circle cx="66" cy="34" r="1.6"/><circle cx="6" cy="34" r="1.8"/></g>'+
-       '<path d="M0 58q26-6 52 2t48-4v44H0z" fill="#2A4472"/><path d="M0 70q24 8 50-2t50 6v26H0z" fill="#22395F"/>'+
-       '<path d="M14 92V62l6-8 6 8v30z" fill="#1C2F4E"/><rect x="17" y="70" width="3.4" height="4" fill="#F0C878"/>'+
-       '<path d="M44 92V70h10v22z" fill="#1C2F4E"/><path d="M42 70 49 63l7 7z" fill="#16263F"/><rect x="47" y="76" width="3.4" height="4" fill="#F0C878"/>'+
-       '<path d="M74 92V74h12v18z" fill="#1C2F4E"/><rect x="78" y="79" width="3.4" height="4" fill="#F0C878"/>'+
-       '<path d="M90 100c-6-10-7-24-2-34 4 10 6 24 2 34z" fill="#1A2C2A"/>',
-    spots:[[10,10,'#27407C'],[30,8,'#27407C'],[48,20,'#27407C'],[66,8,'#27407C'],[92,32,'#27407C'],[22,30,'#27407C'],[56,38,'#27407C'],[84,16,'#D8C178'],
-           [14,46,'#27407C'],[38,48,'#27407C'],[72,46,'#27407C'],
-           [8,64,'#213A62'],[34,62,'#213A62'],[60,66,'#213A62'],[88,62,'#213A62'],
-           [20,84,'#182F50'],[46,86,'#182F50'],[66,84,'#182F50'],[94,86,'#182F50'],[4,92,'#182F50']],
-    plots:[[10,72,6],[30,74,7],[52,78,7],[68,76,7],[92,74,6],[18,88,8],[40,92,9],[62,90,9],[84,92,9],
-           [6,80,7],[58,70,6],[78,68,6],[26,66,6],[48,68,6]],
+    bg:'<rect width="100" height="100" fill="#2E4A8E"/><rect width="100" height="62" fill="#32508F"/>'+
+       /* 天上那個大漩渦，還有一個小的 */
+       '<g fill="none" stroke-linecap="round">'+
+         '<path d="M52 30c-14 0-18-12-6-16s22 4 20 14-16 14-26 8-10-22 2-28 30-2 34 12" stroke="#6E8ECF" stroke-width="3.2"/>'+
+         '<path d="M52 27c-8 0-11-7-3.5-9.5S62 20 61 26s-10 8-16 4.5-6-13 1-16.5" stroke="#9CB4E2" stroke-width="2"/>'+
+         '<path d="M20 44c-8 2-12-5-5-8s14 1 13 7-10 8-16 3" stroke="#5E80C4" stroke-width="2.6"/>'+
+         '<path d="M20 42c-4 1-6-2-2.6-3.6S24 39 23 42" stroke="#8CA6DC" stroke-width="1.6"/>'+
+         /* 流動的筆觸 */
+         '<path d="M0 52q22 10 44 0t56 5" stroke="#4A6AB0" stroke-width="2.6"/>'+
+         '<path d="M0 57q24 9 46-1t54 5" stroke="#7E9AD4" stroke-width="1.8"/>'+
+         '<path d="M0 10q16 8 30 0t28 3" stroke="#4A6AB0" stroke-width="1.8"/>'+
+         '<path d="M62 46q16-8 38 0" stroke="#6E8ECF" stroke-width="2"/>'+
+       '</g>'+
+       /* 月亮和它的光圈 */
+       '<circle cx="84" cy="16" r="8" fill="#F2D98A"/>'+
+       '<circle cx="84" cy="16" r="11.5" fill="none" stroke="#E8CE80" stroke-width="1.6" opacity=".45"/>'+
+       '<circle cx="84" cy="16" r="15" fill="none" stroke="#E8CE80" stroke-width="1.2" opacity=".2"/>'+
+       '<g fill="#F2E09A"><circle cx="14" cy="14" r="2.4"/><circle cx="38" cy="8" r="1.8"/><circle cx="62" cy="12" r="2"/><circle cx="8" cy="30" r="1.6"/><circle cx="46" cy="42" r="1.6"/><circle cx="72" cy="34" r="1.8"/></g>'+
+       '<g fill="none" stroke="#F2E09A" stroke-width="1" opacity=".38"><circle cx="14" cy="14" r="4.6"/><circle cx="38" cy="8" r="3.8"/><circle cx="62" cy="12" r="4"/><circle cx="72" cy="34" r="3.8"/></g>'+
+       /* 山丘 */
+       '<path d="M0 62q26-8 52 3t48-5v42H0z" fill="#2A4472"/>'+
+       '<path d="M0 74q24 8 50-2t50 6v24H0z" fill="#213A62"/>'+
+       /* 村子：中間是有尖塔的教堂 */
+       '<path d="M46 92V74h12v18z" fill="#17283F"/><path d="M52 55 58 74H46z" fill="#17283F"/>'+
+       '<path d="M52 55v-4.6" stroke="#17283F" stroke-width="1.4"/>'+
+       '<rect x="50.2" y="78" width="3.6" height="5" fill="#F0C878"/>'+
+       '<path d="M20 92V78h12v14z" fill="#1C2F4E"/><path d="M18 78 26 71l8 7z" fill="#16263F"/><rect x="22.8" y="82" width="3.2" height="4" fill="#F0C878"/>'+
+       '<path d="M68 92V80h14v12z" fill="#1C2F4E"/><path d="M66 80 75 73l9 7z" fill="#16263F"/><rect x="70.6" y="84" width="3.2" height="4" fill="#F0C878"/><rect x="77" y="84" width="3.2" height="4" fill="#F0C878"/>'+
+       '<path d="M88 92V82h10v10z" fill="#1C2F4E"/><rect x="91" y="85" width="3" height="4" fill="#F0C878"/>'+
+       /* 前景那棵絲柏，從地上一路竄到天上 */
+       '<path d="M10 100c-8-16-9.5-40-4.5-56 1.2-4 3-9 5.5-13 2 4 3.8 9 5 13 5 16 3.5 40-4.5 56z" fill="#1A2C2A"/>'+
+       '<path d="M11.6 94c-3.4-13-4-33-1.4-45M8 86c-2-10-2-24 0-34" fill="none" stroke="#28443C" stroke-width="1.5" stroke-linecap="round"/>',
+    spots:[[26,10,'#27407C'],[46,20,'#27407C'],[66,8,'#27407C'],[92,32,'#27407C'],[38,34,'#27407C'],[58,40,'#27407C'],[84,16,'#D8C178'],
+           [28,52,'#27407C'],[72,50,'#27407C'],[92,56,'#27407C'],
+           [36,68,'#213A62'],[62,66,'#213A62'],[88,70,'#213A62'],
+           [26,84,'#182F50'],[46,88,'#182F50'],[66,86,'#182F50'],[86,88,'#182F50'],[34,96,'#182F50'],[58,96,'#182F50'],[78,96,'#182F50']],
+    plots:[[30,78,7],[40,82,8],[62,78,7],[74,86,8],[90,78,7],[24,90,9],[44,94,9],
+           [66,94,9],[86,94,9],[36,72,6],[56,70,6],[80,72,6],[70,70,6],[96,88,8]],
     items:['starS','moon','sunflower','palette','flower','bird','plant','owl','cat','cup'] },
 
   { name:'聖誕節', ink:'#7A3030',
@@ -3009,13 +3069,13 @@ function showHelp(){
    全部都是鼓勵，它就變成一直在說教的大人；全部都是閒聊，又少了陪伴的感覺 */
 /* 鼓勵句：陪伴，而且只肯定「他剛剛做了什麼」。不誇聰明、不預言結果 */
 const BUDDY_CARE = [
-  '慢慢來，不用急', '再試一次看看', '你剛剛很努力', '再想一下下',
-  '一題一題來', '你比剛才進步了', '難的題目才好玩', '想過才會變厲害',
-  '你剛剛沒有放棄', '你自己想出來的', '我陪你一起算', '眼睛累了就休息'];
+  '慢慢來，不急', '再試一次看看', '你剛剛很努力', '再想一下下',
+  '一題一題來', '你進步了！', '難的題目才好玩',
+  '你剛剛沒有放棄', '你自己想出來的', '我會陪著你', '累了就休息喔'];
 /* 趣味句：純粹好玩的閒聊，讓小夥伴像個會分心的朋友 */
 const BUDDY_FUN = [
-  '六七⋯⋯四十二！', '不想睡覺怎麼辦？', '哇喔～！', '數字好好玩',
-  '我也在偷偷算', '要不要喝口水？', '這題我也想一下', '肚子有點餓了'];
+  '我最喜歡星期五！', '六七⋯⋯四十二！', '不想睡覺怎麼辦？', '哇喔～！',
+  '數字好好玩', '咻～鬼抓人！', '晚餐要吃什麼？', '歐拉歐拉', '我肚子餓了'];
 const BUDDY_SAY = BUDDY_CARE.concat(BUDDY_FUN);
 let buddyT = null, buddyStep = 0, buddySaid = 0;
 /* 鼓勵、趣味、鼓勵、趣味⋯⋯輪流；同一種裡面才是隨機挑 */
@@ -3114,9 +3174,7 @@ function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=rnd(i+1); [a[i],a[j]
 function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function updateTop(){
   const m=me();
-  /* coinHold：結果畫面上還沒按「按我拿金幣」之前，右上角先停在舊的數字，
-     按下去才跳上來。存檔裡的金幣在過關當下就已經加好了，不會因為沒按而不見 */
-  $('#coins').textContent=Math.max(0, (m?m.coins:0) - coinHold);
+  $('#coins').textContent=m?m.coins:0;
   const lb=$('#logoBal'); if(lb && !lb.firstChild) lb.innerHTML=balloon({pat:'pat-zig',mini:true});
   const hb=$('#helpBal'); if(hb && !hb.firstChild) hb.innerHTML=bearSVG();
   lb.style.cssText='--c1:#D4EEED;--c2:#A8DCDD;--c3:#46959B';
@@ -3168,13 +3226,12 @@ function stickerHTML(s, extra=''){
 }
 
 /* ---------- views ---------- */
-let currentView='home', game=null, lastSetup=null, uiTier=null, coinHold=0;
+let currentView='home', game=null, lastSetup=null, uiTier=null;
 let pickFor='review', reviewTable=2, revPairs=null, revOpen={}, revShine={}, autoT=null, autoI=0;
 let galEdit=false;   /* 畫廊的整理模式 */
 function heroW(){ return Math.min(window.innerWidth-28, (currentView==='home'||currentView==='welcome')?1080:620); }
 function go(name){
   stopAuto();
-  coinHold=0;        /* 離開結果畫面就不再壓著右上角的數字 */
   if(tabStale && (name==='home'||name==='welcome') && adoptNewer()) return;
   if(name!=='gallery') galEdit=false;   /* 離開畫廊就收起整理模式，下次進來是乾淨的 */
   currentView=name;
@@ -3286,10 +3343,11 @@ const VIEWS = {
       <div class="backrow"><button class="iconbtn" data-act="home" aria-label="返回">${ic('back')}</button><h2>給大人的說明</h2></div>
       <section class="card about">
         <h3>關於這個遊戲</h3>
-        <p>我是利利。這個遊戲是做給我女兒的。</p>
-        <p>我為了鼓勵她，在遊戲裡加了很多正向語言和鼓勵機制，希望陪她度過枯燥的背誦過程。</p>
+        <p>我是利利，這個遊戲是做給我女兒的。</p>
+        <p>我在遊戲裡加了很多正向語言和鼓勵機制，想陪伴她度過枯燥的背誦過程。</p>
         <p>女兒現在不再排斥乘法，所以我分享出來，希望這個遊戲也對大家有幫助。</p>
-        <p>有任何建議，歡迎私訊我的 IG <a href="https://www.instagram.com/slowlywithlili/" target="_blank" rel="noopener noreferrer">利利寫生活</a>，我會慢慢改。</p>
+        <p>有任何意見回饋，歡迎私訊我的 IG <a href="https://www.instagram.com/slowlywithlili/" target="_blank" rel="noopener noreferrer">利利寫生活</a>。</p>
+        <p class="tip">（修改最終決定權：我女兒 :D）</p>
       </section>
       <section class="card about">
         <h3>怎麼保存紀錄？</h3>
@@ -3586,11 +3644,10 @@ const VIEWS = {
     let badge='';
     if(r.newBest) badge=`<div class="badge">${ic('trophy')} 新紀錄！</div>`;
     else if(!r.coins && r.capped) badge='<div class="badge">這個遊戲今天的金幣拿完了。</div>';
-    /* 金幣讓小孩自己按一下才「拿到」，才有拿到的感覺 */
+    /* 金幣要小孩自己按一下才入帳。沒按就離開＝今天那一枚沒拿到（他要的就是這樣）*/
     const coinrow = !r.coins ? ''
       : r.got ? `<div class="badge got">${ic('coin')} 拿到 ${r.coins} 枚金幣！</div>`
       : `<button class="btn sun big coinget" data-act="getcoin">${ic('coin')} 按我拿金幣！</button>`;
-    if(r.coins && !r.got) coinHold = r.coins;   /* go() 的 updateTop() 會讀它 */
     const nextN = r.stage && r.cleared && r.stage<STAGES.length ? r.stage+1 : 0;
     view.innerHTML=`
       <section class="card result">
@@ -3706,9 +3763,9 @@ function finishStage(){
   if(cleared){
     /* 規則只有一條：過一關 1 枚，一天到 STAGE_CAP 枚就停。
        以前分成「第一次通關 2 枚」和「重玩 1 枚」兩種上限，小孩算不出來、文案也寫不清楚 */
-    if(d.p.stageCoins < STAGE_CAP){ coins = 1; d.p.stageCoins += coins; }
+    /* 這裡只「掛著」，真正入帳是小孩在結果畫面按下「按我拿金幣」的時候（takeCoin）*/
+    if(d.p.stageCoins < STAGE_CAP) coins = 1;
     else capped = true;
-    if(coins) m.coins += coins;
     m.stages[game.stage]={cleared:true, best:Math.max(grade, prev?prev.best:0)};
     d.p.stagesCleared++;
   }
@@ -3716,7 +3773,7 @@ function finishStage(){
   if(S.table) d.p.tables[S.table]=true; else d.p.mix++;
   if(score===total) d.p.perfect=1;
   markPlayed();
-  game.result={timed:false, stage:game.stage, cleared, firstClear, coins, capped, need, hard:true,
+  game.result={timed:false, stage:game.stage, cleared, firstClear, coins, pend:'stage', capped, need, hard:true,
     score, total, grade, maxCombo:game.maxCombo, newBest:false};
   save(); checkQuests();
   clearTimeout(game.t);
@@ -3735,13 +3792,13 @@ function startPump(){
 function finishPump(){
   const d=ensureDaily(), m=me();
   const score=game.firstCorrect, total=game.total, allOk=score===total;
-  let coins=0;
   /* 全部答對才有金幣，一天一枚。答錯了當天還可以再挑戰，但那一枚今天就沒有了嗎？
-     沒有——只要哪一次全對就給，所以這裡不記「失敗」，只記「拿過了」*/
-  if(allOk && !d.p.pumpCoins && !GUEST){ coins=1; d.p.pumpCoins=1; m.coins+=1; }
+     沒有——只要哪一次全對就給，所以這裡不記「失敗」，只記「拿過了」。
+     跟另外兩個遊戲一樣，這裡只掛著，按了才入帳（takeCoin）*/
+  const coins = (allOk && !d.p.pumpCoins && !GUEST) ? 1 : 0;
   d.p.pumps++;
   markPlayed();
-  game.result={timed:false, pump:true, hard:false, allOk, coins,
+  game.result={timed:false, pump:true, hard:false, allOk, coins, pend:'pump',
     healed:game.healed.slice(), left:pumpDue().length,
     rest:Array.isArray(m.pump)?m.pump.length:0, slabel:'答對的題數',
     score, total, grade:allOk?3:(score>=Math.ceil(total*0.7)?2:1), maxCombo:game.maxCombo, newBest:false};
@@ -3750,18 +3807,29 @@ function finishPump(){
   go('result');
 }
 /* 補好一題：一顆補過的熱氣球淡進來，然後飄走 */
-/* 結果畫面那顆「按我拿金幣」：金幣早就入帳了，這裡只做「拿到的感覺」 */
+/* 結果畫面那顆「按我拿金幣」＝金幣真正入帳的地方。
+   過關當下只是「掛著」，小孩自己按下去才加進存檔、才響音效、右上角才跳數字。
+   每日上限在這裡再檢查一次：結果畫面可能擺著不按就去玩下一關，回來才按 */
 function takeCoin(btn){
-  if(!game || !game.result || game.result.got || !game.result.coins) return;
-  game.result.got = true;
+  const r = game && game.result;
+  if(!r || r.got || !r.coins) return;
+  r.got = true;
+  const d=ensureDaily(), m=me();
+  let n=0;
+  if(d && m){
+    if(r.pend==='stage'){ if(d.p.stageCoins < STAGE_CAP){ n=1; d.p.stageCoins+=1; } }
+    else if(r.pend==='timed'){ if(!d.p.timedCoins){ n=1; d.p.timedCoins=1; } }
+    else if(r.pend==='pump'){ if(!GUEST && !d.p.pumpCoins){ n=1; d.p.pumpCoins=1; } }
+    if(n){ m.coins+=n; save(); }
+  }
   sfx.coin();
   coinFly(btn);
-  coinHold = 0;
   updateTop();
   const b=document.createElement('div');
   b.className='badge got';
-  b.innerHTML=`${ic('coin')} 拿到 ${game.result.coins} 枚金幣！`;
+  b.innerHTML=`${ic('coin')} 拿到 ${r.coins} 枚金幣！`;
   btn.replaceWith(b);           /* 新字的注音由 zyObs 自己補上 */
+  if(n){ checkQuests(); coinDoneCheck(); }
 }
 /* 金幣從按鈕飛到右上角的金幣數字那裡 */
 function coinFly(from){
@@ -3959,14 +4027,14 @@ function finishTimed(){
   const m=me();
   const newBest=score>m.timedBest && score>0;
   if(newBest) m.timedBest=score;
-  let coins=0;                       /* 答對 20 題以上給 1 枚，每天只給一次 */
-  if(score>=TIMED_GOAL && !d.p.timedCoins){ coins=1; d.p.timedCoins=1; m.coins+=1; }
+  /* 答對 TIMED_GOAL 題以上給 1 枚，每天只給一次。這裡只掛著，按了才入帳（takeCoin）*/
+  const coins = (score>=TIMED_GOAL && !d.p.timedCoins) ? 1 : 0;
   d.p.timedBest=Math.max(d.p.timedBest,score);
   markPlayed();
-  game.result={timed:true, hard:true, score, grade, coins, maxCombo:game.maxCombo, newBest};
+  game.result={timed:true, hard:true, score, grade, coins, pend:'timed', maxCombo:game.maxCombo, newBest};
   game.locked=true;
   save(); checkQuests();
-  go('result'); if(coins) coinDoneCheck();
+  go('result');
 }
 function inGame(){ return (currentView==='play'||currentView==='hunt'||currentView==='snake'||currentView==='learn'||currentView==='pair') && !!game && !game.result; }
 /* 每個遊戲離開時，除了回首頁，都要能退回它自己的挑選畫面 */
