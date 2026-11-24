@@ -152,10 +152,13 @@ h1,h2,h3,p{margin:0}
 /* top bar */
 .topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:6;background:var(--surface);border-bottom:0}
 .topbar .in{max-width:620px;margin:0 auto;display:flex;align-items:center;gap:8px;padding:10px 14px}
-.logo{background:none;border:0;padding:4px 2px;cursor:pointer;font-weight:700;font-size:22px;display:flex;align-items:center;gap:6px;position:relative}
-/* 左上角這顆氣球就是「回首頁」鍵。字再小、氣球再小，手指按得到的範圍都要有 44×44：
-   先往上下各撐 4px（高度 38→46），窄螢幕字藏起來之後再往左撐（見 max-width:420px）。
-   用 ::after 撐不影響版面高度 */
+/* 左上角這顆氣球就是「回首頁」鍵。小孩不讀字，但看得懂「圓圓的、有底色的＝可以按」，
+   所以底色和外框跟右上角那排按鈕（.iconbtn）同一套；窄螢幕字收起來之後它就變成一顆圓鈕 */
+.logo{background:var(--surface2);border:1.5px solid var(--hair);border-radius:999px;
+  padding:3px 11px 3px 8px;cursor:pointer;font-weight:700;font-size:22px;
+  display:flex;align-items:center;gap:6px;position:relative}
+.logo:active{transform:translateY(2px)}
+/* 按得到的範圍要有 44×44：圓底本身 38px 高，上下各再撐 4px。用 ::after 撐不影響版面高度 */
 .logo::after{content:"";position:absolute;inset:-4px 0}
 .logo .mini{font-family:var(--num);font-weight:700;background:var(--sun);color:var(--on-color);border:1.5px solid var(--hair);border-radius:9px;padding:0 6px;font-size:18.5px}
 .spacer{flex:1}
@@ -721,10 +724,10 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
   .pacts{width:100%;justify-content:flex-end}
   .topbar .in{gap:5px;padding:10px 8px}
   .topbar .logo span:last-child{display:none}   /* 窄螢幕只留氣球，字放不下 */
-  .topbar .logo{padding:4px 6px;min-width:34px;justify-content:center}   /* 字沒了也要留得住手指點的大小 */
-  /* 看起來還是一顆小氣球，按壓範圍撐到 44×46：往左撐到螢幕邊，右邊只多 2px，
-     才不會蓋到旁邊的「我教你玩」 */
-  .topbar .logo::after{inset:-4px -2px -4px -8px}
+  .topbar .logo{padding:5px 7px;min-width:36px;justify-content:center}   /* 字沒了也要留得住手指點的大小 */
+  /* 看起來是一顆有底色的圓鈕，按壓範圍再往外撐到 44×44：往左撐到螢幕邊，
+     右邊只多 1px，才不會蓋到旁邊的「我教你玩」 */
+  .topbar .logo::after{inset:-4px -1px -4px -8px}
   .pill{padding:2px 8px}
   .pill{padding:2px 9px;font-size:18.5px}
   .tt{font-size:16px}
@@ -1235,7 +1238,7 @@ const SCENES = [
            [27,50,'#3B7A48']],
     plots:[[14,62,7],[36,64,7],[52,66,7],[88,62,7],[24,78,8],[46,80,8],[66,76,8],[86,86,9],[8,92,9],[60,92,9],
            [34,54,5],[6,52,5],[94,50,5],[76,66,6]],
-    items:['snowman','snowflake','penguin','xmastree','scarf','mitten','log','teapot','mountain','sock'] },
+    items:['snowman','snowflake','penguin','pinetree','scarf','mitten','log','teapot','mountain','sock'] },
 
   { name:'夜市', ink:'#5E2A6E',
     bg:'<rect width="100" height="100" fill="#F2C9A8"/><path d="M0 0h100v34H0z" fill="#E8B8D0"/>'+
@@ -1253,7 +1256,193 @@ const SCENES = [
            [10,72,'#A88A6E'],[34,76,'#A88A6E'],[56,72,'#A88A6E'],[78,80,'#A88A6E'],[22,88,'#A88A6E'],[48,92,'#A88A6E'],[70,88,'#A88A6E'],[92,94,'#A88A6E'],[4,94,'#A88A6E']],
     plots:[[14,62,7],[28,62,6],[64,62,7],[80,62,6],[44,70,7],[8,80,8],[30,82,8],[54,80,8],[76,76,8],[92,84,9],
            [18,92,9],[60,94,9],[40,56,5],[88,52,5]],
-    items:['dango','bubbletea','lantern','shrimp','popcorn','corn','cup','dumpling','bear','candy'] }
+    items:['dango','teadrink','lantern','shrimp','popcorn','corn','cup','dumpling','bear','candy'] }
+,
+
+  /* ↓↓ 以下九個場景是後來加的。SCENES 只能往後接，不能插在中間 ——
+        畫廊存的是場景的「編號」，插中間會讓小孩以前的畫全部換成別張 ↓↓ */
+
+  { name:'海底世界', ink:'#1E5A72',
+    bg:'<rect width="100" height="100" fill="#4FB3D9"/><rect y="30" width="100" height="70" fill="#3F9FC9"/><rect y="62" width="100" height="38" fill="#3A8FB8"/>'+
+       '<path d="M10 0h14L2 62H0z" fill="#7FD4EC" opacity=".3"/><path d="M46 0h12L48 58H34z" fill="#7FD4EC" opacity=".26"/><path d="M80 0h10l4 54H78z" fill="#7FD4EC" opacity=".24"/>'+
+       '<path d="M0 78q22-10 46-2t54-6v30H0z" fill="#EAD9AE"/><path d="M0 88q28 6 54-2t46 4" stroke="#DCC89A" stroke-width="1.6" fill="none"/>'+
+       '<ellipse cx="16" cy="84" rx="9" ry="5" fill="#8FA8B8"/><ellipse cx="72" cy="88" rx="11" ry="5.5" fill="#8FA8B8"/><ellipse cx="94" cy="80" rx="7" ry="4" fill="#9CB4C2"/>'+
+       '<path d="M26 82q-4-12 0-20M30 82q3-10 1-16M22 82q-3-8-1-14" stroke="#4E9E72" stroke-width="2.4" fill="none" stroke-linecap="round"/>'+
+       '<path d="M84 76q-4-14 1-22M88 76q3-10 1-17" stroke="#5EAE80" stroke-width="2.2" fill="none" stroke-linecap="round"/>'+
+       '<circle cx="38" cy="26" r="2" fill="#BFEAF8" opacity=".7"/><circle cx="42" cy="18" r="1.4" fill="#BFEAF8" opacity=".7"/><circle cx="66" cy="34" r="1.8" fill="#BFEAF8" opacity=".7"/><circle cx="70" cy="24" r="1.2" fill="#BFEAF8" opacity=".7"/>',
+    spots:[[10,12,'#2E86AE'],[32,8,'#2E86AE'],[56,14,'#2E86AE'],[80,10,'#2E86AE'],[94,22,'#2E86AE'],[20,30,'#2E86AE'],[46,34,'#2E86AE'],
+           [68,44,'#2E7FA4'],[88,48,'#2E7FA4'],[6,46,'#2E7FA4'],[34,54,'#2E7FA4'],[58,60,'#2E7FA4'],
+           [14,86,'#BFA97E'],[40,86,'#BFA97E'],[62,92,'#BFA97E'],[88,92,'#BFA97E'],[28,94,'#BFA97E'],
+           [16,84,'#73889A'],[72,88,'#73889A'],[27,76,'#3B7F5C']],
+    plots:[[12,74,7],[30,70,7],[48,76,7],[66,72,7],[84,70,7],[20,86,8],[44,90,9],[70,84,8],[92,86,9],
+           [6,64,6],[38,62,6],[58,66,6],[80,60,6],[96,68,6]],
+    items:['fish','octopus','coral','turtle','shell','crab','pufferfish','dolphin','seahorse','seaweed'] },
+
+  { name:'過年的家', ink:'#8A2F2F',
+    bg:'<rect width="100" height="100" fill="#F7E0C9"/><rect width="100" height="56" fill="#E8C4A8"/>'+
+       '<rect y="56" width="100" height="6" fill="#B5763F"/><rect y="62" width="100" height="38" fill="#D9A273"/>'+
+       '<path d="M20 62v38M50 62v38M80 62v38" stroke="#C48E57" stroke-width=".8"/>'+
+       '<rect x="36" y="8" width="28" height="48" rx="1" fill="#C44F4F"/><path d="M50 8v48" stroke="#A33F3F" stroke-width="1.2"/>'+
+       '<circle cx="46" cy="30" r="2.2" fill="#E3C06A"/><circle cx="54" cy="30" r="2.2" fill="#E3C06A"/>'+
+       '<rect x="28" y="6" width="6" height="26" rx="1" fill="#D9574F"/><rect x="66" y="6" width="6" height="26" rx="1" fill="#D9574F"/>'+
+       '<rect x="34" y="2" width="32" height="5.5" rx="1" fill="#D9574F"/>'+
+       '<ellipse cx="14" cy="16" rx="7" ry="9" fill="#D9574F"/><path d="M14 7V3M14 25v5" stroke="#C9A45E" stroke-width="1.6"/><path d="M8 13q6 3 12 0M8 19q6 3 12 0" stroke="#C04A46" stroke-width=".9" fill="none"/>'+
+       '<ellipse cx="86" cy="14" rx="7" ry="9" fill="#D9574F"/><path d="M86 5V1M86 23v5" stroke="#C9A45E" stroke-width="1.6"/><path d="M80 11q6 3 12 0M80 17q6 3 12 0" stroke="#C04A46" stroke-width=".9" fill="none"/>'+
+       '<ellipse cx="50" cy="76" rx="30" ry="11" fill="#E8604C"/><ellipse cx="50" cy="74.5" rx="26" ry="8.5" fill="#F2C9A8"/>',
+    spots:[[10,34,'#CFA88C'],[30,42,'#CFA88C'],[70,44,'#CFA88C'],[92,38,'#CFA88C'],[6,52,'#CFA88C'],[24,22,'#CFA88C'],[76,26,'#CFA88C'],
+           [50,20,'#A83F3F'],[44,46,'#A83F3F'],[56,50,'#A83F3F'],[14,16,'#B8443E'],[86,14,'#B8443E'],[31,18,'#B8443E'],[69,18,'#B8443E'],
+           [50,74,'#D4AE90'],[36,78,'#D4AE90'],[66,80,'#D4AE90'],
+           [12,90,'#B98A5E'],[44,94,'#B98A5E'],[86,92,'#B98A5E'],[94,70,'#B98A5E']],
+    plots:[[34,72,6],[46,70,6],[58,72,6],[66,76,6],[40,80,7],[56,80,7],[10,70,7],[88,70,7],[16,86,8],
+           [40,92,9],[70,90,9],[92,84,8],[24,64,6],[76,64,6]],
+    items:['redenvelope','firecracker','niangao','knot','orange','dumpling','teapot','cup','candy','flower'] },
+
+  { name:'森林好朋友', ink:'#3A5E2A',
+    bg:'<rect width="100" height="100" fill="#CFE6D4"/><rect width="100" height="40" fill="#D9EDDC"/>'+
+       '<circle cx="84" cy="14" r="8" fill="#FFF0A8"/>'+
+       '<path d="M0 46 10 26l10 20zM18 48 30 24l12 24zM44 44 55 22l11 22zM70 48 82 24l12 24z" fill="#5E9A58"/>'+
+       '<path d="M0 56 12 34l12 22zM26 58 39 34l13 24zM58 54 70 32l12 22zM84 58 94 38l10 20z" fill="#6FAE64"/>'+
+       '<rect x="12" y="54" width="4" height="14" fill="#8A6A46"/><rect x="38" y="52" width="4" height="14" fill="#8A6A46"/><rect x="70" y="56" width="4" height="12" fill="#8A6A46"/><rect x="92" y="54" width="4" height="12" fill="#8A6A46"/>'+
+       '<path d="M0 60q22-8 46 0t54-4v44H0z" fill="#8FC47A"/>'+
+       '<path d="M40 100q4-24 14-30t20-4v34z" fill="#D9C8A0"/>'+
+       '<path d="M0 82q14 6 26 0t26 2" stroke="#7CB269" stroke-width="2" fill="none"/>'+
+       '<ellipse cx="18" cy="86" rx="14" ry="6" fill="#8FD4F0"/><ellipse cx="18" cy="86" rx="8" ry="3" fill="#B6E6F8"/>',
+    spots:[[12,12,'#B8D6BE'],[36,8,'#B8D6BE'],[58,16,'#B8D6BE'],[92,8,'#B8D6BE'],[70,26,'#B8D6BE'],[84,14,'#E0D08C'],
+           [10,38,'#4E8248'],[30,40,'#4E8248'],[54,34,'#4E8248'],[78,40,'#4E8248'],
+           [14,62,'#8A6A46'],[40,60,'#8A6A46'],
+           [8,70,'#74A862'],[34,72,'#74A862'],[62,68,'#74A862'],[88,70,'#74A862'],[94,86,'#74A862'],
+           [52,88,'#BEAE88'],[70,92,'#BEAE88'],[18,86,'#6FB4CE']],
+    plots:[[14,70,7],[32,66,7],[50,70,7],[68,74,8],[86,70,7],[24,82,8],[44,84,8],[64,88,9],[88,86,9],
+           [6,62,6],[40,60,5],[76,62,6],[56,78,7],[30,92,9]],
+    items:['fox','owl','rabbit','squirrel','acorn','mushroom','leaf','log','bird','butterfly'] },
+
+  { name:'遊樂園', ink:'#8A3F6E',
+    bg:'<rect width="100" height="100" fill="#BFE8FF"/><ellipse cx="22" cy="14" rx="12" ry="5" fill="#FFFFFF"/><ellipse cx="68" cy="10" rx="10" ry="4.2" fill="#FFFFFF"/>'+
+       '<path d="M2 48q14-30 28-2t28-16 26 18" fill="none" stroke="#E8964E" stroke-width="2.6"/>'+
+       '<path d="M8 48v12M20 36v24M32 48v12M44 42v18M58 32v28M72 44v16M86 40v20" stroke="#D9A273" stroke-width="1.6"/>'+
+       '<rect x="24" y="24" width="10" height="5" rx="1.6" fill="#D9574F"/><rect x="35" y="26" width="9" height="5" rx="1.6" fill="#5FA8D8"/>'+
+       '<path d="M0 60q24-6 50 0t50-4v44H0z" fill="#8FD07A"/>'+
+       '<circle cx="18" cy="76" r="12" fill="none" stroke="#9A9BC0" stroke-width="2"/><path d="M18 64v24M6 76h24M9.5 67.5 26.5 84.5M26.5 67.5 9.5 84.5" stroke="#B195B8" stroke-width="1.2"/><rect x="16.6" y="76" width="2.8" height="14" fill="#9A7B55"/>'+
+       '<path d="M62 74h30L77 62z" fill="#D9574F"/><path d="M69 62.5 73 74M77 62v12M85 62.5 81 74" stroke="#FBF3E6" stroke-width="1.4"/>'+
+       '<rect x="62" y="74" width="30" height="3" fill="#E3C06A"/><rect x="65" y="77" width="2.4" height="10" fill="#C9A45E"/><rect x="86" y="77" width="2.4" height="10" fill="#C9A45E"/><rect x="75" y="77" width="2.4" height="10" fill="#C9A45E"/>',
+    spots:[[10,10,'#8FC4E0'],[40,8,'#8FC4E0'],[62,20,'#8FC4E0'],[90,12,'#8FC4E0'],[76,34,'#8FC4E0'],[6,34,'#8FC4E0'],[48,52,'#8FC4E0'],
+           [28,26,'#C9834A'],[52,38,'#C9834A'],[78,66,'#B8443E'],[68,70,'#B8443E'],[18,70,'#8A8BAC'],
+           [12,86,'#6FA85C'],[36,80,'#6FA85C'],[56,86,'#6FA85C'],[80,88,'#6FA85C'],[96,78,'#6FA85C'],[28,94,'#6FA85C'],[66,94,'#6FA85C'],[4,66,'#6FA85C']],
+    plots:[[10,66,6],[30,70,7],[46,74,7],[56,66,6],[40,88,9],[60,90,9],[84,92,9],[94,70,7],[22,90,9],
+           [72,84,8],[6,78,7],[50,80,8],[88,66,6],[34,62,5]],
+    items:['balloonS','popcorn','candy','softserve','ticket','windmill','bear','ball','kite','cup'] },
+
+  { name:'平溪天燈', ink:'#5A3A6E',
+    bg:'<rect width="100" height="100" fill="#3E4A78"/><rect width="100" height="40" fill="#5A5C8E"/>'+
+       '<circle cx="80" cy="12" r="6" fill="#F7EEC8"/>'+
+       '<circle cx="14" cy="10" r=".9" fill="#FFF8E0"/><circle cx="38" cy="6" r=".8" fill="#FFF8E0"/><circle cx="58" cy="14" r=".9" fill="#FFF8E0"/><circle cx="94" cy="28" r=".8" fill="#FFF8E0"/>'+
+       '<path d="M0 46 20 28l16 14 14-10 20 16 16-12 14 10v54H0z" fill="#3A4466"/>'+
+       '<path d="M0 58q24-8 48 2t52-4v44H0z" fill="#2E3752"/>'+
+       '<defs><radialGradient id="lanternglow"><stop offset="0" stop-color="#FFD78E" stop-opacity=".62"/><stop offset=".55" stop-color="#FFC06A" stop-opacity=".22"/><stop offset="1" stop-color="#FFB85E" stop-opacity="0"/></radialGradient></defs>'+
+       '<g fill="url(#lanternglow)"><circle cx="25" cy="37" r="13"/><circle cx="51" cy="25" r="11"/><circle cx="69" cy="43" r="12"/><circle cx="14" cy="57" r="10"/><circle cx="90" cy="49" r="10.5"/><circle cx="38" cy="55" r="9.5"/></g>'+
+       '<g fill="#F2B468"><path d="M21.6 33.6h7.6l1.6 5.8a4.8 4.8 0 0 1-10.8 0z"/><path d="M47.6 21.6h6.4l1.4 5a4.2 4.2 0 0 1-9.2 0z"/><path d="M65.6 39.6h6.8l1.4 5.4a4.5 4.5 0 0 1-9.6 0z"/><path d="M11.6 53.6h5.6l1.2 4.6a3.8 3.8 0 0 1-8 0z"/><path d="M87.6 45.6h5.8l1.2 4.6a4 4 0 0 1-8.2 0z"/><path d="M35.6 51.6h5.2l1 4.2a3.5 3.5 0 0 1-7.2 0z"/></g>'+
+       '<g fill="#FBE3A8"><ellipse cx="25.4" cy="40.6" rx="2.6" ry="1.6"/><ellipse cx="51.2" cy="27.6" rx="2.2" ry="1.4"/><ellipse cx="69.4" cy="46.4" rx="2.4" ry="1.5"/><ellipse cx="14.4" cy="59.4" rx="2" ry="1.3"/><ellipse cx="90.4" cy="51.4" rx="2.1" ry="1.3"/><ellipse cx="38.2" cy="57" rx="1.9" ry="1.2"/></g>'+
+       '<rect y="76" width="100" height="4" fill="#6E6450"/><rect y="84" width="100" height="4" fill="#6E6450"/>'+
+       '<path d="M6 74v16M20 74v16M34 74v16M48 74v16M62 74v16M76 74v16M90 74v16" stroke="#564E3E" stroke-width="2"/>'+
+       '<rect x="4" y="60" width="26" height="16" fill="#4A4258"/><rect x="7" y="64" width="6" height="6" fill="#F0C878"/><rect x="18" y="64" width="6" height="6" fill="#F0C878"/>'+
+       '<rect x="70" y="58" width="28" height="18" fill="#4A4258"/><rect x="74" y="62" width="7" height="7" fill="#F0C878"/><rect x="86" y="62" width="7" height="7" fill="#F0C878"/>',
+    spots:[[10,16,'#4A4C7E'],[32,10,'#4A4C7E'],[56,8,'#4A4C7E'],[74,24,'#4A4C7E'],[94,14,'#4A4C7E'],[44,32,'#4A4C7E'],[80,12,'#D8CFA8'],
+           [16,44,'#2E3858'],[40,44,'#2E3858'],[62,50,'#2E3858'],[88,42,'#2E3858'],
+           [25,37,'#C08A4E'],[51,25,'#C08A4E'],[69,43,'#C08A4E'],
+           [8,66,'#3C3448'],[86,64,'#3C3448'],
+           [14,92,'#262E44'],[44,94,'#262E44'],[70,92,'#262E44'],[94,90,'#262E44']],
+    plots:[[12,82,7],[30,80,7],[48,82,7],[66,80,7],[84,82,7],[20,92,9],[42,90,9],[62,94,9],[88,92,9],
+           [6,72,6],[38,72,6],[58,70,6],[94,72,6],[76,90,8]],
+    items:['lantern','bento','brush','teapot','cup','dango','cat','dog','bird','flower'] },
+
+  { name:'梵谷星空', ink:'#2A3A7A',
+    bg:'<rect width="100" height="100" fill="#2E4A8E"/><rect width="100" height="58" fill="#33508F"/>'+
+       '<path d="M8 20q12-12 22 0t-12 14q-12 2-12-8 0-6 8-6" fill="none" stroke="#6E8ECF" stroke-width="3.4"/>'+
+       '<path d="M11 21q9-8 16 0t-9 10q-8 1-8-6" fill="none" stroke="#8CA6DC" stroke-width="2.2"/>'+
+       '<path d="M44 14q14-10 22 2t-14 12q-10 0-10-8" fill="none" stroke="#5E80C4" stroke-width="3"/>'+
+       '<path d="M47 15q10-7 16 2t-10 9q-7 0-7-6" fill="none" stroke="#7E9AD4" stroke-width="2"/>'+
+       '<path d="M0 40q20 10 40 0t60 4" fill="none" stroke="#5E80C4" stroke-width="2.6"/>'+
+       '<path d="M0 45q22 9 42-1t58 5" fill="none" stroke="#7E9AD4" stroke-width="1.8"/>'+
+       '<path d="M0 50q24-8 50 2t50-4" fill="none" stroke="#4A6AB0" stroke-width="2.2"/>'+
+       '<path d="M0 32q18-7 34 1t30-3 36 4" fill="none" stroke="#4A6AB0" stroke-width="1.8"/>'+
+       '<g stroke="#8CA6DC" stroke-width="1.5" stroke-linecap="round" fill="none" opacity=".75">'+
+         '<path d="M3 10q5-3 9 0M34 6q5-3 10 1M70 20q6-3 11 1M88 36q5-3 10 0M24 44q6-3 11 1M52 46q6-3 11 1M6 54q6-3 11 1M76 52q6-3 11 1M60 26q5-3 9 1M16 36q5-3 9 1"/></g>'+
+       '<circle cx="84" cy="16" r="7" fill="#F2D98A"/><circle cx="84" cy="16" r="10.5" fill="none" stroke="#E8CE80" stroke-width="1.4" opacity=".5"/>'+
+       '<g fill="#F2E09A"><circle cx="18" cy="12" r="2.2"/><circle cx="36" cy="26" r="1.8"/><circle cx="58" cy="10" r="2"/><circle cx="66" cy="34" r="1.6"/><circle cx="6" cy="34" r="1.8"/></g>'+
+       '<path d="M0 58q26-6 52 2t48-4v44H0z" fill="#2A4472"/><path d="M0 70q24 8 50-2t50 6v26H0z" fill="#22395F"/>'+
+       '<path d="M14 92V62l6-8 6 8v30z" fill="#1C2F4E"/><rect x="17" y="70" width="3.4" height="4" fill="#F0C878"/>'+
+       '<path d="M44 92V70h10v22z" fill="#1C2F4E"/><path d="M42 70 49 63l7 7z" fill="#16263F"/><rect x="47" y="76" width="3.4" height="4" fill="#F0C878"/>'+
+       '<path d="M74 92V74h12v18z" fill="#1C2F4E"/><rect x="78" y="79" width="3.4" height="4" fill="#F0C878"/>'+
+       '<path d="M90 100c-6-10-7-24-2-34 4 10 6 24 2 34z" fill="#1A2C2A"/>',
+    spots:[[10,10,'#27407C'],[30,8,'#27407C'],[48,20,'#27407C'],[66,8,'#27407C'],[92,32,'#27407C'],[22,30,'#27407C'],[56,38,'#27407C'],[84,16,'#D8C178'],
+           [14,46,'#27407C'],[38,48,'#27407C'],[72,46,'#27407C'],
+           [8,64,'#213A62'],[34,62,'#213A62'],[60,66,'#213A62'],[88,62,'#213A62'],
+           [20,84,'#182F50'],[46,86,'#182F50'],[66,84,'#182F50'],[94,86,'#182F50'],[4,92,'#182F50']],
+    plots:[[10,72,6],[30,74,7],[52,78,7],[68,76,7],[92,74,6],[18,88,8],[40,92,9],[62,90,9],[84,92,9],
+           [6,80,7],[58,70,6],[78,68,6],[26,66,6],[48,68,6]],
+    items:['starS','moon','sunflower','palette','flower','bird','plant','owl','cat','cup'] },
+
+  { name:'聖誕節', ink:'#7A3030',
+    bg:'<rect width="100" height="100" fill="#F2E2CE"/><rect width="100" height="12" fill="#E0CDB4"/>'+
+       '<rect y="62" width="100" height="6" fill="#B5763F"/><rect y="68" width="100" height="32" fill="#D9A273"/>'+
+       '<path d="M16 68v32M40 68v32M64 68v32M88 68v32" stroke="#C48E57" stroke-width=".8"/>'+
+       '<rect x="4" y="38" width="30" height="26" rx="1" fill="#C98C6A"/><rect x="2" y="35.6" width="34" height="4" fill="#B5763F"/>'+
+       '<rect x="10" y="46" width="18" height="18" rx="1" fill="#4A3C30"/><path d="M13 64q3-10 6 0 3-10 6 0z" fill="#E8964E"/><path d="M15.5 64q2-6 3.5 0 2-6 3.5 0z" fill="#F2C86A"/>'+
+       '<path d="M6 35.6v-3.6M12 35.6v-4.6M18 35.6v-3.6M24 35.6v-4.6M30 35.6v-3.6" stroke="#D9574F" stroke-width="1.4"/>'+
+       '<path d="M72 60 86 26l14 34z" fill="#5E8A54"/><path d="M74 48 86 20l12 28z" fill="#6E9A60"/><path d="M76 36 86 14l10 22z" fill="#5E8A54"/>'+
+       '<rect x="84" y="60" width="4" height="6" fill="#8A6A46"/>'+
+       '<g fill="#E3C06A"><circle cx="82" cy="32" r="1.6"/><circle cx="90" cy="42" r="1.6"/><circle cx="80" cy="52" r="1.8"/><circle cx="92" cy="54" r="1.8"/></g>'+
+       '<g fill="#D9574F"><circle cx="88" cy="34" r="1.4"/><circle cx="80" cy="42" r="1.4"/><circle cx="86" cy="52" r="1.5"/></g>'+
+       '<path d="M86 13.4 87.6 17l3.6.4-2.7 2.5.8 3.5L86 21.6 82.7 23.4l.8-3.5-2.7-2.5 3.6-.4z" fill="#F2D98A"/>'+
+       '<rect x="44" y="14" width="22" height="20" rx="1" fill="#BFE4FF" stroke="#B5763F" stroke-width="2"/><path d="M55 14v20M44 24h22" stroke="#B5763F" stroke-width="1.2"/>'+
+       '<ellipse cx="46" cy="86" rx="30" ry="10" fill="#D9574F"/><ellipse cx="46" cy="85.5" rx="20" ry="6" fill="#E8907E"/>',
+    spots:[[12,18,'#D6C2A6'],[36,8,'#D6C2A6'],[60,10,'#D6C2A6'],[88,6,'#D6C2A6'],[40,44,'#D6C2A6'],[6,24,'#D6C2A6'],[68,48,'#D6C2A6'],
+           [49,19,'#8FB9DB'],[61,29,'#8FB9DB'],[19,42,'#B07A5E'],[31,42,'#B07A5E'],[86,40,'#4E7446'],[84,56,'#4E7446'],
+           [46,84,'#C04A46'],[34,88,'#C04A46'],[58,88,'#C04A46'],
+           [12,78,'#B98A5E'],[76,76,'#B98A5E'],[22,94,'#B98A5E'],[90,92,'#B98A5E'],[62,96,'#B98A5E']],
+    plots:[[42,76,7],[54,74,7],[66,78,7],[30,78,7],[18,72,6],[78,70,6],[10,88,9],[36,92,9],[60,92,9],
+           [86,86,8],[94,74,6],[48,68,6],[70,88,8],[24,86,8]],
+    items:['gift','candycane','reindeer','gingerbread','turkey','bauble','snowman','sock','cookie','bell'] },
+
+  { name:'賽車場', ink:'#3A3A4A',
+    bg:'<rect width="100" height="100" fill="#BFE8FF"/><ellipse cx="20" cy="12" rx="11" ry="4.6" fill="#FFFFFF"/><ellipse cx="72" cy="8" rx="9" ry="4" fill="#FFFFFF"/>'+
+       '<rect y="30" width="100" height="14" fill="#C9CCD8"/><path d="M0 34h100M0 38h100" stroke="#AEB2C0" stroke-width="1"/>'+
+       '<g fill="#D9574F"><rect x="6" y="31" width="4" height="3"/><rect x="20" y="31" width="4" height="3"/><rect x="40" y="31" width="4" height="3"/><rect x="62" y="31" width="4" height="3"/><rect x="82" y="31" width="4" height="3"/></g>'+
+       '<g fill="#5FA8D8"><rect x="13" y="35" width="4" height="3"/><rect x="31" y="35" width="4" height="3"/><rect x="52" y="35" width="4" height="3"/><rect x="72" y="35" width="4" height="3"/><rect x="90" y="35" width="4" height="3"/></g>'+
+       '<path d="M0 44q26-8 52 0t48-4v18H0z" fill="#8FD07A"/>'+
+       '<rect y="56" width="100" height="44" fill="#6E6E7A"/><path d="M0 62h100" stroke="#8A8A96" stroke-width="1.4"/>'+
+       '<path d="M4 78h10M22 78h10M40 78h10M58 78h10M76 78h10M94 78h6" stroke="#F2E6CE" stroke-width="2.4"/>'+
+       '<g fill="#F7F2E6"><rect x="60" y="88" width="5" height="4"/><rect x="70" y="88" width="5" height="4"/><rect x="80" y="88" width="5" height="4"/><rect x="65" y="92" width="5" height="4"/><rect x="75" y="92" width="5" height="4"/><rect x="85" y="92" width="5" height="4"/></g>'+
+       '<g fill="#3A3A44"><rect x="65" y="88" width="5" height="4"/><rect x="75" y="88" width="5" height="4"/><rect x="85" y="88" width="5" height="4"/><rect x="60" y="92" width="5" height="4"/><rect x="70" y="92" width="5" height="4"/><rect x="80" y="92" width="5" height="4"/></g>'+
+       '<rect x="6" y="44" width="22" height="12" rx="1" fill="#4A4A56"/><rect x="8" y="46" width="18" height="8" fill="#2E2E38"/><g fill="#8FD07A"><rect x="10" y="48" width="3" height="4"/><rect x="15" y="48" width="3" height="4"/><rect x="20" y="48" width="3" height="4"/></g>'+
+       '<g fill="#4A423A"><circle cx="46" cy="54" r="3"/><circle cx="53" cy="54" r="3"/><circle cx="60" cy="54" r="3"/><circle cx="67" cy="54" r="3"/></g>',
+    spots:[[12,10,'#8FC4E0'],[38,8,'#8FC4E0'],[58,16,'#8FC4E0'],[86,12,'#8FC4E0'],[96,24,'#8FC4E0'],[6,22,'#8FC4E0'],[30,20,'#8FC4E0'],
+           [24,36,'#AEB2BE'],[48,36,'#AEB2BE'],[78,36,'#AEB2BE'],[36,48,'#6FA85C'],[88,48,'#6FA85C'],[16,50,'#3C3C46'],
+           [10,68,'#5A5A66'],[34,70,'#5A5A66'],[58,68,'#5A5A66'],[84,72,'#5A5A66'],[20,88,'#5A5A66'],[44,92,'#5A5A66'],[94,86,'#5A5A66'],[6,94,'#5A5A66']],
+    plots:[[12,64,6],[30,66,7],[50,64,6],[70,66,7],[90,64,6],[18,78,8],[40,80,8],[62,76,7],[86,80,8],
+           [8,90,9],[32,94,9],[54,92,9],[76,92,9],[96,74,7]],
+    items:['racecar','flagChk','cone','tyre','helmet','clock','balloonS','cup','ball','bird'] },
+
+  { name:'中秋團圓', ink:'#4A3A6E',
+    bg:'<rect width="100" height="100" fill="#3E4A72"/><rect width="100" height="36" fill="#4A5682"/>'+
+       '<circle cx="74" cy="20" r="14" fill="#F7EFC8"/><circle cx="68" cy="15" r="2.4" fill="#EBE2B4"/><circle cx="79" cy="25" r="3" fill="#EBE2B4"/><circle cx="77" cy="13" r="1.8" fill="#EBE2B4"/>'+
+       '<path d="M70 26c-1-3 0-6 2-6s2 2 1.6 4c1.6.4 2.6 1.4 2.6 2.6z" fill="#D9CFA0"/>'+
+       '<g fill="#FFF6D8"><circle cx="10" cy="10" r="1"/><circle cx="28" cy="18" r=".9"/><circle cx="46" cy="8" r="1.1"/><circle cx="20" cy="30" r=".9"/><circle cx="94" cy="40" r="1"/><circle cx="54" cy="30" r=".9"/></g>'+
+       '<path d="M0 52q22-10 46 0t54-6v54H0z" fill="#3E6650"/>'+
+       '<path d="M0 68q26 8 52-2t48 6" stroke="#355A46" stroke-width="2.2" fill="none"/>'+
+       '<rect x="6" y="44" width="3" height="12" fill="#6A5238"/><circle cx="7.5" cy="42" r="7" fill="#35604A"/><circle cx="2" cy="45" r="4.4" fill="#3E6E54"/>'+
+       '<rect x="90" y="46" width="3" height="12" fill="#6A5238"/><circle cx="91.5" cy="44" r="6.4" fill="#35604A"/>'+
+       '<rect x="18" y="62" width="26" height="4" rx="1" fill="#4A4A56"/><rect x="20" y="66" width="2.6" height="10" fill="#3A3A44"/><rect x="39" y="66" width="2.6" height="10" fill="#3A3A44"/>'+
+       '<g fill="#E8964E"><rect x="21" y="59" width="4" height="3" rx="1"/><rect x="28" y="59" width="4" height="3" rx="1"/><rect x="35" y="59" width="4" height="3" rx="1"/></g>'+
+       '<path d="M24 56q2-6 5-3t4-5" fill="none" stroke="#9AA4B8" stroke-width="1.2" opacity=".45"/>'+
+       '<ellipse cx="62" cy="80" rx="22" ry="7" fill="#8A6A46"/><ellipse cx="62" cy="79" rx="17" ry="4.6" fill="#A8845A"/>',
+    spots:[[12,14,'#3F4C78'],[34,10,'#3F4C78'],[52,20,'#3F4C78'],[94,12,'#3F4C78'],[20,32,'#3F4C78'],[60,36,'#3F4C78'],[74,20,'#DCD4A8'],
+           [7,42,'#2E5440'],[91,44,'#2E5440'],[31,63,'#3E3E48'],
+           [10,60,'#35583F'],[36,72,'#35583F'],[62,66,'#35583F'],[88,62,'#35583F'],[48,84,'#35583F'],[16,86,'#35583F'],[78,90,'#35583F'],[38,94,'#35583F'],[94,80,'#35583F'],
+           [62,79,'#8E7048']],
+    plots:[[50,76,7],[62,74,6],[72,78,7],[58,84,7],[12,70,7],[30,80,8],[86,72,7],[8,88,9],[36,90,9],
+           [64,92,9],[92,90,9],[22,62,5],[46,66,6],[78,66,6]],
+    items:['skewer','sausage','corn','mushroom','rabbit','moon','starS','lantern','teapot','cup'] }
 ];
 const ART_N = 9;        /* 一張畫藏 9 個答案（1~9 倍），出題順序隨機 */
 const ART_DECOY = 4;    /* 另外混進幾個不是答案的數字（再隨機多 0~2 個）*/
@@ -2219,6 +2408,48 @@ temple:`<ellipse cx="12" cy="22.9" rx="11" ry=".95" fill="#9AAE8E"/><path d="M1.
 mosasaur:`<path d="M20.4,16.2c1.4,-1.6 1.8,-3.8 1,-5.8 -1.6,1 -2.6,2.6 -2.8,4.4Z" fill="#6E8CA6"/><path d="M19,12.6c1.6,1.4 2.4,3.4 2.2,5.4 -1.8,-.6 -3.2,-2 -3.8,-3.8Z" fill="#6E8CA6"/><path d="M2.2,8.6c2.8,-.6 5.6,.6 7.4,2.8 1.6,2 4,3.2 6.6,3.2 1.4,0 2.6,-.4 3.6,-1.2l.6,1.6c-1.4,1.4 -3.4,2.2 -5.6,2.2 -3.6,0 -6.8,-1.8 -8.6,-4.6 -1,-1.6 -2.6,-2.6 -4.4,-2.8Z" fill="#7E9CB4"/><path d="M2.2,8.6 7.4,6.4c1.6,-.7 3.4,.2 3.8,1.9l.4,1.9Z" fill="#9AB6CA"/><path d="M11.6,10.2c1.2,1.4 2.8,2.4 4.6,2.8l4.2,-1.6c.6,-.2 .6,-1.1 0,-1.4L12,5.8c-.8,-.4 -1.6,.4 -1.3,1.2Z" fill="#9AB6CA"/><path d="M11.4,8.8 19.8,10.3l-5.2,2c-1.4,-.5 -2.6,-1.6 -3.2,-3Z" fill="#CFE0EA"/><g fill="#FBF6E8"><path d="M12.6,8.4 13.1,9.9 11.9,9.5ZM14.6,8.8 15.1,10.3 13.9,9.9ZM16.6,9.2 17.1,10.7 15.9,10.3Z"/></g><path d="M6.8,11.8c-1.2,1.8 -3,2.8 -5,2.8 .6,-2 2.2,-3.4 4.2,-3.8Z" fill="#6E8CA6"/><path d="M11.4,14.6c.6,1.8 .2,3.8 -1,5.2 -1.2,-1.6 -1.4,-3.6 -.6,-5.2Z" fill="#6E8CA6"/><circle cx="10.6" cy="7.6" r=".95" fill="#2E3A44"/><circle cx="10.4" cy="7.4" r=".34" fill="#FBF6E8"/>`,
 sunfish:`<path d="M8.6,7.2 10.9,.9c.3,-.8 1.35,-.6 1.45,.25L13.3,8Z" fill="#8FC6DE"/><path d="M8.6,16.8 10.9,23.1c.3,.8 1.35,.6 1.45,-.25L13.3,16Z" fill="#8FC6DE"/><path d="M4.3,11.4c-1,-.25 -1.75,.3 -1.75,1.1 0,.8 .75,1.35 1.75,1.1Z" fill="#A8D4E8"/><path d="M10,5.9c3.1,0 5.7,1.6 6.7,3.9l.85,.65 -.85,.8 .85,.8 -.85,.8 .85,.8 -.85,.65C15.7,16.5 13.1,18.1 10,18.1 5.6,18.1 3.3,15.4 3.3,12S5.6,5.9 10,5.9Z" fill="#A8D4E8"/><path d="M10,5.9c3.1,0 5.7,1.6 6.7,3.9l.2,.15C15.6,7.7 12.9,6.5 9.6,6.5c-1.6,0 -3,.3 -4.2,.8C6.5,6.3 8.1,5.9 10,5.9Z" fill="#C6E4F2"/><path d="M3.7,14.2c1,2.3 3.4,3.9 6.3,3.9 1.5,0 2.9,-.4 4,-1.1 -1.2,1.6 -3.2,2.6 -5.6,2.6 -2.5,0 -4.2,-2.2 -4.7,-5.4Z" fill="#F7FBFD"/><path d="M3.3,12c0,-1.7 .55,-3.2 1.5,-4.3 1.3,1.6 2.1,3.8 2.1,6.2 0,1.5 -.3,2.9 -.9,4C4.3,16.8 3.3,14.6 3.3,12Z" fill="#F7FBFD"/><circle cx="6.4" cy="10.4" r="1.6" fill="#FBF6E8"/><circle cx="6.2" cy="10.5" r=".88" fill="#2E2A26"/><circle cx="5.96" cy="10.2" r=".3" fill="#FBF6E8"/><ellipse cx="8.5" cy="13.6" rx="1.5" ry="1.15" fill="#8FC6DE" transform="rotate(-18 8.5 13.6)"/><path d="M7.7,13.3c.7,.1 1.3,.35 1.7,.72" stroke="#6FAFCC" stroke-width=".4" fill="none"/><path d="M15,9.6c.5,1.6 .5,3.2 0,4.8" fill="none" stroke="#6FAFCC" stroke-width=".62" stroke-linecap="round"/>`,
 mazufish:`<path d="M16.4,11.5c.9,.15 1.7,.45 2.3,.85L21.6,8.5c.5,-.75 1.5,-.2 1.2,.7L20.6,13.2l1.4,3.2c.4,.9 -.55,1.5 -1.2,.8L18.1,13.9c-.55,.3 -1.2,.45 -1.9,.5Z" fill="#F2BCCC"/><path d="M10,8.2c.4,-2.3 1.6,-3.6 2.8,-3.2 1.3,.4 1.8,2.2 1.2,4.3Z" fill="#F2BCCC"/><path d="M6.6,15.6c-1,1.8 -1.1,3.2 -.2,3.7 .95,.5 2.3,-.5 3.1,-2.3Z" fill="#F2BCCC"/><path d="M.5,13.6C.8,10.4 3.8,8 7.8,8c4.2,0 7.8,2.1 9.2,4.8 .45,.85 .05,1.85 -.9,2.15 -2,.65 -4.4,1 -6.9,1C4.4,15.95 .8,14.9 .5,13.6Z" fill="#F9D2DE"/><path d="M.5,13.6C.8,10.4 3.8,8 7.8,8c.7,0 1.4,.06 2.05,.18C6.6,9.1 4.2,11.1 3.5,13.6Z" fill="#FDF2F5"/><path d="M.9,14.5c1.7,1.3 4.6,2.1 7.8,2.05 -1.2,.4 -2.5,.6 -3.9,.6C2.9,17.15 1.4,16.1 .9,14.5Z" fill="#FDF2F5"/><circle cx="4.3" cy="11.6" r="1.3" fill="#FBF6E8"/><circle cx="4.45" cy="11.75" r=".72" fill="#2E2A26"/><circle cx="4.2" cy="11.4" r=".27" fill="#FBF6E8"/><path d="M1.5,13.9c1.3,.95 3,1.2 4.4,.7" fill="none" stroke="#E8A2B8" stroke-width=".85" stroke-linecap="round"/><circle cx="2.3" cy="13" r=".62" fill="#F7B8CA" opacity=".9"/><ellipse cx="6.2" cy="9.5" rx=".46" ry=".33" fill="#E8A2B8"/>`,
+/* ---------- 新場景專用的手繪道具 ---------- */
+/* 刻意不跟貼紙共用圖：貼紙要靠轉蛋抽，場景裡到處都是就不值錢了。
+   同一個東西（天燈、聖誕樹、月餅…）兩邊各畫一版，畫風像、細節不同 */
+/* 海底世界 */
+seahorse:`<path d="M12.6,3c2.9,0 4.8,2.2 4.8,4.8 0,3 -2.6,4.2 -4.2,5.4 -1.4,1 -2,1.9 -2,3.1 0,1.4 1,2.4 2.4,2.4 1,0 1.6,-.6 1.6,-1.4" fill="none" stroke="#E0A05E" stroke-width="4" stroke-linecap="round"/><path d="M9.6,5.4 6.6,4 7.6,7.2Z" fill="#E0A05E"/><circle cx="12.4" cy="6.4" r=".9" fill="#4D3A2C"/><path d="M15.6,4.6 18.4,3.4" stroke="#C98B4E" stroke-width="1.5" stroke-linecap="round"/><path d="M9.6,9.6 7.2,10.6M9.4,12.6 7,13.8" stroke="#C98B4E" stroke-width="1.2" stroke-linecap="round"/>`,
+seaweed:`<ellipse cx="12" cy="21.4" rx="7.4" ry="1.8" fill="#D9C9A4"/><path d="M11.4,21.4c-2.2,-4 -2.2,-9.2 .2,-13 1.6,-2.6 1.2,-4.6 .4,-6.6" fill="none" stroke="#5E9E68" stroke-width="2.4" stroke-linecap="round"/><path d="M16,21.4c1.6,-3.4 1.8,-7.6 .6,-10.8" fill="none" stroke="#7FBE82" stroke-width="2" stroke-linecap="round"/><path d="M7.4,21.4c-1.4,-3 -1.6,-6.6 -.6,-9.6" fill="none" stroke="#7FBE82" stroke-width="1.8" stroke-linecap="round"/>`,
+/* 過年的家 */
+redenvelope:`<rect x="4.6" y="3.6" width="14.8" height="16.8" rx="1.6" fill="#D9736A"/><path d="M4.6,8h14.8" stroke="#C25F58" stroke-width="1"/><path d="M8.6,3.6v3.6M15.4,3.6v3.6" stroke="#C25F58" stroke-width=".9"/><circle cx="12" cy="13.6" r="3.6" fill="#E3C06A"/><path d="M12,10.6v6M9.2,13.6h5.6" stroke="#C09A4A" stroke-width="1.1"/>`,
+firecracker:`<rect x="6.8" y="8.4" width="4.6" height="12.4" rx="1.4" fill="#D9736A"/><rect x="12.6" y="10.4" width="4.4" height="10.4" rx="1.4" fill="#C25F58"/><path d="M6.8,13.4h4.6M12.6,15h4.4" stroke="#E3C06A" stroke-width="1.4"/><path d="M9.1,8.4C8.4,6.2 7,5.2 5.4,5" fill="none" stroke="#8A7E66" stroke-width="1.2" stroke-linecap="round"/><path d="M14.8,10.4c.4,-2.2 1.6,-3.4 3.4,-3.8" fill="none" stroke="#8A7E66" stroke-width="1.2" stroke-linecap="round"/><path d="M5.4,5 3.4,3.4 6,2.8Z" fill="#E8964E"/>`,
+niangao:`<ellipse cx="12" cy="20.4" rx="8.2" ry="1.9" fill="#CFE0EC"/><path d="M6,11.8h12v6.4a2,2 0 0 1 -2,2H8a2,2 0 0 1 -2,-2Z" fill="#E3C487"/><ellipse cx="12" cy="11.8" rx="6" ry="2.4" fill="#F2DCAC"/><path d="M9,9.8c0,-1.6 1.4,-2.8 3,-2.8s3,1.2 3,2.8" fill="none" stroke="#C9A45E" stroke-width="1.2"/><circle cx="12" cy="5.8" r="1.7" fill="#D9736A"/>`,
+knot:`<path d="M12,3.2 18.8,10 12,16.8 5.2,10Z" fill="#D9736A"/><path d="M12,6.6 15.4,10 12,13.4 8.6,10Z" fill="#C25F58"/><path d="M12,16.8v2.2M10.2,19h3.6" stroke="#C9A45E" stroke-width="1.3" stroke-linecap="round"/><path d="M10.4,19.6v3.2M12,19.6v3.6M13.6,19.6v3.2" stroke="#D9736A" stroke-width="1.1" stroke-linecap="round"/>`,
+/* 森林好朋友 */
+squirrel:`<path d="M16.6,19.6c3,-2.8 3.8,-7.6 1.8,-10.8 -1.4,-2.2 -4.4,-1.8 -4.8,.8 -.4,2.2 1.6,2.6 2.4,1.2" fill="none" stroke="#C98B5E" stroke-width="3.2" stroke-linecap="round"/><ellipse cx="9.4" cy="15.2" rx="4.6" ry="5.4" fill="#D9A06C"/><ellipse cx="9.4" cy="16.6" rx="2.6" ry="3.4" fill="#F2DCC0"/><circle cx="8.2" cy="9.4" r="3.6" fill="#DFAE7C"/><path d="M5.6,7 4.8,4.2 7.4,5.8Z" fill="#C98B5E"/><circle cx="7" cy="9.2" r=".9" fill="#4D3A2C"/><path d="M9.6,10 11.4,10.8 9.6,11.6Z" fill="#8A6440"/>`,
+acorn:`<ellipse cx="12" cy="15.6" rx="5" ry="6" fill="#D9A86C"/><ellipse cx="10.2" cy="14.4" rx="1.3" ry="2" fill="#E8C49A"/><path d="M6.6,10.8c0,-2.2 2.4,-3.6 5.4,-3.6s5.4,1.4 5.4,3.6Z" fill="#9A7B55"/><path d="M6.6,10.8h10.8" stroke="#8A6A46" stroke-width="1"/><path d="M12,7.2V4.4" stroke="#8A6A46" stroke-width="1.4" stroke-linecap="round"/>`,
+/* 遊樂園 */
+ticket:`<path d="M3,7.8h18v3.2a2,2 0 0 0 0,4v3.2H3v-3.2a2,2 0 0 0 0,-4Z" fill="#E6C9A0"/><path d="M8.4,7.8v1.6M8.4,11.8v1.6M8.4,15.8v1.6" stroke="#C9A878" stroke-width="1"/><circle cx="15.2" cy="13" r="3" fill="#DE8070"/><path d="M15.2,10.8 15.9,12.3 17.5,12.5 16.3,13.7 16.6,15.3 15.2,14.5 13.8,15.3 14.1,13.7 12.9,12.5 14.5,12.3Z" fill="#F7EEDC"/>`,
+windmill:`<path d="M12,12V3.8a4.2,4.2 0 0 1 4.2,4.2Z" fill="#DE8070"/><path d="M12,12h8.2a4.2,4.2 0 0 1 -4.2,4.2Z" fill="#E3C06A"/><path d="M12,12v8.2a4.2,4.2 0 0 1 -4.2,-4.2Z" fill="#8FACC4"/><path d="M12,12H3.8a4.2,4.2 0 0 1 4.2,-4.2Z" fill="#9BB893"/><path d="M12,13.6v8.8" stroke="#9A7B55" stroke-width="1.4" stroke-linecap="round"/><circle cx="12" cy="12" r="1.5" fill="#C9A45E"/>`,
+/* 平溪天燈 */
+bento:`<rect x="3.4" y="6.6" width="17.2" height="2.2" rx=".9" fill="#8A6A46"/><rect x="3.6" y="8.6" width="16.8" height="10.6" rx="1.4" fill="#9A7B55"/><rect x="5" y="10" width="14" height="7.8" rx=".8" fill="#F2E6CE"/><rect x="5.8" y="10.8" width="5.2" height="6.2" rx=".6" fill="#FBF8F0"/><path d="M12,10.8h6.2v3H12Z" fill="#C98B5E"/><circle cx="13.4" cy="15.6" r="1.2" fill="#DE8070"/><circle cx="16.4" cy="15.8" r="1.1" fill="#9BB893"/>`,
+brush:`<rect x="10.6" y="2.6" width="2.8" height="10.6" rx="1" fill="#9A7B55"/><circle cx="12" cy="2.8" r="1.1" fill="#D9736A"/><rect x="9.9" y="12.8" width="4.2" height="2.6" rx=".8" fill="#C9A45E"/><path d="M12,15.4c1.8,0 2.9,2.2 2.9,4.1 0,1.8 -1.3,3 -2.9,3s-2.9,-1.2 -2.9,-3c0,-1.9 1.1,-4.1 2.9,-4.1Z" fill="#4A423A"/><path d="M12,22.4v-5.2" stroke="#2E2A26" stroke-width=".8"/>`,
+/* 梵谷星空 */
+palette:`<path d="M12,3.4c5.2,0 9,3.4 9,7.6 0,2.6 -2,3.6 -3.8,3.6 -1.4,0 -2.4,.8 -2.4,2 0,1.6 -1,3 -3.2,3 -5,0 -8.6,-3.6 -8.6,-8.2C3,6.8 6.8,3.4 12,3.4Z" fill="#E6D4B4"/><circle cx="8" cy="8.4" r="1.7" fill="#DE8070"/><circle cx="13.4" cy="7" r="1.7" fill="#E3C06A"/><circle cx="17.2" cy="10.2" r="1.6" fill="#9BB893"/><circle cx="7" cy="13.6" r="1.7" fill="#8FACC4"/><circle cx="11" cy="16.6" r="1.5" fill="#B195B8"/>`,
+/* 聖誕節 */
+gift:`<rect x="3.6" y="9.8" width="16.8" height="10.8" rx="1.4" fill="#DE8070"/><rect x="3" y="6.8" width="18" height="3.6" rx="1.2" fill="#C25F58"/><rect x="10.4" y="6.8" width="3.2" height="13.8" fill="#E3C06A"/><path d="M12,6.8C10.6,3.6 7,3.8 7,5.8c0,1.4 2.6,1.8 5,1" fill="none" stroke="#E3C06A" stroke-width="1.6"/><path d="M12,6.8c1.4,-3.2 5,-3 5,-1 0,1.4 -2.6,1.8 -5,1" fill="none" stroke="#E3C06A" stroke-width="1.6"/>`,
+candycane:`<path d="M9,21.4V9.6a4,4 0 0 1 8,0v1.8" fill="none" stroke="#FBF8F0" stroke-width="4.2" stroke-linecap="round"/><path d="M9,21.4V9.6a4,4 0 0 1 8,0v1.8" fill="none" stroke="#DE8070" stroke-width="4.2" stroke-dasharray="2.2 3.6"/>`,
+reindeer:`<path d="M7.6,7.6 5.6,3.8M7.6,7.6 4.2,6.4M7.6,7.6 7.2,4.2M16.4,7.6 18.4,3.8M16.4,7.6 19.8,6.4M16.4,7.6 16.8,4.2" stroke="#9A7B55" stroke-width="1.5" stroke-linecap="round"/><ellipse cx="12" cy="14" rx="6" ry="6.6" fill="#C2905E"/><ellipse cx="12" cy="16.8" rx="3.8" ry="4" fill="#E0BE94"/><circle cx="9.6" cy="12" r="1.1" fill="#4D3A2C"/><circle cx="14.4" cy="12" r="1.1" fill="#4D3A2C"/><circle cx="12" cy="16" r="2" fill="#D9736A"/>`,
+gingerbread:`<circle cx="12" cy="6.6" r="3.8" fill="#C98B5E"/><path d="M9.6,11.2 4.6,13.4M14.4,11.2 19.4,13.4" stroke="#C98B5E" stroke-width="3" stroke-linecap="round"/><path d="M9.2,10.8h5.6l1,8.6a1.4,1.4 0 0 1 -1.4,1.6h-4.8a1.4,1.4 0 0 1 -1.4,-1.6Z" fill="#C98B5E"/><circle cx="10.6" cy="6.2" r=".8" fill="#4A3426"/><circle cx="13.4" cy="6.2" r=".8" fill="#4A3426"/><path d="M10.4,8.2c1,.9 2.2,.9 3.2,0" fill="none" stroke="#4A3426" stroke-width=".9" stroke-linecap="round"/><circle cx="12" cy="14" r="1" fill="#FBF8F0"/><circle cx="12" cy="17.2" r="1" fill="#FBF8F0"/>`,
+turkey:`<ellipse cx="12" cy="21.2" rx="8.6" ry="1.8" fill="#CFE0EC"/><ellipse cx="12" cy="14" rx="7.4" ry="5.6" fill="#C9955E"/><ellipse cx="12" cy="12.2" rx="5.4" ry="3.4" fill="#DFAE7C"/><path d="M6.8,18 4.6,20.4M17.2,18 19.4,20.4" stroke="#C9955E" stroke-width="2.4" stroke-linecap="round"/><path d="M3.6,20.6h2.8M17.6,20.6h2.8" stroke="#F2E6CE" stroke-width="2" stroke-linecap="round"/><circle cx="7.6" cy="9.8" r="1.4" fill="#9BB893"/><circle cx="16.4" cy="9.8" r="1.4" fill="#D9736A"/>`,
+bauble:`<path d="M12,5.6V3.2a2,2 0 0 0 -2,-2" fill="none" stroke="#9A7B55" stroke-width="1.1"/><rect x="10.2" y="5.4" width="3.6" height="2.8" rx=".8" fill="#C9A45E"/><circle cx="12" cy="14.6" r="6.6" fill="#D9736A"/><path d="M5.6,12.6q6.4,2.6 12.8,0" fill="none" stroke="#E3C06A" stroke-width="1.6"/><circle cx="9.4" cy="11.8" r="1.4" fill="#F2C6BE"/>`,
+bell:`<rect x="10.6" y="2.4" width="2.8" height="2.6" rx="1.2" fill="#C9A45E"/><path d="M12,4.6c3.4,0 5.4,2.8 5.4,6.4 0,2.4 .8,4 1.8,5H4.8c1,-1 1.8,-2.6 1.8,-5 0,-3.6 2,-6.4 5.4,-6.4Z" fill="#E3C06A"/><path d="M8.2,9.8c0,-2 1.2,-3.4 2.6,-3.8" fill="none" stroke="#F2DCA4" stroke-width="1.2" stroke-linecap="round"/><circle cx="12" cy="18.4" r="2" fill="#C9A45E"/>`,
+/* 賽車場 */
+racecar:`<path d="M2.6,15.6h18.8l-.8,-2.8c-.3,-1 -1.2,-1.6 -2.2,-1.6h-1.6l-2,-2.6c-.5,-.7 -1.2,-1 -2,-1h-3.6c-.8,0 -1.5,.3 -2,1l-2,2.6H3.4Z" fill="#D9736A"/><path d="M9.4,9.6h4.6l1.4,2H8Z" fill="#CFE0EC"/><rect x="2.4" y="15.4" width="19.2" height="2.2" rx="1" fill="#C25F58"/><rect x="18.8" y="8" width="2.6" height="3" rx=".6" fill="#E3C06A"/><circle cx="6.6" cy="18.6" r="2.6" fill="#4A423A"/><circle cx="17.4" cy="18.6" r="2.6" fill="#4A423A"/><circle cx="6.6" cy="18.6" r="1" fill="#9A9AA0"/><circle cx="17.4" cy="18.6" r="1" fill="#9A9AA0"/>`,
+flagChk:`<rect x="4.4" y="3" width="1.8" height="18.6" rx=".8" fill="#9A7B55"/><rect x="6.2" y="3.8" width="12.8" height="9.2" fill="#FBF8F0"/><g fill="#4A423A"><rect x="6.2" y="3.8" width="4.3" height="3.1"/><rect x="14.8" y="3.8" width="4.2" height="3.1"/><rect x="10.5" y="6.9" width="4.3" height="3.1"/><rect x="6.2" y="10" width="4.3" height="3"/><rect x="14.8" y="10" width="4.2" height="3"/></g>`,
+cone:`<path d="M12,4 18.6,19.4H5.4Z" fill="#E8964E"/><path d="M9.5,12.4h5l.8,2H8.7Z" fill="#FBF8F0"/><rect x="3.4" y="19.2" width="17.2" height="2.8" rx="1.1" fill="#DD7F3C"/>`,
+tyre:`<circle cx="12" cy="12.6" r="8.4" fill="#4A423A"/><path d="M12,4.2v2.6M12,18.4v2.6M3.6,12.6h2.6M17.8,12.6h2.6M6,6.6 7.9,8.5M18,6.6 16.1,8.5M6,18.6 7.9,16.7M18,18.6 16.1,16.7" stroke="#2E2A26" stroke-width="1.4" stroke-linecap="round"/><circle cx="12" cy="12.6" r="4.4" fill="#9A9AA0"/><circle cx="12" cy="12.6" r="2" fill="#6E6E74"/>`,
+helmet:`<path d="M12,3.8c4.4,0 7.6,3.4 7.6,7.6v3.6H4.4v-3.6c0,-4.2 3.2,-7.6 7.6,-7.6Z" fill="#D9736A"/><path d="M8,15v-3.4a4,4 0 0 1 8,0V15Z" fill="#8FACC4"/><path d="M4.4,15h15.2v2.4a1.6,1.6 0 0 1 -1.6,1.6H6a1.6,1.6 0 0 1 -1.6,-1.6Z" fill="#C25F58"/><path d="M12,4v4.2" stroke="#E3C06A" stroke-width="1.4"/>`,
+/* 中秋團圓 */
+skewer:`<rect x="11.2" y="2.4" width="1.6" height="19.4" rx=".8" fill="#C2A37E"/><rect x="7.4" y="5" width="9.2" height="4.2" rx="1.4" fill="#C25F58"/><rect x="7.4" y="10.2" width="9.2" height="4.2" rx="1.4" fill="#9BB893"/><rect x="7.4" y="15.4" width="9.2" height="4.2" rx="1.4" fill="#C9955E"/>`,
+sausage:`<path d="M6.8,6.8c3.6,-1.6 8.4,-.8 10.6,2.6 2.2,3.4 .6,7.8 -3,9.4 -3.6,1.6 -7.4,.2 -9,-2.8" fill="none" stroke="#C25F58" stroke-width="4.4" stroke-linecap="round"/><path d="M8.8,7.8 9.8,10.2M12.6,7.2 13.2,9.8M16,9.6 14.4,11.4" stroke="#A84E4C" stroke-width=".9" stroke-linecap="round"/>`,
+/* 下雪天的松樹、夜市的飲料：原本直接用貼紙的圖，改成場景自己的版本 */
+pinetree:`<path d="M12,2.4 16.4,9.4H7.6Z" fill="#6E8F60"/><path d="M12,7 17.6,14.6H6.4Z" fill="#7E9C6C"/><path d="M12,11.8 19,19.6H5Z" fill="#6E8F60"/><rect x="10.6" y="19.6" width="2.8" height="2.8" rx=".8" fill="#8A6A46"/><path d="M9,8.6h6M7.8,13.8h8.4M6.4,18.8h11.2" stroke="#F7F2E6" stroke-width="1.2" stroke-linecap="round"/>`,
+teadrink:`<rect x="5.6" y="5.8" width="12.8" height="2.2" rx=".9" fill="#9BB893"/><path d="M12,5.8V2.6" stroke="#D9736A" stroke-width="1.5" stroke-linecap="round"/><path d="M6.6,7.8h10.8l-1.2,12.4a2,2 0 0 1 -2,1.8h-4.4a2,2 0 0 1 -2,-1.8Z" fill="#EADCC2"/><path d="M7.4,13.2h9.2l-.8,7a1.6,1.6 0 0 1 -1.6,1.4h-4.4a1.6,1.6 0 0 1 -1.6,-1.4Z" fill="#C9955E"/>`
 };
 const art = k => `<svg class="ar" viewBox="0 0 24 24" aria-hidden="true">${ART[k]||''}</svg>`;
 const ic = (n,cls)=>`<i class="ic ${cls||''}">${ICON[n]?`<svg viewBox="0 0 24 24" aria-hidden="true">${ICON[n]}</svg>`:''}</i>`;
@@ -3919,10 +4150,25 @@ function artHTML(a, opt){
   }).join('');
   return bg+objs+nums;
 }
+/* 挑一個「最近沒出現過」的場景。純隨機的話，17 個場景玩三次就有約三成機率撞到同一張，
+   小孩連玩很容易抽到剛畫完的那個。排除最近 5 次開過的，再排除畫廊最新 3 張的場景
+   （畫廊是存檔裡的，重新整理也記得），剩下的才均勻抽 */
+let recentScenes = [];
+const RECENT_KEEP = 5;
+function pickScene(){
+  const avoid=new Set(recentScenes), m=me();
+  if(m && Array.isArray(m.art)) m.art.slice(0,3).forEach(a=>avoid.add(((a.s%SCENES.length)+SCENES.length)%SCENES.length));
+  let pool=SCENES.map((_,i)=>i).filter(i=>!avoid.has(i));
+  if(!pool.length) pool=SCENES.map((_,i)=>i);     /* 理論上不會發生，防呆 */
+  const s=pool[rnd(pool.length)];
+  recentScenes.push(s);
+  if(recentScenes.length>RECENT_KEEP) recentScenes.shift();
+  return s;
+}
 function startHunt(table){
   endGame();
   lastSetup={mode:'hunt', table};
-  const art={ t:table, s:rnd(SCENES.length), k:Date.now()%1000000, d:todayStr() };
+  const art={ t:table, s:pickScene(), k:Date.now()%1000000, d:todayStr() };
   game={mode:'hunt', table, art, pairs:artPairs(art), order:shuffle([1,2,3,4,5,6,7,8,9]), pos:0, firstFind:0,
     combo:0, maxCombo:0, locked:false, miss:0, hinted:false, hints:0, t:null};
   go('hunt');
