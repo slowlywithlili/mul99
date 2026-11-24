@@ -80,7 +80,7 @@
   --shadow:rgba(140,118,76,.10);
   --sun:#FBE6B8; --tomato:#FACCC4; --mint:#CBDDB9; --grape:#DBD3E9; --sky:#BDD6E6; --peach:#FBD2B2;
   --blue:#7FA0B6; --oat:#E0D4C2; --sage:#AEBDA4;
-  --blue-l:#BDD6E6; --oat-l:#F1E7D6; --sage-l:#D2DFC6;
+  --blue-l:#BDD6E6; --oat-l:#F1E7D6; --sage-l:#D2DFC6; --rose-l:#F6DEE7;   /* 補氣站的粉紅 */
   /* 鹿野高台：天空與山坡草地 */
   --sky1:#DCEFFA; --sky2:#EFF7F0;
   --hill0:#C9DCDA; --hill1:#D6E8C6; --hill2:#BEDAA6; --hill3:#A3C98A; --hill4:#8AB670;
@@ -883,6 +883,23 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 .bal .tag .ic{width:1.18em;height:1.18em;vertical-align:-.2em;margin-right:.22em}
 .bal .sub{font-size:18.5px;color:var(--muted);line-height:1.45;margin-top:4px;max-width:17em}
 @keyframes balfloat{0%,100%{transform:translateY(0) rotate(-.6deg)}50%{transform:translateY(-11px) rotate(.8deg)}}
+/* 補氣站那顆：橫跨整排、置中放在最下面。球身是壓扁的，所以名牌要跟著往下挪，
+   不然會浮在球上面那塊空白裡 */
+.bal.wide{grid-column:1/-1;margin-top:2px}
+.bal.wide .env{max-width:300px}
+@media (min-width:700px){ .bal.wide .env{max-width:330px} }
+.bal.wide .tag{top:19%;right:0;font-size:clamp(15px,7cqw,23px)}
+.tag.pump{background:var(--rose-l)}
+/* 補好一題：一顆補過的熱氣球淡進來再飄走 */
+.flyball{position:absolute;width:76px;pointer-events:none;z-index:3;
+  --c1:#E3F0E6;--c2:#BFDCC7;--c3:#6E9A7C;--c0:var(--surface);
+  animation:flyup 2s cubic-bezier(.25,.1,.4,1) forwards}
+.flyball svg{display:block;width:100%;height:auto}
+@keyframes flyup{
+  0%{transform:translate(-50%,-50%) scale(.45);opacity:0}
+  16%{transform:translate(-50%,-58%) scale(1);opacity:1}
+  100%{transform:translate(-50%,-300%) scale(1.05);opacity:0}}
+@media (prefers-reduced-motion:reduce){ .flyball{display:none} }
 
 /* 舊的活頁筆記本樣式（已不在首頁使用）*/
 #view.v-home{padding-bottom:calc(var(--dockh) + 10px)}
@@ -1447,6 +1464,11 @@ const SCENES = [
 const ART_N = 9;        /* 一張畫藏 9 個答案（1~9 倍），出題順序隨機 */
 const ART_DECOY = 4;    /* 另外混進幾個不是答案的數字（再隨機多 0~2 個）*/
 const MAX_ART = 60;     /* 畫廊最多收幾張 */
+/* 補氣站：這三個常數在 fixPump() 之前就要宣告好 ——
+   讀存檔（migrate → fixPlayer → fixPump）是在載入當下跑的，宣告晚了會丟 TDZ 例外 */
+const PUMP_N = 10;      /* 一次最多出幾題，最早加入的先出 */
+const PUMP_DAYS = 2;    /* 要在幾個「不同的日子」在補氣站答對才算補好 */
+const PUMP_MAX = 60;    /* 隊伍最多排幾題，滿了就先不收新的 */
 
 const RAR_LABEL = {n:'普通', r:'稀有', s:'閃亮'};
 const RAR_WEIGHT = {n:6, r:3, s:1};
@@ -1582,7 +1604,7 @@ const MAX_PLAYERS = 6;
 function uid(){ return 'p'+Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
 function blankPlayer(name,avatar){
   return { id:uid(), name:name||'挑戰者', avatar:avatar||AVATARS[0], createdAt:Date.now(),
-    coins:0, owned:{}, facts:{}, stages:{}, art:[], daily:null, streak:{last:'',count:0},
+    coins:0, owned:{}, facts:{}, stages:{}, art:[], pump:[], daily:null, streak:{last:'',count:0},
     timedBest:0, snakeBest:0, buddy:'' };
 }
 function defaultState(){
@@ -1646,6 +1668,24 @@ function fixArt(src){
   });
   return out;
 }
+/* 補氣站的隊伍：每一筆是「哪一題、休息到哪天、已經在補氣站答對過的日子」。
+   存檔是不可信輸入，所以 1~9 的範圍、日期格式、重複的題目都要擋 */
+function fixPump(src){
+  if(!Array.isArray(src)) return [];
+  const out=[], seen=new Set();
+  src.slice(0, PUMP_MAX*2).forEach(x=>{
+    const o=obj(x), a=Math.floor(Number(o.a)), b=Math.floor(Number(o.b));
+    if(!(a>=1 && a<=9 && b>=1 && b<=9)) return;
+    if(typeof o.d!=='string' || !DATE_RE.test(o.d)) return;
+    const k=a+'x'+b;                 /* 7x8 和 8x7 是兩題，所以不正規化 */
+    if(seen.has(k)) return;
+    const g=[...new Set((Array.isArray(o.g)?o.g:[]).filter(v=>typeof v==='string' && DATE_RE.test(v)))];
+    if(g.length>=PUMP_DAYS) return;  /* 已經補好的就不用再排隊 */
+    seen.add(k);
+    if(out.length<PUMP_MAX) out.push({a, b, d:o.d, g});
+  });
+  return out;
+}
 function fixP(src){
   const p=obj(src), out=blankP();
   Object.keys(out).forEach(k=>{ if(typeof out[k]==='number') out[k]=num(p[k],999999); });
@@ -1685,6 +1725,7 @@ function fixPlayer(src){
   out.facts = fixFacts(p.facts);
   out.stages = fixStages(p.stages);
   out.art = fixArt(p.art);
+  out.pump = fixPump(p.pump);
   const st=obj(p.streak);
   out.streak = { last:(typeof st.last==='string'&&DATE_RE.test(st.last))?st.last:'', count:num(st.count,999999) };
   out.daily = fixDaily(p.daily);
@@ -1865,7 +1906,9 @@ const TIER_QUESTS = {
   h:[{type:'pair', target:1}, {type:'snake', target:2}, {type:'stage', target:1}]
 };
 /* 今天還能拿幾枚金幣：六個任務＋兩個全完成獎勵＋實戰家＋比快挑戰 */
-const COIN_MAX_DAY = TIERS.reduce((t,T)=>t+TIER_QUESTS[T.id].length+T.bonus,0) + STAGE_CAP + 1;
+/* 攤子 9 ＋ 乘法實戰家 3 ＋ 比快挑戰 1 ＋ 補氣站 1。
+   補氣站那一枚只有「今天真的有題目可以補」的日子才拿得到，所以這是上限不是保證 */
+const COIN_MAX_DAY = TIERS.reduce((t,T)=>t+TIER_QUESTS[T.id].length+T.bonus,0) + STAGE_CAP + 1 + 1;
 function makeQuests(date, tier){
   return (TIER_QUESTS[tier]||TIER_QUESTS.e).map(q=>Object.assign({},q));
 }
@@ -1891,7 +1934,7 @@ function questText(q){
 }
 function blankP(){ return {correct:0, rounds:0, maxCombo:0, timedBest:0, tables:{}, perfect:0,
   mix:0, mastered:0, reviews:0, revk:{}, stagesCleared:0, stageCoins:0, timedCoins:0, hunts:0,
-  snakes:0, rainbows:0, learns:0, pairs:0}; }
+  snakes:0, rainbows:0, learns:0, pairs:0, pumpCoins:0, pumps:0}; }
 function blankTier(date,id){ return {quests:makeQuests(date,id), claimed:[false,false,false], bonus:false, notified:[false,false,false]}; }
 function ensureDaily(){
   const m = me();
@@ -1984,7 +2027,48 @@ function record(a,b,ok){
   const before=level(a,b);
   if(ok){ f.c++; f.s++; } else { f.w++; f.s=0; }
   m.facts[k]=f;
+  if(!ok) pumpAdd(a,b);              /* 答錯就排進補氣站，隔天再練（熟練度的算法沒變）*/
   if(ok && before<3 && level(a,b)===3 && m.daily && m.daily.p) m.daily.p.mastered++;
+}
+/* ---------- 補氣站 ---------- */
+/* 答錯過的題目，隔天變成一顆漏氣的熱氣球，要到補氣站重新練。
+   為什麼要另外存一份：熟練度 facts[] 只記「答對幾次／答錯幾次／連續答對幾次」，
+   既沒有日期，又把 5x3 和 3x5 併成同一題，所以推不出「昨天答錯了哪幾題」。
+   這裡只存「哪一題、休息到哪天、已經補好的日子」，不重複記熟練度的那三個數字。 */
+/* 答錯就進補氣站。掛在 record() 裡，所有有對錯的遊戲都會經過那裡；
+   翻翻樂沒有作答、不呼叫 record，所以自動不算 */
+function pumpAdd(a,b){
+  if(GUEST) return;
+  const m=me(); if(!m) return;
+  if(!Array.isArray(m.pump)) m.pump=[];
+  const t=todayStr(), it=m.pump.find(x=>x.a===a && x.b===b);
+  if(it){ it.g=[]; it.d=t; return; }   /* 已經在裡面：補氣次數歸零，重新等一天 */
+  if(m.pump.length>=PUMP_MAX) return;
+  m.pump.push({a, b, d:t, g:[]});
+}
+/* 今天還可以補的題目。兩個條件：
+   一、加入（或答錯）的當天不出現，隔天才出現；
+   二、今天已經在補氣站答對過的也不再出現 —— 同一天答對多次只算一次，
+       再出一次對補氣進度沒有幫助，只會讓「再玩一次」一直重複同一題 */
+function pumpDue(m){
+  const p=((m||me())||{}).pump;
+  if(!Array.isArray(p)) return [];
+  const t=todayStr();
+  return p.filter(x=>x.d < t && (!Array.isArray(x.g) || x.g.indexOf(t)<0));
+}
+/* 一次最多 10 題，最早加入的先出（陣列順序就是加入順序）*/
+function pumpQueue(){ return pumpDue().slice(0, PUMP_N).map(x=>({a:x.a, b:x.b})); }
+/* 在補氣站答對：同一天只算一次，湊滿兩個不同的日子就補好，移出補氣站。
+   回傳 true 代表「這題補好了」*/
+function pumpHeal(a,b){
+  const m=me(); if(!m || !Array.isArray(m.pump)) return false;
+  const i=m.pump.findIndex(x=>x.a===a && x.b===b);
+  if(i<0) return false;
+  const it=m.pump[i], t=todayStr();
+  if(!Array.isArray(it.g)) it.g=[];
+  if(it.g.indexOf(t)<0) it.g.push(t);
+  if(it.g.length>=PUMP_DAYS){ m.pump.splice(i,1); return true; }
+  return false;
 }
 function level(a,b){
   const f=me().facts[key(a,b)];
@@ -2136,9 +2220,25 @@ function balloonBody(shape){
   for(let i=0;i<GORES.length-1;i++) g+=`<path d="${edgeF(GORES[i])+edgeR(GORES[i+1])}" fill="var(--c${i%2?2:1})"/>`;
   return g;
 }
+/* deflate＝洩了氣（補氣站那顆）：球身壓扁、右上角咬掉一個破口、身上縫一塊補丁。
+   壓扁只套在「裁切區」和「外框」上，裡面的符號才不會跟著變形。
+   patch＝補好了（補好一題時飛走的那顆）：形狀正常，只留補丁 */
 function balloon(o){
   o=o||{}; const id='bl'+(++BUID), pat=o.pat||'', mini=!!o.mini;
   const g=balloonBody(o.shape||'gore');
+  const warp = o.deflate ? ' transform="translate(50,100) scale(1.1,0.68) translate(-50,-100)"' : '';
+  const patch = (o.deflate||o.patch) ? `
+    <g transform="rotate(-10 ${o.deflate?'26 78':'34 68'})">
+      <rect x="${o.deflate?14:22}" y="${o.deflate?68:58}" width="24" height="21" rx="5" fill="var(--c3)" opacity=".2"/>
+      <rect x="${o.deflate?14:22}" y="${o.deflate?68:58}" width="24" height="21" rx="5" fill="none"
+        stroke="var(--c3)" stroke-width="1.8" stroke-dasharray="3.4 3.4" stroke-opacity=".8"/>
+    </g>` : '';
+  const tear = o.deflate ? `<g clip-path="url(#c-${id})">
+      <path d="M64,34 77,40 68,47 81,52 64,58 73,66 101,62V30Z" fill="var(--c0,#FDF8E9)"/>
+      <path d="M64,34 77,40 68,47 81,52 64,58 73,66" fill="none" stroke="var(--c3)" stroke-width="1.7"
+        stroke-opacity=".55" stroke-linejoin="round" stroke-linecap="round"/>
+      <path d="M12,52q11,6 22,0" fill="none" stroke="var(--c3)" stroke-width="1.4" stroke-opacity=".26"/>
+    </g>` : '';
   const rig = mini ? '' : `
     <path d="M39.2,94H60.8L59.2,103H40.8Z" fill="var(--c3)"/>
     <path d="M41.4,103 44,114M58.6,103 56,114M46,103 47.4,114M54,103 52.6,114M50,103V114"
@@ -2148,7 +2248,7 @@ function balloon(o){
     <rect x="43" y="113.6" width="14" height="11" rx="2.4" fill="none" stroke="#B08B57" stroke-width="1.3"/>
     <path d="M43.4,117.4h13.2M43.4,121h13.2" stroke="#B08B57" stroke-width=".8" opacity=".6"/>`;
   return `<svg viewBox="0 0 100 ${mini?102:128}" aria-hidden="true" focusable="false">
-    <defs><clipPath id="c-${id}"><path d="${ENV}"/></clipPath></defs>
+    <defs><clipPath id="c-${id}"><path d="${ENV}"${warp}/></clipPath></defs>
     <g clip-path="url(#c-${id})">
       ${g}
       ${pat?`<rect x="0" y="0" width="100" height="100" fill="url(#${pat})"/>`:''}
@@ -2156,9 +2256,11 @@ function balloon(o){
       <circle cx="73" cy="58" r="33" fill="var(--c3)" opacity=".07"/>
       <ellipse cx="29" cy="28" rx="10.5" ry="14" fill="#fff" opacity=".34" transform="rotate(-20 29 28)"/>
       <path d="M78,8 H101 V102 H78 C88,74 88,34 78,8Z" fill="var(--c3)" opacity=".09"/>
-      ${o.glyph?`<g transform="translate(26,20) scale(2.08)" style="color:var(--c3);--ic2:color-mix(in srgb,var(--c3) 58%,var(--c0,#FDF8E9))">${ICON[o.glyph]}</g>`:''}
+      ${o.glyph?`<g transform="translate(${o.deflate?'29,46) scale(1.66':'26,20) scale(2.08'})" style="color:var(--c3);--ic2:color-mix(in srgb,var(--c3) 58%,var(--c0,#FDF8E9))">${ICON[o.glyph]}</g>`:''}
+      ${patch}
     </g>
-    <path d="${ENV}" fill="none" stroke="var(--c3)" stroke-width="1.5" stroke-opacity=".45" stroke-linejoin="round"/>
+    <path d="${ENV}"${warp} fill="none" stroke="var(--c3)" stroke-width="1.5" stroke-opacity=".45" stroke-linejoin="round"/>
+    ${tear}
     ${rig}
   </svg>`;
 }
@@ -2209,6 +2311,8 @@ const ICON={
   seed:`<path d="M12,20.4c-5,0 -8,-3.4 -8,-7.6 4.4,0 8,2.4 8,7.6Z" fill="currentColor"/><path d="M12,20.4C12,11.6 16.4,6 21,4.2c.6,6.6 -2.8,13.2 -9,16.2Z" fill="var(--ic2)"/>`,
   /* 有金幣可以領了：跳動的小紅驚嘆號 */
   bang:`<circle cx="12" cy="12" r="10.2" fill="#D9736A"/><circle cx="12" cy="12" r="10.2" fill="none" stroke="#FFF8EC" stroke-width="1.6"/><rect x="10.3" y="5.2" width="3.4" height="9.4" rx="1.7" fill="#FFF8EC"/><circle cx="12" cy="17.6" r="1.95" fill="#FFF8EC"/>`,
+  /* 補氣站：打氣筒。T 形把手、筒身、底座和一條氣管 */
+  pump:`<path d="M12,8.4V3.2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><rect x="7.6" y="1.6" width="8.8" height="2.6" rx="1.3" fill="currentColor"/><rect x="9.2" y="8.4" width="5.6" height="11.4" rx="1.6" fill="currentColor"/><rect x="10.5" y="10.4" width="3" height="7.4" rx="1.3" fill="var(--ic2)"/><rect x="5.8" y="19.2" width="12.4" height="2.8" rx="1.4" fill="currentColor"/><path d="M14.8,15.4h2.8a2.2,2.2 0 0 1 2.2,2.2v1.6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>`,
   lock:`<path d="M7.4,10.4V7.8a4.6,4.6 0 0 1 9.2,0v2.6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><rect x="4.4" y="10" width="15.2" height="10.8" rx="3" fill="currentColor"/><circle cx="12" cy="14.6" r="1.7" fill="var(--ic2)"/><rect x="11.1" y="15" width="1.8" height="3.4" rx=".9" fill="var(--ic2)"/>`,
   gear:`<path d="M10.2,2.6h3.6l.4,2.5 2,1.15 2.3,-1 1.8,3.1 -1.9,1.65v2.3l1.9,1.65 -1.8,3.1 -2.3,-1 -2,1.15 -.4,2.5h-3.6l-.4,-2.5 -2,-1.15 -2.3,1 -1.8,-3.1 1.9,-1.65v-2.3L3.7,8.35 5.5,5.25l2.3,1 2,-1.15Z" fill="currentColor"/><circle cx="12" cy="12" r="3.4" fill="var(--ic2)"/>`,
   /* 初學者記號：左黃右綠的雙葉盾牌，代表「簡單、先玩這個」*/
@@ -2680,6 +2784,18 @@ function riseHome(){
     el.classList.add('rise'); el.style.setProperty('--ed', late);
   });
 }
+/* 補氣站的球：粉紅色，橫跨整排放在六顆氣球的最下面。
+   今天沒有題目可以補就整顆不出現；訪客模式不留紀錄，所以也不顯示 */
+const BAL_PUMP = ['#F6E6EE','#E3C3D4','#A77391'];
+function pumpBalloonHTML(m){
+  if(GUEST) return '';
+  const n=pumpDue(m).length;
+  if(!n) return '';
+  return `<button class="bal wide" data-act="pump"
+      style="${cvar(BAL_PUMP)};--d:${(MODES.length*0.43).toFixed(2)}s;--t:5.2s">
+      <span class="env">${balloon({shape:'solid', glyph:'pump', deflate:true})}<span class="tag pump">請幫我補氣 ${n} 題！</span></span>
+      <span class="sub">之前不熟的題目，再想一次</span></button>`;
+}
 function balloonsHTML(m){
   return MODES.map((x,i)=>`<button class="bal" data-act="${x.act}"
       style="${cvar(balColor(i))};--d:${(i*0.43).toFixed(2)}s;--t:${(4.6+(i%3)*0.8).toFixed(1)}s">
@@ -2712,6 +2828,11 @@ const HELP = {
     '答案藏在畫裡，顏色跟畫一樣。',
     '找到就點它，會唸口訣。',
     '找不到就按「提示」。']},
+  pump:{t:'補氣站', li:[
+    '這些是之前不熟的題目。',
+    '慢慢想，想起來再按。',
+    '同一題隔天再答對一次，就補好了。',
+    '全部答對有 1 枚金幣。']},
   play:{t:'怎麼按？', li:[
     '打數字，再按「確定」。',
     '答完會唸一次口訣。',
@@ -2770,6 +2891,7 @@ const INFO = {
     '一個攤子三件事都做到，還會多送你金幣。',
     `乘法實戰家：過一關 1 枚，今天最多 ${STAGE_CAP} 枚。`,
     `比快挑戰：答對 ${TIMED_GOAL} 題，有 1 枚。`,
+    '補氣站：那幾題全部答對，有 1 枚。',
     `${DRAW_COST} 枚金幣可以轉一次轉蛋。`,
     '今天的金幣拿完就沒有了，明天會再長出來。'],
     note:`金幣每天有上限（一天最多 ${COIN_MAX_DAY} 枚），是為了讓眼睛休息 🙂。`}
@@ -2786,7 +2908,8 @@ function showInfo(kind){
   sfx.tap();
 }
 function showHelp(){
-  const h = HELP[currentView] || HELP.home;
+  /* 補氣站借用 play 這個畫面，但規則不一樣（不會同一回合再出一次），所以要自己的說明 */
+  const h = (game && game.mode==='pump' && HELP.pump) || HELP[currentView] || HELP.home;
   /* note 是寫給大人看的小字，不占小孩的編號步驟 */
   showModal(`<div class="owl" aria-hidden="true" style="width:74px">${bearSVG()}</div><h3>${h.t}</h3>
     <ol class="helplist">${h.li.map(x=>`<li>${mk(x)}</li>`).join('')}</ol>
@@ -3013,7 +3136,7 @@ const VIEWS = {
       </section>
       ${ GUEST ? `<div class="guestbar">${ic('warn','lg')}<span><b>訪客模式</b>：沒有金幣可以收集，貼紙和紀錄也不會留下來。</span><button class="btn small" data-act="toName">取名字</button></div>` : '' }
       ${tip?helper(mk(tip)):''}
-      <section class="modes">${balloonsHTML(m)}</section>
+      <section class="modes">${balloonsHTML(m)}${pumpBalloonHTML(m)}</section>
       <div class="gdock"><button class="gbtn" data-act="book" aria-label="我的轉蛋機">${gachaSVG()}<b>我的轉蛋機</b></button></div>
       <div class="sdock"><div class="sdrow">${stalls}</div></div>`;
     riseHome();   /* 同一拍就掛上去，不然會先閃一下完整的畫面 */
@@ -3314,10 +3437,11 @@ const VIEWS = {
 
   result(){
     const r=game.result;
-    const bigIc = r.snake?'snake' : r.hunt?'find' : r.learn?'array' : r.pair?'pair' : r.timed?'clock' : 'steps';
+    const bigIc = r.pump?'pump' : r.snake?'snake' : r.hunt?'find' : r.learn?'array' : r.pair?'pair' : r.timed?'clock' : 'steps';
     const artHd = r.hunt && r.art ? `<div class="art artwrap">${artHTML(r.art,{full:true})}</div>` : '';
     const title = r.snake ? (r.win?'兩條彩虹，過關！':r.rainbows>=1?`吃出 ${r.rainbows} 條彩虹！`:'蛇蛇再長一點就有彩虹了！')
       : r.hunt ? (r.score===r.total?'九個答案全都一次找到！':'九個答案都找到了！')
+      : r.pump ? (r.allOk ? '全部都答對了！' : '你剛剛很認真！')
       : r.stage
       ? (r.cleared ? (r.firstClear?`第 ${r.stage} 關通關！`:`第 ${r.stage} 關再次通關！`) : '差一點點！')
       : (r.grade===3?'太厲害了！':r.grade===2?'做得很好！':'你剛剛很認真！');
@@ -3344,15 +3468,20 @@ const VIEWS = {
           ${statA}
           ${r.snake
             ? `<div class="stat"><b>${ic('rainbow')} ${r.rainbows}</b><span>完成的彩虹</span></div>`
+            : r.pump
+            ? `<div class="stat"><b>${r.healed.length}</b><span>補好的題目</span></div>`
             : `<div class="stat"><b>${r.maxCombo}</b><span>最多連續答對</span></div>`}
         </div>
+        ${r.pump && r.healed.length ? `<p class="qsum">${r.healed.join('、')} 補好氣了。</p>` : ''}
+        ${r.pump ? `<p class="qsum">${r.left ? `還有 ${r.left} 題可以補。`
+            : r.rest ? '剩下的明天再來補。' : '全部的題目都補好了！'}</p>` : ''}
         <p class="qsum">今日任務完成 ${dn}/6</p>
         ${claimable?`<p class="getcoin">${ic('coin')} 攤子有金幣可以拿了，回首頁點它。</p>`:''}
         <div class="rbtns">
           ${r.hunt?`<button class="btn" data-act="gallery">看畫廊</button>`:''}
           ${nextN?`<button class="btn sun big" data-act="stage" data-arg="${nextN}">下一關 ${ic('play')}</button>`:''}
           ${claimable?`<button class="btn ${nextN?'':'sun big'}" data-act="home">去拿金幣</button>`:''}
-          <button class="btn ${(claimable||nextN)?'':'sun big'}" data-act="again">再玩一次</button>
+          ${r.pump && !r.left ? '' : `<button class="btn ${(claimable||nextN)?'':'sun big'}" data-act="again">再玩一次</button>`}
           ${backBtn(r.timed?'timed':r.stage?'stage':r.snake?'snake':r.pair?'pair':r.hunt?'hunt':'')}
           <button class="btn" data-act="home">回首頁</button>
         </div>
@@ -3455,6 +3584,43 @@ function finishStage(){
   clearTimeout(game.t);
   go('result');
 }
+/* ---------- 補氣站：昨天以前答錯過的題目，用實戰家那套數字鍵盤重新練 ---------- */
+function startPump(){
+  const q=pumpQueue();
+  if(!q.length){ toast('今天沒有要補的題目喔。'); return; }
+  endGame();
+  lastSetup={mode:'pump'};
+  game={mode:'pump', table:0, input:state.settings.input, queue:q, total:q.length, pos:0,
+    firstCorrect:0, healed:[], combo:0, maxCombo:0, typed:'', locked:false, waiting:false, t:null};
+  go('play'); nextQ();
+}
+function finishPump(){
+  const d=ensureDaily(), m=me();
+  const score=game.firstCorrect, total=game.total, allOk=score===total;
+  let coins=0;
+  /* 全部答對才有金幣，一天一枚。答錯了當天還可以再挑戰，但那一枚今天就沒有了嗎？
+     沒有——只要哪一次全對就給，所以這裡不記「失敗」，只記「拿過了」*/
+  if(allOk && !d.p.pumpCoins && !GUEST){ coins=1; d.p.pumpCoins=1; m.coins+=1; }
+  d.p.pumps++;
+  markPlayed();
+  game.result={timed:false, pump:true, hard:false, allOk, coins,
+    healed:game.healed.slice(), left:pumpDue().length,
+    rest:Array.isArray(m.pump)?m.pump.length:0, slabel:'答對的題數',
+    score, total, grade:allOk?3:(score>=Math.ceil(total*0.7)?2:1), maxCombo:game.maxCombo, newBest:false};
+  save(); checkQuests();
+  clearTimeout(game.t);
+  go('result');
+}
+/* 補好一題：一顆補過的熱氣球淡進來，然後飄走 */
+function pumpFly(el){
+  if(reduceMotion || !el) return;
+  const r=el.getBoundingClientRect(), f=document.createElement('div');
+  f.className='flyball';
+  f.style.left=(r.left+r.width/2)+'px'; f.style.top=(r.top+r.height/2)+'px';
+  f.innerHTML=balloon({shape:'band', glyph:'check', patch:true});
+  document.getElementById('fx').appendChild(f);
+  setTimeout(()=>f.remove(), 2100);
+}
 function startTimed(){
   endGame();
   lastSetup={mode:'timed'};
@@ -3550,6 +3716,19 @@ function submit(val){
     slot.textContent=ans; qc.classList.add('right');
     const msg = game.combo>0 && game.combo%5===0 ? `連續 ${game.combo} 題，火力全開！` : PRAISE[rnd(PRAISE.length)];
     fb.innerHTML=`<div class="praise">${msg}</div><div class="chant">${chant(it.a,it.b)}</div>`;
+    if(game.mode==='pump'){
+      /* 要在兩個不同的日子答對才算補好。第一天答對先說「明天再補一次」，
+         湊滿兩天才放氣球、才說「補好氣了」*/
+      if(pumpHeal(it.a,it.b)){
+        game.healed.push(`${it.a}×${it.b}`);
+        fb.innerHTML=`<div class="praise">${it.a}×${it.b} 補好氣了！</div>`+
+          `<div class="chant">${chant(it.a,it.b)}</div>`+
+          `<div class="retrynote">之前卡住的題目，現在記住了。</div>`;
+        pumpFly(slot);
+      } else {
+        fb.innerHTML+=`<div class="retrynote">明天再補一次，這題就補好了。</div>`;
+      }
+    }
     sfx.right(game.combo);
     say(chant(it.a,it.b));   /* 答完就唸一次口訣：2×2 唸「二二得四」 */
     floaty(slot,'+1');
@@ -3562,7 +3741,10 @@ function submit(val){
     const ch=chant(it.a,it.b);
     let html=`<div class="wrongmsg">慢慢來，答案是 <b>${ans}</b>。</div><div class="chant">${ch}${canSpeak?`<button class="say" data-act="say" data-arg="${ch}" aria-label="唸口訣">🔊</button>`:''}</div>`;
     if(game.mode!=='timed'){
-      if(!it.retry){ game.queue.push({a:it.a,b:it.b,retry:true}); html+='<div class="retrynote">這題等一下會再出現一次。</div>'; }
+      /* 補氣站不在同一回合重出：這個遊戲的用意就是「隔一天再回想一次」。
+         其他遊戲的錯題重練完全沒動 */
+      if(game.mode==='pump') html+='<div class="retrynote">沒關係，明天再補這一題。</div>';
+      else if(!it.retry){ game.queue.push({a:it.a,b:it.b,retry:true}); html+='<div class="retrynote">這題等一下會再出現一次。</div>'; }
       fb.innerHTML=html;
       $('#inputArea').innerHTML='<div class="nextwrap"><button class="btn big sun" data-act="next">下一題</button></div>';
       game.waiting=true;
@@ -3586,6 +3768,7 @@ function advance(){
 }
 function finishRound(){
   if(game.mode==='stage') return finishStage();
+  if(game.mode==='pump') return finishPump();
   const d=ensureDaily();
   const score=game.firstCorrect, total=game.total, acc=score/total;
   const grade=acc>=.9?3:acc>=.7?2:1;
@@ -3676,7 +3859,15 @@ function playCoinsLeft(){
   if(GUEST || !d) return 0;
   let n = Math.max(0, STAGE_CAP - d.p.stageCoins);
   if(!d.p.timedCoins) n += 1;
+  n += pumpCoinLeft();
   return n;
+}
+/* 補氣站：全部補好給 1 枚，一天一次。
+   沒有題目可以補的日子不算這一枚，否則首頁會顯示一枚今天永遠拿不到的金幣 */
+function pumpCoinLeft(){
+  const d=ensureDaily();
+  if(GUEST || !d) return 0;
+  return (!d.p.pumpCoins && pumpDue().length) ? 1 : 0;
 }
 /* 剛好把今天的金幣領完時說一聲，小孩才知道不是壞掉了 */
 function coinDoneCheck(){
@@ -4717,6 +4908,7 @@ document.addEventListener('click', e=>{
       if(pickFor==='hunt') startHunt(+arg); else startReview(+arg);
       break;
     case 'timed': startTimed(); break;
+    case 'pump': startPump(); break;
     case 'stages': go('stages'); break;
     case 'stage': startStage(+arg); break;
     case 'book': go('book'); break;
@@ -4773,7 +4965,8 @@ document.addEventListener('click', e=>{
     case 'closeModal': closeModal(); break;
     case 'closeBook': closeModal(); if(!showUnlocked()) go('book'); break;
     case 'again': if(lastSetup){
-        lastSetup.mode==='timed' ? startTimed()
+        lastSetup.mode==='pump' ? startPump()
+        : lastSetup.mode==='timed' ? startTimed()
         : lastSetup.mode==='hunt' ? startHunt(lastSetup.table)
         : lastSetup.mode==='snake' ? startSnake(lastSetup.table, lastSetup.lv)
         : lastSetup.mode==='learn' ? startLearn()
