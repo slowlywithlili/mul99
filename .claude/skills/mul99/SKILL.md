@@ -90,7 +90,18 @@ $OLD/fontenv/bin/python3 make-font.py \
 
 ### 6. 推送要用 `ppmonkeyLiao` 這個 gh 帳號
 
-`gh auth switch` 會被權限分類器擋下來，**助理自己切不了**。要請使用者在對話裡自己打：
+**使用者已授權助理直接推（2026-11-25：「之後也都直接推」），不用再問。**
+做完一輪、測試全綠、文件更新完就自己推，然後驗證線上。
+
+推之前先確認作用中的帳號是對的：
+
+```bash
+gh auth status | grep -A1 ppmonkeyLiao      # 要看到 Active account: true
+cd /Users/philip/personal/mul99 && git push origin main
+```
+
+作用中的帳號如果變成 `dcardphilipliao`，**助理自己切不了**（`gh auth switch`
+會被權限分類器擋下來），要請使用者在對話裡自己打：
 
 ```
 ! gh auth switch -u ppmonkeyLiao && git push origin main
