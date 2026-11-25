@@ -336,7 +336,7 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 /* gacha */
 .gacha{display:flex;align-items:center;gap:18px;margin-bottom:22px}
 /* 轉蛋機整體放大 10%（140 → 154px）*/
-.machine{position:relative;width:154px;flex:none}
+.machine{position:relative;width:140px;flex:none}
 .machine > svg{display:block;width:100%;height:auto;filter:drop-shadow(0 6px 10px var(--shadow))}
 .machine.spin > svg{animation:wobble .3s 3}
 .dome{position:relative;width:140px;height:130px;border:1.5px solid var(--hair);border-radius:70px 70px 14px 14px;background:color-mix(in srgb,#C3D6E2 70%,var(--surface));overflow:hidden}
@@ -634,6 +634,10 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 .about a{position:relative;color:var(--ink);text-decoration:none;padding:1px 4px;border-radius:8px;
   background:color-mix(in srgb,var(--oat-l) 32%,var(--oat) 68%)}
 .about a::after{content:"";position:absolute;inset:-9px -4px}
+/* 文章裡那顆熱氣球：原稿寫 🎈，全站不用 emoji，改用標題列那顆熱氣球的小圖。
+   顏色要寫在 style 裡（balloon() 讀 --c1~--c3），class 不能叫 .bal，首頁的氣球在用 */
+.about .abal{display:inline-block;width:1.45em;vertical-align:-.42em;margin-left:3px}
+.about .abal svg{display:block;width:100%;height:auto}
 .about .tip{margin-top:15px;color:var(--muted);font-size:17px}
 .about .tip+.tip{margin-top:-6px}
 /* 整頁最後一句，置中當結尾 */
@@ -904,7 +908,7 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
   width:155%;aspect-ratio:1;border-radius:50%;z-index:-1;pointer-events:none;
   background:radial-gradient(circle,rgba(248,222,160,.58),rgba(248,222,160,.2) 44%,transparent 68%);
   animation:glowpulse 3.6s ease-in-out infinite}
-.gbtn svg{width:clamp(46px,12vw,66px);height:auto}
+.gbtn svg{width:clamp(51px,13.2vw,73px);height:auto}
 .gbtn b{font-size:15px;font-weight:700;margin-top:3px;white-space:nowrap;
   background:var(--sun);color:var(--on-color);border-radius:10px 6px 11px 5px/6px 11px 5px 10px;
   padding:3px 9px;box-shadow:0 2px 6px var(--shadow)}
@@ -1082,7 +1086,7 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 <div id="fx" aria-hidden="true"></div>
 <div class="toast" id="toast" role="status"></div>
 <footer class="credit nozy">
-  <span class="made"><a href="https://www.instagram.com/slowlywithlili/" target="_blank" rel="noopener noreferrer">利利寫生活</a> 製作<span class="sep">｜</span></span>
+  <span class="made">利利寫生活 製作<span class="sep">｜</span></span>
   <span><button type="button" class="lk" data-act="about">關於遊戲</button><span class="sep">｜</span></span>
   <span class="upd" id="upd"></span>
 </footer>
@@ -1610,7 +1614,7 @@ const PRAISE = ['答對了！','就是這樣！','完全正確！','你算出來
 /* 字型自己會畫注音，這裡只放「預設讀音不對」的字：字後面那個看不見的
    異體字選擇子（U+E01E0~5）會挑出正確的讀音，E01E0 代表不標注音 */
 const ZY_CHAR_SRC = "什\uDB40\uDDE0,喔\uDB40\uDDE1,囉\uDB40\uDDE2,鑽\uDB40\uDDE1";
-const ZY_WORD_SRC = "一下=一\uDB40\uDDE1下,一個=一\uDB40\uDDE1個,一台=一\uDB40\uDDE2台,一回=一\uDB40\uDDE2回,一定=一\uDB40\uDDE1定,一對=一\uDB40\uDDE1對,一張=一\uDB40\uDDE2張,一排=一\uDB40\uDDE2排,一枚=一\uDB40\uDDE2枚,一格=一\uDB40\uDDE2格,一條=一\uDB40\uDDE2條,一樣=一\uDB40\uDDE1樣,一次=一\uDB40\uDDE1次,一步=一\uDB40\uDDE1步,一段=一\uDB40\uDDE1段,一起=一\uDB40\uDDE2起,一遍=一\uDB40\uDDE1遍,一關=一\uDB40\uDDE2關,一頁=一\uDB40\uDDE1頁,一顆=一\uDB40\uDDE2顆,一題=一\uDB40\uDDE2題,一點=一\uDB40\uDDE2點,不一樣=不一\uDB40\uDDE1樣,不再=不\uDB40\uDDE1再,不到=不\uDB40\uDDE1到,不受=不\uDB40\uDDE1受,不太=不\uDB40\uDDE1太,不是=不\uDB40\uDDE1是,不會=不\uDB40\uDDE1會,不用=不\uDB40\uDDE1用,不算=不\uDB40\uDDE1算,不要=不\uDB40\uDDE1要,不見=不\uDB40\uDDE1見,不計=不\uDB40\uDDE1計,應用=應\uDB40\uDDE1用,數數看=數\uDB40\uDDE1數\uDB40\uDDE1看,更新=更\uDB40\uDDE1新,重新=重\uDB40\uDDE1新,重玩=重\uDB40\uDDE1玩,長大=長\uDB40\uDDE1大";
+const ZY_WORD_SRC = "一下=一\uDB40\uDDE1下,一個=一\uDB40\uDDE1個,一台=一\uDB40\uDDE2台,一回=一\uDB40\uDDE2回,一定=一\uDB40\uDDE1定,一對=一\uDB40\uDDE1對,一張=一\uDB40\uDDE2張,一排=一\uDB40\uDDE2排,一枚=一\uDB40\uDDE2枚,一格=一\uDB40\uDDE2格,一條=一\uDB40\uDDE2條,一樣=一\uDB40\uDDE1樣,一次=一\uDB40\uDDE1次,一步=一\uDB40\uDDE1步,一段=一\uDB40\uDDE1段,一起=一\uDB40\uDDE2起,一遍=一\uDB40\uDDE1遍,一關=一\uDB40\uDDE2關,一頁=一\uDB40\uDDE1頁,一顆=一\uDB40\uDDE2顆,一題=一\uDB40\uDDE2題,一點=一\uDB40\uDDE2點,不一樣=不一\uDB40\uDDE1樣,不再=不\uDB40\uDDE1再,不到=不\uDB40\uDDE1到,不受=不\uDB40\uDDE1受,不太=不\uDB40\uDDE1太,不是=不\uDB40\uDDE1是,不會=不\uDB40\uDDE1會,不用=不\uDB40\uDDE1用,不算=不\uDB40\uDDE1算,不要=不\uDB40\uDDE1要,不見=不\uDB40\uDDE1見,不計=不\uDB40\uDDE1計,地學=地\uDB40\uDDE1學,應用=應\uDB40\uDDE1用,數數看=數\uDB40\uDDE1數\uDB40\uDDE1看,更新=更\uDB40\uDDE1新,重新=重\uDB40\uDDE1新,重玩=重\uDB40\uDDE1玩,長大=長\uDB40\uDDE1大";
 /* ZY-TABLE-END */
 const ZY_C = {}, ZY_W = {};
 let ZY_WMAX = 0;
@@ -3086,7 +3090,7 @@ const BUDDY_CARE = [
   '你剛剛沒有放棄', '你自己想出來的', '我會陪著你', '累了就休息喔'];
 /* 趣味句：純粹好玩的閒聊，讓小夥伴像個會分心的朋友 */
 const BUDDY_FUN = [
-  '我最喜歡星期五！', '六七⋯⋯四十二！', '不想睡覺怎麼辦？', '哇喔～！',
+  '我最喜歡星期五！', '67⋯⋯42！', '不想睡覺怎麼辦？', '哇喔～！',
   '數字好好玩', '咻～鬼抓人！', '晚餐要吃什麼？', '歐拉歐拉', '我肚子餓了'];
 const BUDDY_SAY = BUDDY_CARE.concat(BUDDY_FUN);
 let buddyT = null, buddyStep = 0, buddySaid = 0;
@@ -3355,10 +3359,10 @@ const VIEWS = {
     view.innerHTML=`
       <div class="backrow"><button class="iconbtn" data-act="home" aria-label="返回">${ic('back')}</button><h2>給大人的說明</h2></div>
       <section class="card about">
-        <h3>關於這個遊戲</h3>
-        <p>我是利利，這個遊戲是做給我女兒的。</p>
-        <p>我在遊戲裡加了很多正向語言和鼓勵機制，想陪伴她度過枯燥的背誦過程。</p>
-        <p>女兒現在不再排斥乘法，所以我分享出來，希望這個遊戲也對大家有幫助。</p>
+        <h3>關於乘乘熱氣球</h3>
+        <p>我是<a href="https://www.instagram.com/slowlywithlili/" target="_blank" rel="noopener noreferrer">利利</a>，這個遊戲是做給我女兒的。<span class="abal" style="--c1:#D4EEED;--c2:#A8DCDD;--c3:#46959B;--c0:var(--surface)">${balloon({pat:'pat-band',mini:true})}</span></p>
+        <p>我在遊戲裡加了很多鼓勵和正向回饋，想陪她度過枯燥的背誦過程。</p>
+        <p>現在女兒不再排斥乘法了，所以我想把這個遊戲分享出來，希望也能幫助其他孩子更輕鬆地學習！</p>
       </section>
       <section class="card about">
         <h3>遊玩重點提醒</h3>

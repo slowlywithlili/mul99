@@ -39,7 +39,7 @@ $OLD/fontenv/bin/python3 make-font.py \
   $OLD/fontdl/BpmfGenSenRounded-M.ttf $OLD/fontdl/BpmfGenSenRounded-B.ttf
 ```
 
-- 目前 **1075 字**。字數只會往上，突然變少代表有東西被誤刪。
+- 目前 **1076 字**。字數只會往上，突然變少代表有東西被誤刪。
 - 唯一的警告「什=ㄕㄜˊ 字型只有 shen2／shi2」是舊有的、無害。
 - `$OLD` 是**更早一個 session 的暫存區，隨時可能被清掉**。清掉的話要重建 venv（fonttools + brotli）並重新下載 [ButTaiwan/bpmfvs](https://github.com/ButTaiwan/bpmfvs) 的 `BpmfGenSenRounded.zip`（SIL OFL 1.1）。多音字對照表在 `zhuyin.txt`。
 - 注音**不是 `<ruby>`**，是用 Unicode 變體選擇子（U+E0100–E01EF，代理對 `\uDB40[\uDC00-\uDFFF]`）畫進漢字字形裡。`zyOne()`（index.html:1321）只對多音字插選擇子；`zySkip()`（index.html:1312）會跳過 SCRIPT/STYLE/TEXTAREA/INPUT、SVG 命名空間、和帶 `nozy` class 的節點。
@@ -258,7 +258,7 @@ cd ~/personal/mul99-tests
   翻翻樂不呼叫 `record`，所以它自動不算，也不要幫它加。
 - **補氣站的 `m.pump` 和熟練度 `m.facts` 不可以合併。** facts 只有 `{c,w,s}`，沒有日期，
   而且 `key()` 把 5×3 和 3×5 併成同一題；補氣站要日期、而且 7×8 和 8×7 分開算。
-- **頁尾固定三段：`利利寫生活 製作｜關於遊戲｜最後更新：年.月.日`。**
+- **頁尾固定三段：`利利寫生活 製作｜關於遊戲｜最後更新：年.月.日`，只有「關於遊戲」是連結。**
   「｜」要掛在前一段的尾巴（`<span class="sep">`），不能獨立一格 —— 頁尾在 320px 會換行，
   獨立一格的話分隔線會變成下一行的開頭。日期讀 `document.lastModified`，不要手動維護。
   站內換頁用 `<button class="lk">`，外部連結才用 `<a>`，兩者共用同一條 `.credit` 樣式。
@@ -289,8 +289,11 @@ cd ~/personal/mul99-tests
 - **「關於遊戲」整頁是給大人看的，但沒有標 `nozy`**（跟「挑戰者」那張卡片一致），
   所以改它的字**一樣要重建注音字型**，「一」「不」的變調也要補進 `zhuyin.txt` 的 `[詞]` 區。
   `.about` 靠左、行高 1.8、18px，刻意跟給小孩的畫面（置中、大字、短句）長得不一樣。
-  頁內的 IG 連結是**米色底、沒有外框**的「利利寫生活」（引號包在底色裡面）：
-  加了引號又加虛線框會變兩層框。頁尾那顆按鈕才是虛線膠囊，兩邊不一樣是故意的。
+  頁內的 IG 連結是**米色底、沒有外框**（引號包在底色裡面）：加了引號又加虛線框會變兩層框。
+  頁尾那顆「關於遊戲」才是虛線膠囊，兩邊不一樣是故意的。
+  **頁尾的「利利寫生活」是純文字**，IG 連結只放在這一頁（第一張卡片的「利利」、最後一張的「利利寫生活」）。
+  第一張卡片句尾那顆熱氣球用 `balloon({mini:true})`，class 是 **`.abal`**——
+  `.bal` 首頁的氣球在用，不要撞名；顏色要寫進 `style`（`--c1`~`--c3`），不寫就沒顏色。
   那一頁出現「備份」兩個字只能是「加到主畫面不是備份」這句提醒——**全站沒有備份功能**。
   但 `m.pump` **只存日期和補氣進度**，不要再抄一份 c/w/s。
 - **`PUMP_N` / `PUMP_DAYS` / `PUMP_MAX` 一定要宣告在 `fixPump()` 之前。**
