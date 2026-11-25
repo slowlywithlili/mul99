@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta http-equiv="Content-Security-Policy" content="img-src 'self' data:; font-src 'self' https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; object-src 'none'; base-uri 'none'; form-action 'none'">
-<title>乘乘熱氣球｜九九乘法嘉年華 ─ 給小朋友的免費乘法練習遊戲</title>
-<meta name="description" content="乘乘熱氣球是一款免費、免安裝、不用註冊的九九乘法練習遊戲。六個小遊戲（翻翻樂、尋寶、貪食蛇、配對消消樂、這是幾乘幾、乘法實戰家）加上 63 張台灣主題貼紙，陪小一到小三的孩子把乘法背熟。全中文、可切換注音，手機平板都能玩。">
+<title>乘乘熱氣球｜給初學孩子的九九乘法遊戲（全站注音、免費）</title>
+<meta name="description" content="打開網頁就能玩！專為乘法初學的孩子設計，從看懂乘法開始，再透過尋寶、貪食蛇、消消樂等遊戲，慢慢熟悉九九乘法。答錯不扣分，讓孩子在沒有壓力的情況下，開心練習、慢慢學會！">
 <meta name="keywords" content="九九乘法,乘法表,乘法練習,九九乘法表遊戲,數學遊戲,國小數學,注音,免費,小學二年級">
 <link rel="canonical" href="https://slowlywithlili.github.io/mul99/">
 <meta name="theme-color" content="#DCEFFA">
@@ -15,25 +15,25 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="乘乘熱氣球">
 <meta property="og:locale" content="zh_TW">
-<meta property="og:title" content="乘乘熱氣球｜九九乘法嘉年華">
-<meta property="og:description" content="免費、免安裝、不用註冊的九九乘法練習遊戲。六個小遊戲加 63 張台灣主題貼紙，陪孩子把乘法背熟。">
+<meta property="og:title" content="乘乘熱氣球｜給初學孩子的九九乘法遊戲">
+<meta property="og:description" content="打開網頁就能玩！專為乘法初學的孩子設計，從看懂乘法開始，再透過尋寶、貪食蛇、消消樂等遊戲，慢慢熟悉九九乘法。答錯不扣分，開心練習、慢慢學會！">
 <meta property="og:url" content="https://slowlywithlili.github.io/mul99/">
 <meta property="og:image" content="https://slowlywithlili.github.io/mul99/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="乘乘熱氣球｜九九乘法嘉年華">
+<meta property="og:image:alt" content="乘乘熱氣球｜給初學孩子的九九乘法遊戲">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="乘乘熱氣球｜九九乘法嘉年華">
-<meta name="twitter:description" content="免費、免安裝、不用註冊的九九乘法練習遊戲，還有 63 張台灣主題貼紙可以收集。">
+<meta name="twitter:title" content="乘乘熱氣球｜給初學孩子的九九乘法遊戲">
+<meta name="twitter:description" content="打開網頁就能玩！專為乘法初學的孩子設計，從看懂乘法開始，再透過尋寶、貪食蛇、消消樂等遊戲，慢慢熟悉九九乘法。答錯不扣分，開心練習、慢慢學會！">
 <meta name="twitter:image" content="https://slowlywithlili.github.io/mul99/og.png">
 <!-- 給 Google 看的結構化資料：這是一個免費的網頁遊戲 -->
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"VideoGame",
- "name":"乘乘熱氣球｜九九乘法嘉年華",
+ "name":"乘乘熱氣球｜給初學孩子的九九乘法遊戲",
  "alternateName":"乘乘熱氣球",
  "url":"https://slowlywithlili.github.io/mul99/",
  "image":"https://slowlywithlili.github.io/mul99/og.png",
- "description":"免費、免安裝、不用註冊的九九乘法練習遊戲。六個小遊戲加 63 張台灣主題貼紙，陪小一到小三的孩子把乘法背熟。",
+ "description":"打開網頁就能玩！專為乘法初學的孩子設計，從看懂乘法開始，再透過尋寶、貪食蛇、消消樂等遊戲，慢慢熟悉九九乘法。答錯不扣分，開心練習、慢慢學會！",
  "inLanguage":"zh-Hant-TW",
  "genre":["教育遊戲","數學"],
  "gamePlatform":"Web browser",
@@ -90,6 +90,7 @@
   --dockh:calc((min(100vw - 16px,360px,44vh) - 12px)/2*0.8625 + var(--credh) + 10px);
   --ic2:color-mix(in srgb,currentColor 42%,var(--surface));   /* 符號的第二層顏色 */
   --on-color:#3A4650;
+  --emph:#3A6B86;   /* 給大人那一頁的粗體字：比 --blue 再深一階，才看得出重點 */
   --zh:'Huninn','Noto Sans TC','PingFang TC','Microsoft JhengHei',system-ui,sans-serif;
   --num:'Fredoka','Huninn','Arial Rounded MT Bold',system-ui,sans-serif;
   color-scheme:light;
@@ -106,7 +107,7 @@
   --blue:#9DB6C6; --oat:#9A8C77; --sage:#B4C2AA;
   --blue-l:#9DB6C6; --oat-l:#6E614A; --sage-l:#B4C2AA;
   --sky1:#2F3A43; --sky2:#2C3339; --hill0:#3A4750; --hill1:#3C4D3E; --hill2:#354537; --hill3:#2E3C30; --hill4:#283429;
-  --on-color:#1E272E; color-scheme:dark;
+  --on-color:#1E272E; --emph:#B6D5E6; color-scheme:dark;
 }
 /* 注音開著的時候，整站的中文都換成注音圓體。
    注音是畫在字裡面的，所以漢字會變寬 1.5 倍 —— 不能換行的地方要把字縮小一點 */
@@ -430,6 +431,9 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 .hask{text-align:center;font-family:var(--num);font-weight:700;font-size:clamp(28px,9vw,44px);line-height:1.15;margin-bottom:8px}
 .hask .op{color:var(--muted);font-weight:600;font-size:.72em;margin:0 2px}
 .hask .hchant{display:block;font-family:var(--zh);font-size:18.5px;letter-spacing:.04em;color:var(--muted);font-weight:400;margin-top:2px}
+/* 作答中是空的（說明句已經搬到下面那一行），答對才長出口訣。
+   空的時候照樣占一行，不然答對的瞬間整張畫會往下跳 */
+.hask .hchant:empty{min-height:1.45em}
 .hask .hchant.big{font-size:clamp(17px,4.6vw,23px);line-height:1.35;margin-top:6px}
 .hask .hchant.ok{color:var(--sage);font-weight:700;letter-spacing:.06em}
 .hask .hchant.big.ok{font-size:clamp(20px,5.6vw,28px)}
@@ -630,9 +634,11 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 .about ul li{text-indent:-1.15em}
 .about ul li::before{content:"・";color:var(--muted)}
 .about>*:last-child{margin-bottom:0}
-/* 文章裡唯一能點的東西：米色底讓大人一眼看得出來，::after 往外撐出手指按得到的範圍 */
-.about a{position:relative;color:var(--ink);text-decoration:none;padding:1px 4px;border-radius:8px;
-  background:color-mix(in srgb,var(--oat-l) 32%,var(--oat) 68%)}
+/* 重點句的粗體字給一個深藍，大人掃過去才抓得到重點（內文一律 --ink，只有 <b> 變色）*/
+.about b{color:var(--emph)}
+/* 文章裡唯一能點的東西：底色沿用標題列「我教你玩」那顆黃，全站同一種「這裡可以點」 */
+.about a{position:relative;color:var(--on-color);text-decoration:none;padding:1px 5px;border-radius:8px;
+  background:var(--sun)}
 .about a::after{content:"";position:absolute;inset:-9px -4px}
 /* 文章裡那顆熱氣球：原稿寫 🎈，全站不用 emoji，改用標題列那顆熱氣球的小圖。
    顏色要寫在 style 裡（balloon() 讀 --c1~--c3），class 不能叫 .bal，首頁的氣球在用 */
@@ -649,6 +655,12 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 .helper{display:flex;gap:9px;align-items:flex-start;background:var(--surface2);border:2px dashed var(--hair);border-radius:16px;padding:9px 12px;margin:0 0 14px;font-size:19.5px;line-height:1.5}
 .helper b{font-size:21px;line-height:1.15;flex:none}
 .helper .q{margin-left:auto;flex:none;font-size:15px;color:var(--muted);white-space:nowrap}
+/* 給大人的入口鈕：小孩看得到，但刻意不給糖果色、不標注音，看起來就是大人的東西。
+   點下去走 data-act="about"，跟頁尾的「關於遊戲」同一頁 */
+.pbtn{display:inline-flex;align-items:center;gap:5px;background:var(--surface2);color:var(--muted);
+  border-color:var(--edge);font-size:16px;box-shadow:0 2px 6px var(--shadow)}
+.pbtn .ic{width:1em;height:1em;color:var(--muted);--ic2:var(--surface2)}
+.pbtnrow{margin-top:12px;text-align:center}
 .helpnote{margin-top:10px;text-align:left;font-size:.78em;line-height:1.5;
   background:var(--surface2);border-radius:14px 11px 15px 10px/11px 15px 10px 14px;padding:8px 11px}
 .helpnote b{color:var(--ink)}
@@ -943,12 +955,12 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 .bal .tag .ic{width:1.18em;height:1.18em;vertical-align:-.2em;margin-right:.22em}
 .bal .sub{font-size:18.5px;color:var(--muted);line-height:1.45;margin-top:4px;max-width:17em}
 @keyframes balfloat{0%,100%{transform:translateY(0) rotate(-.6deg)}50%{transform:translateY(-11px) rotate(.8deg)}}
-/* 補氣站那顆：橫跨整排、置中放在最下面。球身是壓扁的，所以名牌要跟著往下挪，
-   不然會浮在球上面那塊空白裡 */
+/* 補氣站那顆：橫跨整排、置中放在最下面。球身是橫躺的（lie），球體占右半邊、
+   籃子在左邊中間，上緣整條是空的 —— 名牌就貼著上緣放，才不會蓋到球上的打氣筒 */
 .bal.wide{grid-column:1/-1;margin-top:2px}
 .bal.wide .env{max-width:300px}
 @media (min-width:700px){ .bal.wide .env{max-width:330px} }
-.bal.wide .tag{top:19%;right:0;font-size:clamp(15px,7cqw,23px)}
+.bal.wide .tag{top:1%;right:0;font-size:clamp(15px,7cqw,23px)}
 .tag.pump{background:var(--rose-l)}
 /* 補好一題：一顆補過的熱氣球淡進來再飄走 */
 .flyball{position:absolute;width:76px;pointer-events:none;z-index:3;
@@ -1160,7 +1172,13 @@ const DRAW_COST = 3;        /* 轉一次轉蛋要幾枚金幣 */
 /* 彩虹貪食蛇：三個難度，一次只加一個負擔（先只要算 → 會自己跑 → 題目隨機又變快）*/
 /* 蛇身永遠是彩虹：紅色固定當頭，往後照紅橙黃綠藍靛紫排下去 */
 const RAINBOW = ['#C98C84','#D4A47C','#D6C487','#9BB893','#8FACC4','#9A9BC0','#B195B8'];
-const SNAKE_WIN = RAINBOW.length * 2;   /* 吃到 14 個（兩條彩虹）就放煙火過關 */
+/* 彩虹的算法要跟「畫面上看到的」一致：蛇身照紅橙黃綠藍靛紫排下去，
+   第 7 節就是紫色 —— 紫色尾巴一出現就是一條彩虹。蛇一開始已經有 3 節，
+   所以第 1 條彩虹是吃到第 4 個、第 2 條是第 11 個。
+   （舊版是用「吃到幾個 % 7」算的，所以畫面早就出現紫色了，訊息還說沒有）*/
+const SNAKE_LEN0 = 3;                   /* 蛇一開始就有三節 */
+const SNAKE_RAINBOWS = 2;               /* 兩條彩虹就放煙火過關 */
+const SNAKE_WIN = RAINBOW.length * SNAKE_RAINBOWS - SNAKE_LEN0;   /* ＝要吃到 11 個 */
 const SNAKE_LV = [
   {id:'e', icon:'seed', name:'散步', d1:'自己慢慢走', d2:'照順序出題', seq:true, step:true,  ms:0,   min:0,   up:0,  decoys:2, hearts:5, size:9,  rocks:false},
   {id:'m', icon:'flag', name:'快走', d1:'蛇蛇會動喔', d2:'照順序出題', seq:true,  step:false, ms:850, min:850, up:0,  decoys:3, hearts:4, size:11, rocks:false},
@@ -1614,7 +1632,7 @@ const PRAISE = ['答對了！','就是這樣！','完全正確！','你算出來
 /* 字型自己會畫注音，這裡只放「預設讀音不對」的字：字後面那個看不見的
    異體字選擇子（U+E01E0~5）會挑出正確的讀音，E01E0 代表不標注音 */
 const ZY_CHAR_SRC = "什\uDB40\uDDE0,喔\uDB40\uDDE1,囉\uDB40\uDDE2,鑽\uDB40\uDDE1";
-const ZY_WORD_SRC = "一下=一\uDB40\uDDE1下,一個=一\uDB40\uDDE1個,一台=一\uDB40\uDDE2台,一回=一\uDB40\uDDE2回,一定=一\uDB40\uDDE1定,一對=一\uDB40\uDDE1對,一張=一\uDB40\uDDE2張,一排=一\uDB40\uDDE2排,一枚=一\uDB40\uDDE2枚,一格=一\uDB40\uDDE2格,一條=一\uDB40\uDDE2條,一樣=一\uDB40\uDDE1樣,一次=一\uDB40\uDDE1次,一步=一\uDB40\uDDE1步,一段=一\uDB40\uDDE1段,一起=一\uDB40\uDDE2起,一遍=一\uDB40\uDDE1遍,一關=一\uDB40\uDDE2關,一頁=一\uDB40\uDDE1頁,一顆=一\uDB40\uDDE2顆,一題=一\uDB40\uDDE2題,一點=一\uDB40\uDDE2點,不一樣=不一\uDB40\uDDE1樣,不再=不\uDB40\uDDE1再,不到=不\uDB40\uDDE1到,不受=不\uDB40\uDDE1受,不太=不\uDB40\uDDE1太,不是=不\uDB40\uDDE1是,不會=不\uDB40\uDDE1會,不用=不\uDB40\uDDE1用,不算=不\uDB40\uDDE1算,不要=不\uDB40\uDDE1要,不見=不\uDB40\uDDE1見,不計=不\uDB40\uDDE1計,地學=地\uDB40\uDDE1學,應用=應\uDB40\uDDE1用,數數看=數\uDB40\uDDE1數\uDB40\uDDE1看,更新=更\uDB40\uDDE1新,重新=重\uDB40\uDDE1新,重玩=重\uDB40\uDDE1玩,長大=長\uDB40\uDDE1大";
+const ZY_WORD_SRC = "一下=一\uDB40\uDDE1下,一個=一\uDB40\uDDE1個,一台=一\uDB40\uDDE2台,一回=一\uDB40\uDDE2回,一定=一\uDB40\uDDE1定,一對=一\uDB40\uDDE1對,一張=一\uDB40\uDDE2張,一排=一\uDB40\uDDE2排,一枚=一\uDB40\uDDE2枚,一格=一\uDB40\uDDE2格,一條=一\uDB40\uDDE2條,一樣=一\uDB40\uDDE1樣,一次=一\uDB40\uDDE1次,一步=一\uDB40\uDDE1步,一段=一\uDB40\uDDE1段,一起=一\uDB40\uDDE2起,一遍=一\uDB40\uDDE1遍,一關=一\uDB40\uDDE2關,一頁=一\uDB40\uDDE1頁,一顆=一\uDB40\uDDE2顆,一題=一\uDB40\uDDE2題,一點=一\uDB40\uDDE2點,不一樣=不一\uDB40\uDDE1樣,不再=不\uDB40\uDDE1再,不到=不\uDB40\uDDE1到,不受=不\uDB40\uDDE1受,不太=不\uDB40\uDDE1太,不是=不\uDB40\uDDE1是,不會=不\uDB40\uDDE1會,不用=不\uDB40\uDDE1用,不算=不\uDB40\uDDE1算,不要=不\uDB40\uDDE1要,不見=不\uDB40\uDDE1見,不計=不\uDB40\uDDE1計,再長=再長\uDB40\uDDE1,地學=地\uDB40\uDDE1學,家長=家長\uDB40\uDDE1,應用=應\uDB40\uDDE1用,數數看=數\uDB40\uDDE1數\uDB40\uDDE1看,更新=更\uDB40\uDDE1新,重新=重\uDB40\uDDE1新,重玩=重\uDB40\uDDE1玩,長大=長\uDB40\uDDE1大";
 /* ZY-TABLE-END */
 const ZY_C = {}, ZY_W = {};
 let ZY_WMAX = 0;
@@ -2319,7 +2337,9 @@ function showModal(html){
   const m=document.createElement('div'); m.className='modal'; m.id='modal';
   m.innerHTML=`<div class="sheet" role="dialog" aria-modal="true">${html}</div>`;
   document.body.appendChild(m);
-  const b=m.querySelector('button'); if(b) b.focus();
+  /* 預設焦點給第一顆按鈕；彈窗裡如果有先放別的鈕（例如說明裡給大人的入口），
+     就用 data-focus 指定真正該拿到焦點的那一顆，小孩直接按 Enter 才不會跳走 */
+  const b=m.querySelector('[data-focus]') || m.querySelector('button'); if(b) b.focus();
 }
 function closeModal(){ const m=document.getElementById('modal'); if(m) m.remove(); }
 
@@ -2357,13 +2377,17 @@ function balloonBody(shape){
    壓扁只套在「裁切區」和「外框」上，裡面的符號才不會跟著變形。
    patch＝補好了（補好一題時飛走的那顆）：形狀正常，只留補丁 */
 function balloon(o){
-  o=o||{}; const id='bl'+(++BUID), pat=o.pat||'', mini=!!o.mini;
+  o=o||{}; const id='bl'+(++BUID), pat=o.pat||'', mini=!!o.mini, lie=!!o.lie;
   const g=balloonBody(o.shape||'gore');
-  const warp = o.deflate ? ' transform="translate(50,100) scale(1.1,0.68) translate(-50,-100)"' : '';
+  /* 洩了氣就把球身壓扁。直立的那顆往下壓（1.1,0.68）；橫躺那顆要壓的是「躺下來之後的上下」，
+     在轉 90 度之前就是左右，所以改成 0.68,1 —— 轉完才會是又扁又長的橫躺球 */
+  const warp = o.deflate ? ` transform="translate(50,100) scale(${lie?'0.68,1':'1.1,0.68'}) translate(-50,-100)" `.trimEnd() : '';
+  /* 補丁要縫在「球身上還看得到的地方」：壓扁的方向不一樣，位置就得跟著挪 */
+  const px = o.deflate ? (lie?28:14) : 22, py = o.deflate ? (lie?26:68) : 58;
   const patch = (o.deflate||o.patch) ? `
-    <g transform="rotate(-10 ${o.deflate?'26 78':'34 68'})">
-      <rect x="${o.deflate?14:22}" y="${o.deflate?68:58}" width="24" height="21" rx="5" fill="var(--c3)" opacity=".2"/>
-      <rect x="${o.deflate?14:22}" y="${o.deflate?68:58}" width="24" height="21" rx="5" fill="none"
+    <g transform="rotate(-10 ${px+12} ${py+10})">
+      <rect x="${px}" y="${py}" width="24" height="21" rx="5" fill="var(--c3)" opacity=".2"/>
+      <rect x="${px}" y="${py}" width="24" height="21" rx="5" fill="none"
         stroke="var(--c3)" stroke-width="1.8" stroke-dasharray="3.4 3.4" stroke-opacity=".8"/>
     </g>` : '';
   const tear = o.deflate ? `<g clip-path="url(#c-${id})">
@@ -2380,8 +2404,13 @@ function balloon(o){
     <rect x="43" y="113.6" width="14" height="11" rx="2.4" fill="#E2C193"/>
     <rect x="43" y="113.6" width="14" height="11" rx="2.4" fill="none" stroke="#B08B57" stroke-width="1.3"/>
     <path d="M43.4,117.4h13.2M43.4,121h13.2" stroke="#B08B57" stroke-width=".8" opacity=".6"/>`;
-  return `<svg viewBox="0 0 100 ${mini?102:128}" aria-hidden="true" focusable="false">
+  const H = mini?102:128;
+  /* lie＝橫躺（補氣站那顆）：整顆順時針轉 90 度，原本在右上角的破口就轉到下面，
+     示意球破了、躺在地上飛不起來。viewBox 跟著換成橫的，版面才不會被原本的直立比例撐開 */
+  /* 躺下來之後球身只占中間那一條，下面那塊是空的，直接把 viewBox 裁掉，球才不會看起來縮水 */
+  return `<svg viewBox="0 0 ${lie?H:100} ${lie?88:H}" aria-hidden="true" focusable="false">
     <defs><clipPath id="c-${id}"><path d="${ENV}"${warp}/></clipPath></defs>
+    ${lie?`<g transform="translate(${H},0) rotate(90)">`:''}
     <g clip-path="url(#c-${id})">
       ${g}
       ${pat?`<rect x="0" y="0" width="100" height="100" fill="url(#${pat})"/>`:''}
@@ -2389,12 +2418,13 @@ function balloon(o){
       <circle cx="73" cy="58" r="33" fill="var(--c3)" opacity=".07"/>
       <ellipse cx="29" cy="28" rx="10.5" ry="14" fill="#fff" opacity=".34" transform="rotate(-20 29 28)"/>
       <path d="M78,8 H101 V102 H78 C88,74 88,34 78,8Z" fill="var(--c3)" opacity=".09"/>
-      ${o.glyph?`<g transform="translate(${o.deflate?'29,46) scale(1.66':'26,20) scale(2.08'})" style="color:var(--c3);--ic2:color-mix(in srgb,var(--c3) 58%,var(--c0,#FDF8E9))">${ICON[o.glyph]}</g>`:''}
+      ${o.glyph?`<g transform="translate(${o.deflate?'29,46) scale(1.66':'26,20) scale(2.08'})${lie?' rotate(-90 12 12)':''}" style="color:var(--c3);--ic2:color-mix(in srgb,var(--c3) 58%,var(--c0,#FDF8E9))">${ICON[o.glyph]}</g>`:''}
       ${patch}
     </g>
     <path d="${ENV}"${warp} fill="none" stroke="var(--c3)" stroke-width="1.5" stroke-opacity=".45" stroke-linejoin="round"/>
     ${tear}
     ${rig}
+    ${lie?'</g>':''}
   </svg>`;
 }
 
@@ -2928,7 +2958,7 @@ function pumpBalloonHTML(m){
   if(!n) return '';
   return `<button class="bal wide" data-act="pump"
       style="${cvar(BAL_PUMP)};--d:${(MODES.length*0.43).toFixed(2)}s;--t:5.2s">
-      <span class="env">${balloon({shape:'solid', glyph:'pump', deflate:true})}<span class="tag pump">請幫我補氣 ${n} 題！</span></span>
+      <span class="env">${balloon({shape:'solid', glyph:'pump', deflate:true, lie:true})}<span class="tag pump">請幫我補氣 ${n} 題！</span></span>
       <span class="sub">之前不熟的題目，再想一次</span></button>`;
 }
 function balloonsHTML(m){
@@ -2944,7 +2974,7 @@ const HELP = {
     '剛開始學乘法，先玩 🔰。',
     '玩遊戲、做攤子任務，就有金幣。',
     `金幣可以玩轉蛋，有 ${STICKERS.length} 種等你收集喔！`],
-   note:'給大人：請固定用<b>同一台裝置、同一個瀏覽器</b>玩，紀錄才留得住；建議用<b>平板</b>。紀錄存在這台裝置的瀏覽器裡，太久沒玩或清除瀏覽資料就會不見。iPhone 請用 Safari「加入主畫面」，從圖示進來玩。'},
+   parent:true},
   stages:{t:'怎麼玩？', li:[
     '每關 10 題，答對 8 題就過關。',
     '不熟的題目等一下會再出現。',
@@ -2957,8 +2987,7 @@ const HELP = {
   pick:{t:'要選哪一張？', li:[
     '2 到 9，點哪一張都可以。',
     '一張乘法表有 9 題。',
-    '下面亮幾顆綠點，就是你記住了幾題。'],
-   note:'給大人：小綠點是熟練度。同一題<b>連續答對 3 次</b>才會變成亮綠點，答對過但還沒連三次是半亮的。<b>7×8 和 8×7 分開算</b>。只有「第一次就自己算出來」才算數：看了提示、或是同一回合再出一次的那一題都不算；翻翻樂沒有作答，所以不會動到小綠點。'},
+    '下面亮幾顆綠點，就是你記住了幾題。']},
   hunt:{t:'怎麼玩？', li:[
     '先算出答案是多少。',
     '答案藏在畫裡，顏色跟畫一樣。',
@@ -2983,7 +3012,7 @@ const HELP = {
   snake:{t:'怎麼玩？', li:[
     '吃到寫著正確答案的蘋果。',
     '點蛇頭前面那一格就轉彎。',
-    '吃到 14 個就放煙火過關。',
+    `吃到 ${SNAKE_WIN} 個就放煙火過關。`,
     '吃到不對的，扣一顆愛心。',
     '撞到牆壁不會怎樣。']},
   learn:{t:'怎麼玩？', li:[
@@ -3014,11 +3043,17 @@ const HELP = {
     '每個人的進度分開記。',
     '點「換我玩」就換人。',
     '點鉛筆可以改名字和頭貼。'],
-   note:'給大人：請固定用<b>同一台裝置、同一個瀏覽器</b>玩，紀錄才留得住；建議用<b>平板</b>。紀錄存在這台裝置的瀏覽器裡，沒有上傳到網路，太久沒玩、清除瀏覽資料或換裝置就會不見。'}
+   parent:true}
 };
 function helper(txt){
   return `<p class="helper">${txt}</p>`;
 }
+/* 給大人的入口：原本三處都塞了一整段小字，大人滑過去不會看、小孩又看不懂。
+   改成一顆鈕，統一帶去「給大人的說明」那一頁（那頁前三張卡片講的就是保存紀錄）。
+   這顆鈕「不加」nozy：字型本來就會把注音畫進每個漢字裡，nozy 只會讓多音字拿不到選擇子，
+   「家長」就會變成ㄐㄧㄚ ㄔㄤˊ —— 小孩看得到的錯注音比看得懂更嚴重。
+   讀音靠 zhuyin.txt 的「家長＝ㄐㄧㄚ ㄓㄤˇ」處理 */
+const PARENT_BTN = `<button class="btn small pbtn" data-act="about">家長請看：保存紀錄方法 ${ic('right')}</button>`;
 /* 文案裡可以直接寫 emoji，輸出前一律換成手繪符號（全站不用 emoji）*/
 const MK_IC = {'\u{1F530}':'rookie', '\u{1F642}':'smile'};
 const mk = t => String(t).replace(/[\u{1F530}\u{1F642}]/gu, m=>ic(MK_IC[m]));
@@ -3071,7 +3106,8 @@ function showHelp(){
   showModal(`<div class="owl" aria-hidden="true" style="width:74px">${bearSVG()}</div><h3>${h.t}</h3>
     <ol class="helplist">${h.li.map(x=>`<li>${mk(x)}</li>`).join('')}</ol>
     ${h.note?`<p class="note helpnote">${mk(h.note)}</p>`:''}
-    <div class="row"><button class="btn sun big" data-act="closeModal">知道了！</button></div>`);
+    ${h.parent?`<div class="pbtnrow">${PARENT_BTN}</div>`:''}
+    <div class="row"><button class="btn sun big" data-focus data-act="closeModal">知道了！</button></div>`);
   sfx.tap();
 }
 /* ---------- 陪我玩的小夥伴 ---------- */
@@ -3342,28 +3378,17 @@ const VIEWS = {
       <p class="note">每位挑戰者的金幣、貼紙和每日任務都是分開記錄的。</p>
       <section class="card bak">
         <h3>給大人的說明</h3>
-        <ol class="grown">
-          <li><b>請固定用同一台裝置、同一個瀏覽器玩</b>，遊戲紀錄才留得住。</li>
-          <li>建議用<b>平板</b>玩，畫面大，玩起來最舒服。</li>
-          <li><b>紀錄存在哪裡：</b>紀錄是存在這台裝置的瀏覽器裡的，沒有上傳到網路。
-            太久沒玩、清除瀏覽資料、或換一台裝置，紀錄就會不見。</li>
-        </ol>
-        <p class="note" style="margin-top:10px;text-align:left">iPhone、iPad 請用 Safari 的「分享 → 加入主畫面」，
-          從主畫面的圖示進來玩，紀錄比較不會被系統清掉。</p>
+        <div class="pbtnrow" style="margin-top:4px">${PARENT_BTN}</div>
       </section>`;
   },
 
-  /* 頁尾「關於遊戲」進來的那一頁，整頁都是寫給大人看的 */
+  /* 頁尾「關於遊戲」進來的那一頁，整頁都是寫給大人看的。
+     卡片順序是「先給最急的，再講我是誰」：大人多半是為了保住紀錄才點進來的，
+     所以重點提醒和加到主畫面擺前面，自我介紹擺第四張 */
   about(){
     const ig = `<a href="https://www.instagram.com/slowlywithlili/" target="_blank" rel="noopener noreferrer">「利利寫生活」</a>`;
     view.innerHTML=`
       <div class="backrow"><button class="iconbtn" data-act="home" aria-label="返回">${ic('back')}</button><h2>給大人的說明</h2></div>
-      <section class="card about">
-        <h3>關於乘乘熱氣球</h3>
-        <p>我是<a href="https://www.instagram.com/slowlywithlili/" target="_blank" rel="noopener noreferrer">利利</a>，這個遊戲是做給我女兒的。<span class="abal" style="--c1:#D4EEED;--c2:#A8DCDD;--c3:#46959B;--c0:var(--surface)">${balloon({pat:'pat-band',mini:true})}</span></p>
-        <p>我在遊戲裡加了很多鼓勵和正向回饋，想陪她度過枯燥的背誦過程。</p>
-        <p>現在女兒不再排斥乘法了，所以我想把這個遊戲分享出來，希望也能幫助其他孩子更輕鬆地學習！</p>
-      </section>
       <section class="card about">
         <h3>遊玩重點提醒</h3>
         <ul>
@@ -3400,6 +3425,12 @@ const VIEWS = {
         <p>遊戲紀錄只儲存在目前裝置的瀏覽器裡，不會上傳到網路。</p>
         <p>換裝置、換瀏覽器、清除瀏覽資料、用無痕模式玩，紀錄都可能消失。</p>
         <p>iPhone／iPad 用 Safari 玩的話，很久沒打開遊戲（大約 7 天以上），紀錄可能會被 Safari 自動清除。從主畫面圖示玩就比較不受影響。</p>
+      </section>
+      <section class="card about">
+        <h3>關於乘乘熱氣球</h3>
+        <p>嗨，我是<a href="https://www.instagram.com/slowlywithlili/" target="_blank" rel="noopener noreferrer">利利</a>，這個遊戲是做給我女兒的。<span class="abal" style="--c1:#D4EEED;--c2:#A8DCDD;--c3:#46959B;--c0:var(--surface)">${balloon({pat:'pat-band',mini:true})}</span></p>
+        <p>我在遊戲裡加了很多鼓勵和正向回饋，想陪她度過枯燥的背誦過程。</p>
+        <p>現在女兒不再排斥乘法了，所以我想把這個遊戲分享出來，希望也能幫助其他孩子更輕鬆地學習！</p>
       </section>
       <section class="card about">
         <h3>遇到問題</h3>
@@ -3475,7 +3506,7 @@ const VIEWS = {
         <button class="btn small" data-act="hhint">${ic('find')} 提示</button>
       </div>
       <div class="hstrip" id="hstrip"></div>
-      <p class="note gnote" id="hnote">在「${esc(S.name)}」裡找答案。</p>
+      <p class="note gnote" id="hnote">${HUNT_TIP}</p>
       <div class="art" id="art">${artHTML(game.art)}</div>`;
   },
 
@@ -3558,7 +3589,7 @@ const VIEWS = {
         <span class="qnum" id="qnum">${Math.min(g.qi+1,g.total)}/${g.total}</span>
       </div>
       <div class="haskrow">
-        <div class="hask lask">這是幾乘幾呢？<span class="hchant">先填每排幾個，再填有幾排。</span></div>
+        <div class="hask lask">這是幾乘幾呢？</div>
         <button class="btn small" data-act="lhint">${ic('find')} 提示</button>
       </div>
       <p class="note lhint" id="lnote">先數每排幾個，再數有幾排</p>
@@ -3615,9 +3646,9 @@ const VIEWS = {
           <div class="track" id="track"><i id="trackfill" style="width:${g.qi/g.total*100}%"></i></div>
           <span class="qnum">${Math.min(g.qi+1,g.total)}/${g.total}</span>
         </div>
-        <div class="hask lask">哪一張的答案不一樣？<span class="hchant">兩個算式算算看，答案不同的就是它。</span></div>
-        <div class="pgrid two">${cells}</div>
-        <p class="note" id="pnote">其他幾張的兩個算式，答案都是一樣的。</p>`;
+        <div class="hask lask">哪一張的答案不一樣？</div>
+        <p class="note topnote" id="pnote">兩個算式算算看，答案不同的就是它。</p>
+        <div class="pgrid two">${cells}</div>`;
     }
   },
 
@@ -4021,7 +4052,7 @@ function submit(val){
           `<div class="retrynote">之前卡住的題目，現在記住了。</div>`;
         pumpFly(slot);
       } else {
-        fb.innerHTML+=`<div class="retrynote">明天再補一次，這題就補好了。</div>`;
+        fb.innerHTML+=`<div class="retrynote">這題明天再答對一次，就補好了。</div>`;
       }
     }
     sfx.right(game.combo);
@@ -4313,7 +4344,7 @@ function startSnake(table, lvId){
   game = { mode:'snake', table, lv, n,
     snake:[{x:mid,y:mid},{x:mid-1,y:mid},{x:mid-2,y:mid}],
     dir:{x:1,y:0}, nextDir:{x:1,y:0},
-    hearts:lv.hearts, eaten:0, rainbows:0, combo:0, maxCombo:0,
+    hearts:lv.hearts, eaten:0, maxLen:SNAKE_LEN0, rainbows:0, combo:0, maxCombo:0,
     qi:0, cur:null, items:[], rocks:[], ms:lv.ms, paused:false, over:false, timer:null, t:null };
   go('snake');
   snakeNextQ();
@@ -4429,14 +4460,17 @@ function snakeEat(){
   snakeNote(`${chant(a,b)}　${PRAISE[rnd(PRAISE.length)]}`);
   const head=document.querySelector('.snhead');
   if(head) burstAt(head, 10);
-  if(g.eaten % RAINBOW.length === 0){
-    g.rainbows++; d.p.rainbows++;
-    sfx.fanfare(); toast(`完成第 ${g.rainbows} 條彩虹！${g.rainbows>=2?'':'再一條就過關。'}`);
+  g.maxLen = Math.max(g.maxLen, g.snake.length);
+  const rb = Math.floor(g.maxLen / RAINBOW.length);   /* 身體第 7、14 節是紫色 */
+  if(rb > g.rainbows){
+    d.p.rainbows += rb - g.rainbows; g.rainbows = rb;
+    sfx.fanfare();
+    toast(`出現 ${g.rainbows} 條彩虹了！${g.rainbows>=SNAKE_RAINBOWS?'':'再長一點就有第 2 條。'}`);
     if(head) burstAt(head, 40);
     if(g.lv.up && g.ms>g.lv.min){ g.ms=Math.max(g.lv.min, g.ms-g.lv.up); snakeRun(); }
     if(g.lv.rocks) for(let i=0;i<2;i++){ const c=snakeFree(); if(c) g.rocks.push(c); }
   }
-  if(g.eaten>=SNAKE_WIN){          /* 兩條彩虹就放煙火收工，不用玩到沒愛心 */
+  if(g.rainbows>=SNAKE_RAINBOWS){   /* 第二條彩虹出現就放煙火收工，不用玩到沒愛心 */
     g.win=true;
     paintSnake();
     snakeNote('兩條彩虹集滿了，過關！');
@@ -4474,8 +4508,9 @@ function updateSnakeBar(){
   const h=document.getElementById('snhearts');
   if(h) h.innerHTML = ic('heart','hp').repeat(Math.max(0,g.hearts)) + ic('heart','hp off').repeat(Math.max(0, g.lv.hearts-g.hearts));
   const bar=document.getElementById('snbar');
+  /* 進度條＝現在這一條彩虹排到第幾色，跟蛇身上的顏色同步（蛇一開始就有 3 節，所以一開局就亮 3 格）*/
   if(bar) bar.innerHTML = RAINBOW.map((c,i)=>
-    `<i style="background:${i < g.eaten%RAINBOW.length ? c : 'var(--track)'}"></i>`).join('');
+    `<i style="background:${i < g.snake.length%RAINBOW.length ? c : 'var(--track)'}"></i>`).join('');
   const q=document.getElementById('snq');
   if(q && g.cur) q.innerHTML = `${g.cur.a} <span class="op">×</span> ${g.cur.b} <span class="op">=</span> ?`;
   const n=document.getElementById('qnum');
@@ -4680,13 +4715,16 @@ function huntNext(){
   if(game.pos>=ART_N) return finishHunt();
   game.locked=false; game.miss=0; game.hinted=false;
   const slot=game.order[game.pos], p=game.pairs[slot-1];
-  $('#hask').innerHTML=`${p.a} <span class="op">×</span> ${p.b} <span class="op">=</span> ?<span class="hchant">答案藏在畫面裡，找到就點它。</span>`;
+  $('#hask').innerHTML=`${p.a} <span class="op">×</span> ${p.b} <span class="op">=</span> ?<span class="hchant"></span>`;
   $('#qnum').textContent=`${game.pos+1}/${ART_N}`;
   $('#trackfill').style.width=(game.pos/ART_N*100)+'%';
-  hnote(game.pos===0 ? '數字跟畫面同色，仔細看每個角落。' : `還剩 ${ART_N-game.pos} 個答案`);
+  /* 說明句每一題都重講一次（上面那排點點和 N/9 已經在報進度了，不用再寫一次「還剩幾個」）。
+     答錯或按提示，提示句就直接蓋掉它 —— 開始找了就不需要說明了 */
+  hnote('');
   huntStrip();
 }
-function hnote(msg){ const el=document.getElementById('hnote'); if(el) el.textContent=msg; }
+function hnote(msg){ const el=document.getElementById('hnote'); if(el) el.textContent = msg || HUNT_TIP; }
+const HUNT_TIP = '數字跟畫面同色，仔細看每個角落。';
 function artSplash(el){
   const art=document.getElementById('art'); if(!art || reduceMotion) return;
   const sp=document.createElement('span');
