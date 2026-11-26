@@ -18,14 +18,14 @@
 <meta property="og:title" content="乘乘熱氣球｜給初學孩子的九九乘法遊戲">
 <meta property="og:description" content="打開網頁就能玩！專為乘法初學的孩子設計，從看懂乘法開始，再透過尋寶、貪食蛇、消消樂等遊戲，慢慢熟悉九九乘法。答錯不扣分，開心練習、慢慢學會！">
 <meta property="og:url" content="https://slowlywithlili.github.io/mul99/">
-<meta property="og:image" content="https://slowlywithlili.github.io/mul99/og.png">
+<meta property="og:image" content="https://slowlywithlili.github.io/mul99/og.png?v=2">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="乘乘熱氣球｜給初學孩子的九九乘法遊戲">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="乘乘熱氣球｜給初學孩子的九九乘法遊戲">
 <meta name="twitter:description" content="打開網頁就能玩！專為乘法初學的孩子設計，從看懂乘法開始，再透過尋寶、貪食蛇、消消樂等遊戲，慢慢熟悉九九乘法。答錯不扣分，開心練習、慢慢學會！">
-<meta name="twitter:image" content="https://slowlywithlili.github.io/mul99/og.png">
+<meta name="twitter:image" content="https://slowlywithlili.github.io/mul99/og.png?v=2">
 <!-- 給 Google 看的結構化資料：這是一個免費的網頁遊戲 -->
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"VideoGame",
@@ -655,11 +655,16 @@ main{max-width:620px;margin:0 auto;padding:18px 14px 48px}
 .helper{display:flex;gap:9px;align-items:flex-start;background:var(--surface2);border:2px dashed var(--hair);border-radius:16px;padding:9px 12px;margin:0 0 14px;font-size:19.5px;line-height:1.5}
 .helper b{font-size:21px;line-height:1.15;flex:none}
 .helper .q{margin-left:auto;flex:none;font-size:15px;color:var(--muted);white-space:nowrap}
-/* 給大人的入口鈕：小孩看得到，但刻意不給糖果色、不標注音，看起來就是大人的東西。
-   點下去走 data-act="about"，跟頁尾的「關於遊戲」同一頁 */
+/* 給大人的入口鈕：小孩看得到，但刻意不給糖果色，看起來就是大人的東西。
+   點下去走 data-act="about"，跟頁尾的「關於遊戲」同一頁。
+   注意：這顆鈕「不加」nozy —— nozy 不會把注音藏起來（注音是畫在字型裡的），
+   只會讓多音字拿不到選擇子，「家長」就變成ㄐㄧㄚ ㄔㄤˊ。讀音走 zhuyin.txt */
 .pbtn{display:inline-flex;align-items:center;gap:5px;background:var(--surface2);color:var(--muted);
   border-color:var(--edge);font-size:16px;box-shadow:0 2px 6px var(--shadow)}
-.pbtn .ic{width:1em;height:1em;color:var(--muted);--ic2:var(--surface2)}
+/* 兩行：「家長請看：」和「保存紀錄方法」各一行，箭頭在旁邊置中。
+   一行塞滿十一個字的時候，小螢幕上這顆鈕會把卡片撐破 */
+.pbtn .pbl{line-height:1.32;text-align:left}
+.pbtn .ic{width:1em;height:1em;color:var(--muted);--ic2:var(--surface2);flex:none}
 .pbtnrow{margin-top:12px;text-align:center}
 .helpnote{margin-top:10px;text-align:left;font-size:.78em;line-height:1.5;
   background:var(--surface2);border-radius:14px 11px 15px 10px/11px 15px 10px 14px;padding:8px 11px}
@@ -2950,7 +2955,9 @@ function riseHome(){
   });
 }
 /* 補氣站的球：粉紅色，橫跨整排放在六顆氣球的最下面。
-   今天沒有題目可以補就整顆不出現；訪客模式不留紀錄，所以也不顯示 */
+   今天沒有題目可以補就整顆不出現；訪客模式不留紀錄，所以也不顯示。
+   灰字跟乘法實戰家同一套規矩：金幣不要只躲在說明裡，有得拿就直接寫在氣球上。
+   寫「全部答對有 1 枚」不寫「補氣完拿金幣」—— 答錯了沒有金幣，講滿了小孩會覺得被騙 */
 const BAL_PUMP = ['#F6E6EE','#E3C3D4','#A77391'];
 function pumpBalloonHTML(m){
   if(GUEST) return '';
@@ -2959,7 +2966,7 @@ function pumpBalloonHTML(m){
   return `<button class="bal wide" data-act="pump"
       style="${cvar(BAL_PUMP)};--d:${(MODES.length*0.43).toFixed(2)}s;--t:5.2s">
       <span class="env">${balloon({shape:'solid', glyph:'pump', deflate:true, lie:true})}<span class="tag pump">請幫我補氣 ${n} 題！</span></span>
-      <span class="sub">之前不熟的題目，再想一次</span></button>`;
+      <span class="sub">${pumpCoinLeft()?`之前不熟的題目　${ic('coin')} 全部答對有 1 枚`:'之前不熟的題目，再想一次'}</span></button>`;
 }
 function balloonsHTML(m){
   return MODES.map((x,i)=>`<button class="bal" data-act="${x.act}"
@@ -3053,7 +3060,7 @@ function helper(txt){
    這顆鈕「不加」nozy：字型本來就會把注音畫進每個漢字裡，nozy 只會讓多音字拿不到選擇子，
    「家長」就會變成ㄐㄧㄚ ㄔㄤˊ —— 小孩看得到的錯注音比看得懂更嚴重。
    讀音靠 zhuyin.txt 的「家長＝ㄐㄧㄚ ㄓㄤˇ」處理 */
-const PARENT_BTN = `<button class="btn small pbtn" data-act="about">家長請看：保存紀錄方法 ${ic('right')}</button>`;
+const PARENT_BTN = `<button class="btn small pbtn" data-act="about"><span class="pbl">家長請看：<br>保存紀錄方法</span>${ic('right')}</button>`;
 /* 文案裡可以直接寫 emoji，輸出前一律換成手繪符號（全站不用 emoji）*/
 const MK_IC = {'\u{1F530}':'rookie', '\u{1F642}':'smile'};
 const mk = t => String(t).replace(/[\u{1F530}\u{1F642}]/gu, m=>ic(MK_IC[m]));
@@ -3395,6 +3402,7 @@ const VIEWS = {
           <li>本遊戲免費、無廣告、免註冊。</li>
           <li>遊戲紀錄只存在這台裝置。用 iPhone／iPad 的話，<b>第一天就把遊戲加到主畫面，紀錄比較不容易被清掉。</b></li>
           <li><b>推薦用平板玩，畫面大，操作起來最舒服！</b></li>
+          <li>遊戲紀錄的保存方式，請看下方的<b>「遊戲紀錄存在哪裡？」</b></li>
         </ul>
       </section>
       <section class="card about">

@@ -39,9 +39,25 @@ $OLD/fontenv/bin/python3 make-font.py \
   $OLD/fontdl/BpmfGenSenRounded-M.ttf $OLD/fontdl/BpmfGenSenRounded-B.ttf
 ```
 
-- 目前 **1086 字**。字數只會往上，突然變少代表有東西被誤刪。
+- 目前 **1088 字**。字數只會往上，突然變少代表有東西被誤刪。
 - 唯一的警告「什=ㄕㄜˊ 字型只有 shen2／shi2」是舊有的、無害。
-- `$OLD` 是**更早一個 session 的暫存區，隨時可能被清掉**。清掉的話要重建 venv（fonttools + brotli）並重新下載 [ButTaiwan/bpmfvs](https://github.com/ButTaiwan/bpmfvs) 的 `BpmfGenSenRounded.zip`（SIL OFL 1.1）。多音字對照表在 `zhuyin.txt`。
+- `$OLD` 是**更早一個 session 的暫存區，隨時可能被清掉**（2026-11-26 就被清掉過一次）。
+  清掉的話在自己的 scratchpad 重建，兩步都不用問人：
+  ```bash
+  python3 -m venv $SP/fontenv && $SP/fontenv/bin/pip install -q fonttools brotli
+  mkdir -p $SP/fontdl && cd $SP/fontdl && \
+    curl -sL -o bpmf.zip https://github.com/ButTaiwan/bpmfvs/releases/latest/download/BpmfGenSenRounded.zip && unzip -oq bpmf.zip
+  ```
+  （`BpmfGenSenRounded.zip` 約 25 MB，SIL OFL 1.1。）多音字對照表在 `zhuyin.txt`。
+- **重建完要比對新舊字集，不要只看字數。** 字數對不上就是哪裡出事了：
+  ```bash
+  git show HEAD:fonts/bpmf-gensen-m.woff2 > /tmp/old.woff2
+  $SP/fontenv/bin/python3 -I -c "from fontTools.ttLib import TTFont as T;\
+  a=set(T('/tmp/old.woff2').getBestCmap());b=set(T('fonts/bpmf-gensen-m.woff2').getBestCmap());\
+  print('新增',''.join(sorted(map(chr,b-a))),'消失',''.join(sorted(map(chr,a-b))))"
+  ```
+  **「消失」永遠要是空的。**（`make-font.py` 的字集是整個 index.html 的漢字，註解裡的字也算進去，
+  所以新增的字不一定看得到；但少掉的字就是畫面上會變成空格的字。）
 - 注音**不是 `<ruby>`**，是用 Unicode 變體選擇子（U+E0100–E01EF，代理對 `\uDB40[\uDC00-\uDFFF]`）畫進漢字字形裡。`zyOne()`（index.html:1321）只對多音字插選擇子；`zySkip()`（index.html:1312）會跳過 SCRIPT/STYLE/TEXTAREA/INPUT、SVG 命名空間、和帶 `nozy` class 的節點。
 - **`nozy` 不會讓注音消失。** 注音是字型畫進每一個漢字裡的，`nozy` 只是讓 `zyFix()` 跳過那個節點，
   也就是**多音字拿不到變體選擇子、只好用字型的預設讀音**。
@@ -138,7 +154,7 @@ curl -s "https://slowlywithlili.github.io/mul99/?cb=$RANDOM" -o /tmp/live.html
 
 ```bash
 cd ~/personal/mul99-tests
-./run.sh              # 完整矩陣（24 支）
+./run.sh              # 完整矩陣（25 支）
 ./run.sh r3.html      # 只跑一支
 ```
 
@@ -155,6 +171,7 @@ cd ~/personal/mul99-tests
 | `r7` | 頁尾三段（連結、分隔線、最後更新）、「關於遊戲」整頁五張卡片的內容與連結（含安裝步驟、結尾那朵雲、沒有 emoji）、回首頁、`HELP.about`、遊戲中按到會先問 |
 | `r8` | 新版本橫幅、實戰家的金幣記號與指路句、`INFO.here`、「按我拿金幣」、貪食蛇不慶祝、小夥伴輪流說話與點擊、全站不講「計分」 |
 | `r9` | 網站名稱／描述（含 og、twitter、ld+json）、給大人那頁五張卡片的順序、三處「家長請看」入口鈕、一個畫面只有一句灰字、補氣站的球橫躺、彩虹＝蛇身上的紫色 |
+| `r10` | 分享預覽圖的網址帶 `?v=`、家長鈕斷兩行、重點提醒指向「遊戲紀錄存在哪裡？」、補氣站氣球的灰字標金幣（拿過就不標）、補氣要兩個不同的日子 |
 | `rise` / `foot` | 進場動畫 / 頁尾與首頁提示 |
 | `host` / `r2host` / `visual` / `drv_visual` | 版面（多畫面 × 多寬度）|
 | `v_all` | 貼紙、轉蛋、畫作 |
@@ -182,6 +199,28 @@ cd ~/personal/mul99-tests
 - `showHelp()` **不吃參數**，它讀 `currentView`。選乘法表那個畫面的 view 名字是 `'pick'` 不是 `'reviewPick'`。
 
 ---
+
+## 三之二、分享出去的那一張（名詞對照）
+
+使用者講「網頁預覽圖」「那句話」的時候，指的是下面這四樣其中之一。改之前先對清楚是哪一個：
+
+| 使用者會怎麼說 | 正式名稱 | 改哪裡 |
+|---|---|---|
+| 網站名稱、分頁上的字 | `<title>` ／ `og:title` ／ `twitter:title` ／ ld+json 的 `name` | `index.html` 的 `<head>`，**四個要一起改** |
+| 網頁描述、連結下面那段小字 | `meta[name=description]` ／ `og:description` ／ `twitter:description` ／ ld+json 的 `description` | 同上，**180 字以內**，太長會被搜尋結果截掉 |
+| 網頁預覽圖、分享出去那張圖 | Open Graph 圖（`og.png`，1200×630） | 改版型 `og.html` → headless Chrome 截圖蓋掉 `og.png` |
+| 預覽圖上那行小字 | 預覽圖的**標語**（`og.html` 的 `.tag`） | 同上。**不要寫會過期的數字**（遊戲數、貼紙張數） |
+
+另外還有兩個常被混在一起、但其實是不同東西的：
+
+- **首頁的副標**（畫面上「九九乘法嘉年華」那行）＝ 氣氛，不是搜尋結果，改標題時不要順手改掉它。
+- **加到主畫面的名字** ＝ `manifest.webmanifest` 的 `name` / `short_name`，跟 `<title>` 分開存。
+
+**換圖、換標題之後一定要把 `og:image` / `twitter:image` 的 `?v=` 加一號。**
+LINE 和 Facebook 用**網址**當快取的鍵，檔名沒變就繼續拿舊的。
+連結本身的標題和描述也會被 LINE 快取（改完當下分享還是舊的），
+想馬上看到新的就分享一次帶問號的網址；Facebook 用
+[Sharing Debugger](https://developers.facebook.com/tools/debug/) 按 Scrape Again。
 
 ## 四、index.html 地圖
 
